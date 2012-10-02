@@ -2,16 +2,12 @@
 #include <numeric>
 
 #if defined(_WIN32) | defined(_WIN64)
-
 #pragma comment(lib, "winmm.lib")
 #include <windows.h>
 #include <mmsystem.h>
-
 #elif defined(__linux__)
-
 #include <sys/time.h>
 #include <sys/resource.h>
-
 #endif
 
 #include "timer.h"
@@ -165,9 +161,9 @@ double StopWatch::getLastElapsedTime() const {
 }
 
 double StopWatch::getTotalTime() const {
-	double r =0;
-	for(int i=0;i<m_lap.size();++i)
-		r +=m_lap[i];
+	double r = 0;
+	for (int i = 0; i < m_lap.size(); ++i)
+		r += m_lap[i];
 	return r;
 }
 

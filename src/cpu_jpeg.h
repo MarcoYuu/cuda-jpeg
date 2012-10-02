@@ -13,7 +13,7 @@
 #include "utils/out_bit_stream.h"
 #include "utils/in_bit_stream.h"
 
-#include "cuda_jpeg_types.h"
+#include "type_definitions.h"
 
 void color_trans_rgb_to_yuv(byte* src_img, int* dst_img, int sizeX, int sizeY);
 void color_trans_yuv_to_rgb(int *src_img, byte *dst_img, int sizeX, int sizeY);

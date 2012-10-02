@@ -9,7 +9,7 @@
 #define GPU_JPEG_H_
 
 #include "utils/gpu_out_bit_stream.cuh"
-#include "cuda_jpeg_types.h"
+#include "type_definitions.h"
 
 #ifdef __CDT_PARSER__
 #define __global__

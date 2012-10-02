@@ -10,6 +10,7 @@ The comments are written in Japanese (Shift-JIS).
 #ifdef __CDT_PARSER__
 #define __global__
 #define __device__
+#define __constant__
 #endif
 
 //------------------------------------------------------------
@@ -17,14 +18,14 @@ The comments are written in Japanese (Shift-JIS).
 //------------------------------------------------------------
 
 // サイズテーブル
-__device__ static const int	kYDcSizeT_d[] = {
+__device__ __constant__ static const int	kYDcSizeT_d[] = {
 		0x0002, 0x0003, 0x0003, 0x0003,
 		0x0003, 0x0003, 0x0004, 0x0005,
 		0x0006, 0x0007, 0x0008, 0x0009
 };
 
 // 符号語テーブル
-__device__ static const int	kYDcCodeT_d[] = {
+__device__ __constant__ static const int	kYDcCodeT_d[] = {
 		0x0000, 0x0002, 0x0003, 0x0004,
 		0x0005, 0x0006, 0x000e, 0x001e,
 		0x003e, 0x007e, 0x00fe, 0x01fe
@@ -40,19 +41,19 @@ static const SHuffmanCodeTable	dkYDcHuffmanT = {
 //------------------------------------------------------------
 
 // サイズテーブル
-__device__ static const int	kCDcSizeT_d[] = {
+__device__ __constant__ static const int	kCDcSizeT_d[] = {
 		0x0002, 0x0002, 0x0002, 0x0003,
 		0x0004, 0x0005, 0x0006, 0x0007,
 		0x0008, 0x0009, 0x000a, 0x000b	};
 
 // 符号語テーブル
-__device__ static const int	kCDcCodeT_d[] = {
+__device__ __constant__ static const int	kCDcCodeT_d[] = {
 		0x0000, 0x0001, 0x0002, 0x0006,
 		0x000e, 0x001e, 0x003e, 0x007e,
 		0x00fe, 0x01fe, 0x03fe, 0x07fe	};
 
 // パラメータ
-__device__ static const int	kCDcValueT[] = {
+__device__ __constant__ static const int	kCDcValueT[] = {
 		0x0000, 0x0001, 0x0002, 0x0003,
 		0x0004, 0x0005, 0x0006, 0x0007,
 		0x0008, 0x0009, 0x000a, 0x000b
@@ -63,7 +64,7 @@ __device__ static const int	kCDcValueT[] = {
 //------------------------------------------------------------
 
 // サイズテーブル
-__device__ static const int	kYAcSizeT_d[] = {
+__device__ __constant__ static const int	kYAcSizeT_d[] = {
 		 4,  2,  2,  3,  4,  5,  7,  8,
 		10, 16, 16,  4,  5,  7,  9, 11,
 		16, 16, 16, 16, 16,  5,  8, 10,
@@ -87,7 +88,7 @@ __device__ static const int	kYAcSizeT_d[] = {
 		16, 16 };
 
 // 符号語テーブル
-__device__ static const int	kYAcCodeT_d[] = {
+__device__ __constant__ static const int	kYAcCodeT_d[] = {
 		0x000a, 0x0000, 0x0001, 0x0004,
 		0x000b, 0x001a, 0x0078, 0x00f8,
 		0x03f6, 0xff82, 0xff83, 0x000c,
@@ -133,14 +134,14 @@ __device__ static const int	kYAcCodeT_d[] = {
 static const SHuffmanCodeTable	dkYAcHuffmanT = {162,// テーブル要素数（符号語数）
 };
 
-__device__ static const int	kYEOBidx_d = 0;	// EOBのインデックス
-__device__ static const int	kYZRLidx_d = 151;// ZRLのインデックス
+__device__ __constant__ static const int	kYEOBidx_d = 0;	// EOBのインデックス
+__device__ __constant__ static const int	kYZRLidx_d = 151;// ZRLのインデックス
 
 //------------------------------------------------------------
 // 色差AC成分用
 //------------------------------------------------------------
 // サイズテーブル
-__device__ static const int	kCAcSizeT_d[] = {
+__device__ __constant__ static const int	kCAcSizeT_d[] = {
 		 2,  2,  3,  4,  5,  5,  6,  7,
 		 9, 10, 12,  4,  6,  8,  9, 11,
 		12, 16, 16, 16, 16,  5,  8, 10,
@@ -164,7 +165,7 @@ __device__ static const int	kCAcSizeT_d[] = {
 		16, 16 };
 
 // 符号語テーブル
-__device__ static const int	kCAcCodeT_d[] = {
+__device__ __constant__ static const int	kCAcCodeT_d[] = {
 		0x0000, 0x0001, 0x0004, 0x000a,
 		0x0018, 0x0019, 0x0038, 0x0078,
 		0x01f4, 0x03f6, 0x0ff4, 0x000b,
@@ -211,26 +212,26 @@ static const SHuffmanCodeTable	dkCAcHuffmanT = {
 	162,											// テーブル要素数（符号語数）
 };
 
-__device__ static const int		kCEOBidx_d = 0;		// EOBのインデックス
-__device__ static const int		kCZRLidx_d = 151;	// ZRLのインデックス
+__device__ __constant__ static const int		kCEOBidx_d = 0;		// EOBのインデックス
+__device__ __constant__ static const int		kCZRLidx_d = 151;	// ZRLのインデックス
 
 //------------------------------------------------------------
 // 輝度DC成分用
 //------------------------------------------------------------
 // サイズテーブル
-__device__ static const int	kYDcSizeDT_d[] = {
+__device__ __constant__ static const int	kYDcSizeDT_d[] = {
 		0x0002, 0x0003, 0x0003, 0x0003,
 		0x0003, 0x0003, 0x0004, 0x0005,
 		0x0006, 0x0007, 0x0008, 0x0009
 };
 // 符号語テーブル
-__device__ static const int	kYDcCodeDT_d[] = {
+__device__ __constant__ static const int	kYDcCodeDT_d[] = {
 		0x0000, 0x0002, 0x0003, 0x0004,
 		0x0005, 0x0006, 0x000e, 0x001e,
 		0x003e, 0x007e, 0x00fe, 0x01fe
 };
 // パラメータ
-__device__ static const int	kYDcValueDT_d[] = {
+__device__ __constant__ static const int	kYDcValueDT_d[] = {
 		0x0000, 0x0001, 0x0002, 0x0003,
 		0x0004, 0x0005, 0x0006, 0x0007,
 		0x0008, 0x0009, 0x000a, 0x000b
@@ -240,19 +241,19 @@ __device__ static const int	kYDcValueDT_d[] = {
 // 色差DC成分用
 //------------------------------------------------------------
 // サイズテーブル
-__device__ static const int	kCDcSizeDT_d[] = {
+__device__ __constant__ static const int	kCDcSizeDT_d[] = {
 		0x0002, 0x0002, 0x0002, 0x0003,
 		0x0004, 0x0005, 0x0006, 0x0007,
 		0x0008, 0x0009, 0x000a, 0x000b	};
 
 // 符号語テーブル
-__device__ static const int	kCDcCodeDT_d[] = {
+__device__ __constant__ static const int	kCDcCodeDT_d[] = {
 		0x0000, 0x0001, 0x0002, 0x0006,
 		0x000e, 0x001e, 0x003e, 0x007e,
 		0x00fe, 0x01fe, 0x03fe, 0x07fe	};
 
 // パラメータ
-__device__ static const int	kCDcValueDT_d[] = {
+__device__ __constant__ static const int	kCDcValueDT_d[] = {
 		0x0000, 0x0001, 0x0002, 0x0003,
 		0x0004, 0x0005, 0x0006, 0x0007,
 		0x0008, 0x0009, 0x000a, 0x000b
@@ -262,7 +263,7 @@ __device__ static const int	kCDcValueDT_d[] = {
 // 輝度AC成分用
 //------------------------------------------------------------
 // サイズテーブル
-__device__ static const int kYAcSizeDT_d[] = {
+__device__ __constant__ static const int kYAcSizeDT_d[] = {
 		 2,  2,  3,  4,  4,  4,  5,  5,
 		 5,  6,  6,  7,  7,  7,  7,  8,
 		 8,  8,  9,  9,  9,  9,  9, 10,
@@ -287,7 +288,7 @@ __device__ static const int kYAcSizeDT_d[] = {
 };
 
 // 符号語テーブル
-__device__ static const int	kYAcCodeDT_d[] = {
+__device__ __constant__ static const int	kYAcCodeDT_d[] = {
 		0x0000,0x0001,0x0004,0x000a,0x000b,0x000c,0x001a,0x001b,
 		0x001c,0x003a,0x003b,0x0078,0x0079,0x007a,0x007b,0x00f8,
 		0x00f9,0x00fa,0x01f6,0x01f7,0x01f8,0x01f9,0x01fa,0x03f6,
@@ -311,7 +312,7 @@ __device__ static const int	kYAcCodeDT_d[] = {
 		0xfffd,0xfffe,
 };
 
-__device__ static const int kYAcValueDT_d[] = {// パラメータ
+__device__ __constant__ static const int kYAcValueDT_d[] = {// パラメータ
 		0x0001, 0x0002, 0x0003, 0x0000, 0x0004, 0x0011, 0x0005, 0x0012,
 		0x0021, 0x0031, 0x0041, 0x0006, 0x0013, 0x0051, 0x0061, 0x0007,
 		0x0022, 0x0071, 0x0014, 0x0032, 0x0081, 0x0091, 0x00a1, 0x0008,
@@ -339,7 +340,7 @@ __device__ static const int kYAcValueDT_d[] = {// パラメータ
 // 色差AC成分用
 //------------------------------------------------------------
 // サイズテーブル
-__device__ static const int	kCAcSizeDT_d[] = {
+__device__ __constant__ static const int	kCAcSizeDT_d[] = {
 		 2,  2,  3,  4,  4,  5,  5,  5,
 		 5,  6,  6,  6,  6,  7,  7,  7,
 		 8,  8,  8,  8,  9,  9,  9,  9,
@@ -364,7 +365,7 @@ __device__ static const int	kCAcSizeDT_d[] = {
 };
 
 // 符号語テーブル
-__device__ static const int	kCAcCodeDT_d[] = {
+__device__ __constant__ static const int	kCAcCodeDT_d[] = {
 		0x0000, 0x0001, 0x0004, 0x000a, 0x000b, 0x0018, 0x0019, 0x001a,
 		0x001b, 0x0038, 0x0039, 0x003a, 0x003b, 0x0078, 0x0079, 0x007a,
 		0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x01f4, 0x01f5, 0x01f6, 0x01f7,
@@ -389,7 +390,7 @@ __device__ static const int	kCAcCodeDT_d[] = {
 };
 
 // パラメータ
-__device__ static const int kCAcValueDT_d[]={
+__device__ __constant__ static const int kCAcValueDT_d[]={
 		0x0000, 0x0001, 0x0002, 0x0003, 0x0011, 0x0004, 0x0005, 0x0021,
 		0x0031, 0x0006, 0x0012, 0x0041, 0x0051, 0x0007, 0x0061, 0x0071,
 		0x0013, 0x0022, 0x0032, 0x0081, 0x0008, 0x0014, 0x0042, 0x0091,

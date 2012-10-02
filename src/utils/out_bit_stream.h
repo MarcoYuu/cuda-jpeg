@@ -7,7 +7,7 @@
 #ifndef OUT_BIT_STREAM_H_
 #define OUT_BIT_STREAM_H_
 
-#include "../cuda_jpeg_types.h"
+#include "../type_definitions.h"
 
 class OutBitStream {
 public:

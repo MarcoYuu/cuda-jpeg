@@ -13,6 +13,8 @@ CudaStopWatch::CudaStopWatch() {
 }
 
 CudaStopWatch::~CudaStopWatch() {
+	cudaEventDestroy(m_start);
+	cudaEventDestroy(m_end);
 }
 
 void CudaStopWatch::start() {
@@ -23,12 +25,14 @@ void CudaStopWatch::stop() {
 	cudaEventRecord(m_end, 0);
 	cudaEventSynchronize(m_end);
 	cudaEventElapsedTime(&m_elapse_time, m_start, m_end);
+	m_elapse_time /= 1000.0;
 }
 
 void CudaStopWatch::lap() {
 	cudaEventRecord(m_end, 0);
 	cudaEventSynchronize(m_end);
 	cudaEventElapsedTime(&m_elapse_time, m_start, m_end);
+	m_elapse_time /= 1000.0;
 	m_lap.push_back(m_elapse_time);
 
 	cudaEventRecord(m_start, 0);

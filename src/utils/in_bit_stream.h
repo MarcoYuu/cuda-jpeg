@@ -7,7 +7,7 @@
 #ifndef IN_BIT_STREAM_H_
 #define IN_BIT_STREAM_H_
 
-#include "../cuda_jpeg_types.h"
+#include "../type_definitions.h"
 
 class InBitStream {
 public:

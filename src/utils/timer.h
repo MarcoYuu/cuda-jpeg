@@ -22,14 +22,6 @@ public:
 		CPU_OPTIMUM, C_STD, OTHER
 	};
 
-	template<class Counter>
-	StopWatch() :
-		m_counter(new Counter()),
-		m_prev_time(0.0),
-		m_elapse_time(0.0),
-		m_lap(),
-		m_mode(OTHER) {
-	}
 	explicit StopWatch(Mode mode);
 	~StopWatch();
 

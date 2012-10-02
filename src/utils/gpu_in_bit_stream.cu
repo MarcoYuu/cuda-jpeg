@@ -1,17 +1,17 @@
-﻿
-#include "gpu_in_bit_stream.cuh"
+﻿#include "gpu_in_bit_stream.cuh"
 
 // ビット取り出しのためのマスク
-__device__ static const int GPUkBitTestMaskT[8] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
+__device__ __constant__ static const int GPUkBitTestMaskT[8] = { 0x01, 0x02,
+		0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 
 GPUInBitStream::GPUInBitStream() :
-mBitPos(7), // 読み出しビット位置（上位ビットが7、下位ビットが0）
+	mBitPos(7), // 読み出しビット位置（上位ビットが7、下位ビットが0）
 	mBytePos(0), // 次のバイトを読んでいいかどうか
 	mNumBits(0), // 1:読み出し可, 0:読み出し不可
 	mWriteFlag(0) {
 }
 
-__device__ void IncBuf(	GPUInBitStream *d, byte *mBufP) {
+__device__ void IncBuf(GPUInBitStream *d, byte *mBufP) {
 	//エラー検出、ちょっとだけ遅くなる
 	if (++d->mBytePos >= MBS) {
 		printf("IncBuf:buff_overflow");

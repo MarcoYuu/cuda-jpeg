@@ -7,7 +7,7 @@
 #ifndef GPU_OUT_BIT_STREAM_H_
 #define GPU_OUT_BIT_STREAM_H_
 
-#include "../cuda_jpeg_types.h"
+#include "../type_definitions.h"
 
 #include <stdio.h>
 
@@ -47,17 +47,20 @@ __device__ void IncBuf(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP);
 //------------------------------------------------------------
 // 8ビット以下のデータを１つのアドレスに書き込む
 //------------------------------------------------------------
-__device__ void SetFewBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP, byte v, int numBits);
+__device__ void SetFewBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
+	byte v, int numBits);
 
 //------------------------------------------------------------
 // 8ビット以下のデータを2つのアドレスに分けて書き込む
 //------------------------------------------------------------
-__device__ void SetBits2Byte(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP, byte v, int numBits);
+__device__ void SetBits2Byte(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
+	byte v, int numBits);
 
 //------------------------------------------------------------
 // 8ビット以下のデータを書き込む
 //------------------------------------------------------------
-__device__ void Set8Bits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP, byte v, int numBits);
+__device__ void Set8Bits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
+	byte v, int numBits);
 
 //------------------------------------------------------------
 // ビット単位で書き込む
@@ -72,7 +75,8 @@ __device__ void Set8Bits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP, byte
 //
 // ビット単位で書き込む（最大16ビット）
 //------------------------------------------------------------
-__device__ void SetBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP, int v, int numBits);
+__device__ void SetBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
+	int v, int numBits);
 
 ////////////////////////////////////////////////////////////////////
 //MCU毎から1枚のバッファへ。上位ビットから書き込むので上の流用不可//
@@ -83,13 +87,16 @@ __device__ void IncBuf_w(GPUOutBitStream *d);
 //------------------------------------------------------------
 // 8ビット以下のデータを１つのアドレスに書き込む
 //------------------------------------------------------------
-__device__ void SetFewBits_w(GPUOutBitStream *d, byte *mBufP, byte v, int numBits);
+__device__ void SetFewBits_w(GPUOutBitStream *d, byte *mBufP, byte v,
+	int numBits);
 
 //------------------------------------------------------------
 // 8ビット以下のデータを2つのアドレスに分けて書き込む
 //------------------------------------------------------------
-__device__ void SetBits2Byte_w(GPUOutBitStream *d, byte *mBufP, byte v, int numBits);
-__device__ void Set8Bits_w(GPUOutBitStream *d, byte *mBufP, byte v, int numBits);
+__device__ void SetBits2Byte_w(GPUOutBitStream *d, byte *mBufP, byte v,
+	int numBits);
+__device__ void Set8Bits_w(GPUOutBitStream *d, byte *mBufP, byte v,
+	int numBits);
 
 //------------------------------------------------------------
 // GPUCOutBitStream *Od, //マクロブロック毎の書き込み位置と書き込みbit数を記録してある
@@ -97,17 +104,19 @@ __device__ void Set8Bits_w(GPUOutBitStream *d, byte *mBufP, byte v, int numBits)
 // byte *ImBufP,// 書き込み元先頭アドレス、マクロ毎のバッファ
 // int id//バグチェック用に使ってた
 //------------------------------------------------------------
-__device__ void WriteBits(GPUOutBitStream *Od, byte *OmBufP, byte *ImBufP, int id);
-
+__device__ void WriteBits(GPUOutBitStream *Od, byte *OmBufP, byte *ImBufP,
+	int id);
 
 //------------------------------------------------------------
 // 余ったビットに1を詰めるためのマスク,COutBitStream.hで定義してる
 //------------------------------------------------------------
-__device__ static const byte GPUkBitFullMaskT[8] = { 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff };
-__device__ static const byte GPUkBitFullMaskLowT[8] = { 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff };
+__device__ static const byte GPUkBitFullMaskT[8] = { 0x01, 0x03, 0x07, 0x0f,
+		0x1f, 0x3f, 0x7f, 0xff };
+__device__ static const byte GPUkBitFullMaskLowT[8] = { 0x80, 0xc0, 0xe0, 0xf0,
+		0xf8, 0xfc, 0xfe, 0xff };
 
-
-inline __device__ void IncBuf(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP) {
+inline __device__ void IncBuf(GPUOutBitStream *d, byte *mBufP,
+	byte *mEndOfBufP) {
 	//エラー検出、ちょっとだけ遅くなる
 	if (++d->mBytePos >= MBS) {
 		printf("IncBuf:buff_overflow");
@@ -115,9 +124,10 @@ inline __device__ void IncBuf(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP)
 }
 
 // 8ビット以下のデータを１つのアドレスに書き込む
-inline __device__ void SetFewBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP, byte v, // 書き込む値
-int numBits) // 書き込みビット数
-{
+inline __device__ void SetFewBits(GPUOutBitStream *d, byte *mBufP,
+	byte *mEndOfBufP, byte v, // 書き込む値
+	int numBits) // 書き込みビット数
+	{
 	// 上位ビットをクリア
 	v &= GPUkBitFullMaskT[numBits - 1];
 	*(mBufP + d->mBytePos) |= v << (d->mBitPos + 1 - numBits);
@@ -128,9 +138,10 @@ int numBits) // 書き込みビット数
 }
 
 // 8ビット以下のデータを2つのアドレスに分けて書き込む
-inline __device__ void SetBits2Byte(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP, byte v, // 書き込む値
-int numBits) // 書き込みビット数
-{
+inline __device__ void SetBits2Byte(GPUOutBitStream *d, byte *mBufP,
+	byte *mEndOfBufP, byte v, // 書き込む値
+	int numBits) // 書き込みビット数
+	{
 	v &= GPUkBitFullMaskT[numBits - 1]; // 上位ビットをクリア
 	int nextBits = numBits - (d->mBitPos + 1); // 次のバイトに入れるビット数
 	*(mBufP + d->mBytePos) |= (v >> nextBits) & GPUkBitFullMaskT[d->mBitPos]; // 1バイト目書き込み
@@ -141,9 +152,10 @@ int numBits) // 書き込みビット数
 }
 
 // 8ビット以下のデータを書き込む
-inline __device__ void Set8Bits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP, byte v, // 書き込む値
-int numBits) // 書き込みビット数
-{
+inline __device__ void Set8Bits(GPUOutBitStream *d, byte *mBufP,
+	byte *mEndOfBufP, byte v, // 書き込む値
+	int numBits) // 書き込みビット数
+	{
 	if (d->mBitPos + 1 >= numBits) // 現在のバイトに全部入るとき
 		SetFewBits(d, mBufP, mEndOfBufP, (byte) v, numBits);
 	else
@@ -161,9 +173,10 @@ int numBits) // 書き込みビット数
 //		v	00010011(2)のとき
 //		10011を*mBufPに追加する
 // ビット単位で書き込む（最大16ビット）
-inline __device__ void SetBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP, int v, // 書き込む値
-int numBits) // 書き込みビット数
-{
+inline __device__ void SetBits(GPUOutBitStream *d, byte *mBufP,
+	byte *mEndOfBufP, int v, // 書き込む値
+	int numBits) // 書き込みビット数
+	{
 	if (numBits == 0)
 		return; // 何もしない
 	//if( numBits > 16 )
@@ -186,8 +199,8 @@ inline __device__ void IncBuf_w(GPUOutBitStream *d) {
 
 // 8ビット以下のデータを１つのアドレスに書き込む
 inline __device__ void SetFewBits_w(GPUOutBitStream *d, byte *mBufP, byte v, // 書き込む値
-int numBits) // 書き込みビット数
-{
+	int numBits) // 書き込みビット数
+	{
 	v &= GPUkBitFullMaskLowT[numBits - 1]; // 下位ビットをクリア
 	*(mBufP + d->mBytePos) |= (v >> 7 - d->mBitPos); //
 
@@ -201,8 +214,8 @@ int numBits) // 書き込みビット数
 
 // 8ビット以下のデータを2つのアドレスに分けて書き込む
 inline __device__ void SetBits2Byte_w(GPUOutBitStream *d, byte *mBufP, byte v, // 書き込む値
-int numBits) // 書き込みビット数
-{
+	int numBits) // 書き込みビット数
+	{
 	v &= GPUkBitFullMaskLowT[numBits - 1]; // 下位ビットをクリア
 	int nextBits = numBits - (d->mBitPos + 1); // 次のバイトに入れるビット数
 
@@ -214,8 +227,8 @@ int numBits) // 書き込みビット数
 }
 
 inline __device__ void Set8Bits_w(GPUOutBitStream *d, byte *mBufP, byte v, // 書き込む値
-int numBits) // 書き込みビット数
-{
+	int numBits) // 書き込みビット数
+	{
 	if (d->mBitPos + 1 >= numBits) // 現在のバイトに全部入るとき
 		SetFewBits_w(d, mBufP, (byte) v, numBits);
 	else
@@ -224,10 +237,10 @@ int numBits) // 書き込みビット数
 }
 
 inline __device__ void WriteBits(GPUOutBitStream *Od, //マクロブロック毎の書き込み位置と書き込みbit数を記録してある
-byte *OmBufP, //書き込み先先頭アドレス、一枚のバッファ
-byte *ImBufP, // 書き込み元先頭アドレス、マクロ毎のバッファ
-int id //バグチェック用に使ってた
-) {
+	byte *OmBufP, //書き込み先先頭アドレス、一枚のバッファ
+	byte *ImBufP, // 書き込み元先頭アドレス、マクロ毎のバッファ
+	int id //バグチェック用に使ってた
+	) {
 	int bytepos = 0;
 	while (Od->mNumBits > 8) {
 		Set8Bits_w(Od, OmBufP, *(ImBufP + bytepos), 8); // 1バイト書き込み
@@ -237,7 +250,5 @@ int id //バグチェック用に使ってた
 
 	Set8Bits_w(Od, OmBufP, *(ImBufP + bytepos), Od->mNumBits); // 端数バイト書き込み
 }
-
-
 
 #endif

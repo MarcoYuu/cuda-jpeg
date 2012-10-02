@@ -10,8 +10,7 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-#include "../cuda_jpeg_types.h"
-
+#include "../type_definitions.h"
 
 #ifdef __CDT_PARSER__
 #define __global__
@@ -48,6 +47,5 @@ __device__ void IncBuf(GPUInBitStream *d, byte *mBufP);
 // 読み出したビット値：エラーコード
 // 読み出すビット数
 __device__ int gpu_GetBits(GPUInBitStream *d, byte *mBufP, int numOfBits);
-
 
 #endif

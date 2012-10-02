@@ -2,17 +2,14 @@
 #include <cstdlib>
 #include <cmath>//cos
 #include <cstring>//memcpy
-
 #include "cpu_jpeg.h"
-
 #include "utils/util_cv.h"
 #include "utils/encoder_tables.h"
 #include "utils/out_bit_stream.h"
 #include "utils/in_bit_stream.h"
 
-const double kSqrt2 = 1.41421356;			// 2の平方根
-const double kDisSqrt2 = 1.0 / 1.41421356;		// 2の平方根の逆数
-const double kPaiDiv16 = 3.14159265 / 16;	// 円周率/16
+static const double kDisSqrt2 = 1.0 / 1.41421356; // 2の平方根の逆数
+static const double kPaiDiv16 = 3.14159265 / 16; // 円周率/16
 
 //for DCT
 static double CosT[8][8][8][8];
@@ -23,7 +20,8 @@ public:
 			for (int u = 0; u < 8; u++) {
 				for (int y = 0; y < 8; y++) {
 					for (int x = 0; x < 8; x++) {
-						CosT[u][x][v][y] = cos((2 * x + 1) * u * kPaiDiv16) * cos((2 * y + 1) * v * kPaiDiv16);
+						CosT[u][x][v][y] = cos((2 * x + 1) * u * kPaiDiv16)
+							* cos((2 * y + 1) * v * kPaiDiv16);
 					}
 				}
 			}
@@ -70,12 +68,16 @@ void color_trans_rgb_to_yuv(byte* src_img, int* dst_img, int sizeX, int sizeY) {
 				}
 				for (l = 0; l < 8; l++) {
 					for (m = 0; m < 8; m++) {
-						src_posi = 3 * (16 * i + 16 * sizeX * j + src_offset + l * sizeX + m);
-						dst_posi = 256 * (i + j * MCU_x) + dst_offset + 8 * l + m;
+						src_posi = 3
+							* (16 * i + 16 * sizeX * j + src_offset + l * sizeX
+								+ m);
+						dst_posi = 256 * (i + j * MCU_x) + dst_offset + 8 * l
+							+ m;
 
 						//Y: -128 levelshift
 						dst_img[dst_posi] = int(
-							0.1440 * src_img[src_posi + 0] + 0.5870 * src_img[src_posi + 1]
+							0.1440 * src_img[src_posi + 0]
+								+ 0.5870 * src_img[src_posi + 1]
 								+ 0.2990 * src_img[src_posi + 2] - 128);
 					}
 				}
@@ -92,14 +94,17 @@ void color_trans_rgb_to_yuv(byte* src_img, int* dst_img, int sizeX, int sizeY) {
 			for (l = 0; l < 16; l += 2) {
 				for (m = 0; m < 16; m += 2) {
 					src_posi = 3 * (16 * i + 16 * sizeX * j + l * sizeX + m);
-					dst_posi = (sizeX * sizeY) + 64 * (i + j * MCU_x) + 8 * (l / 2) + (m / 2);
+					dst_posi = (sizeX * sizeY) + 64 * (i + j * MCU_x)
+						+ 8 * (l / 2) + (m / 2);
 					//Cb
 					dst_img[dst_posi] = int(
-						0.5000 * src_img[src_posi + 0] - 0.3313 * src_img[src_posi + 1]
+						0.5000 * src_img[src_posi + 0]
+							- 0.3313 * src_img[src_posi + 1]
 							- 0.1687 * src_img[src_posi + 2]);
 					//Cr
 					dst_img[dst_posi + ((sizeX / 2) * (sizeY / 2))] = int(
-						-0.0813 * src_img[src_posi + 0] - 0.4187 * src_img[src_posi + 1]
+						-0.0813 * src_img[src_posi + 0]
+							- 0.4187 * src_img[src_posi + 1]
 							+ 0.5000 * src_img[src_posi + 2]);
 				}
 			}
@@ -140,18 +145,25 @@ void color_trans_yuv_to_rgb(int *src_img, byte *dst_img, int sizeX, int sizeY) {
 				}
 				for (l = 0; l < 8; l++) { //tate
 					for (m = 0; m < 8; m++) { //yoko
-						src_posi = 256 * (i + j * MCU_x) + src_offset + 8 * l + m;
+						src_posi = 256 * (i + j * MCU_x) + src_offset + 8 * l
+							+ m;
 
-						Cb = Y_size + 64 * (i + j * MCU_x) + ksamplingT[src_offset + 8 * l + m];
+						Cb = Y_size + 64 * (i + j * MCU_x)
+							+ ksamplingT[src_offset + 8 * l + m];
 						Cr = Cb + C_size;
 
-						dst_posi = 3 * (16 * i + 16 * sizeX * j + dst_offset + sizeX * l + m);
+						dst_posi = 3
+							* (16 * i + 16 * sizeX * j + dst_offset + sizeX * l
+								+ m);
 
 						//BGR
-						dst_img[dst_posi] = revise_value(src_img[src_posi] + 1.77200 * (src_img[Cb] - 128));
+						dst_img[dst_posi] = revise_value(
+							src_img[src_posi] + 1.77200 * (src_img[Cb] - 128));
 						dst_img[dst_posi + 1] = revise_value(
-							src_img[src_posi] - 0.34414 * (src_img[Cb] - 128) - 0.71414 * (src_img[Cr] - 128));
-						dst_img[dst_posi + 2] = revise_value(src_img[src_posi] + 1.40200 * (src_img[Cr] - 128));
+							src_img[src_posi] - 0.34414 * (src_img[Cb] - 128)
+								- 0.71414 * (src_img[Cr] - 128));
+						dst_img[dst_posi + 2] = revise_value(
+							src_img[src_posi] + 1.40200 * (src_img[Cr] - 128));
 
 					}
 				}
@@ -195,7 +207,8 @@ void idct(int *src_coef, int *dst_ycc, int sizeX, int sizeY) {
 					cv = v == 0 ? kDisSqrt2 : 1.0;
 					for (u = 0; u < 8; u++) {
 						cu = u == 0 ? kDisSqrt2 : 1.0;
-						sum += cu * cv * src_coef[i + v * 8 + u] * CosT[u][x][v][y];
+						sum += cu * cv * src_coef[i + v * 8 + u]
+							* CosT[u][x][v][y];
 					}
 				}
 				dst_ycc[i + y * 8 + x] = int(sum / 4 + 128);
@@ -210,11 +223,13 @@ void zig_quantize(int *src_coef, int *dst_qua, int sizeX, int sizeY) {
 	const int Csize = (sizeX / 2) * (sizeY / 2);
 	//Y
 	for (i = 0; i < Ysize; i++) {
-		dst_qua[64 * (i / 64) + kZigzagT[i % 64]] = src_coef[i] / kYQuantumT[i % 64];
+		dst_qua[64 * (i / 64) + kZigzagT[i % 64]] = src_coef[i]
+			/ kYQuantumT[i % 64];
 	}
 	//C(Cb,Cr)
 	for (i = Ysize; i < 2 * Csize; i++) {
-		dst_qua[64 * (i / 64) + kZigzagT[i % 64]] = src_coef[i] / kCQuantumT[i % 64];
+		dst_qua[64 * (i / 64) + kZigzagT[i % 64]] = src_coef[i]
+			/ kCQuantumT[i % 64];
 	}
 
 }
@@ -225,11 +240,13 @@ void izig_quantize(int *src_qua, int *dst_coef, int sizeX, int sizeY) {
 	const int Csize = (sizeX / 2) * (sizeY / 2);
 	//Y
 	for (i = 0; i < Ysize; i++) {
-		dst_coef[i] = src_qua[64 * (i / 64) + kZigzagT[i % 64]] * kYQuantumT[i % 64];
+		dst_coef[i] = src_qua[64 * (i / 64) + kZigzagT[i % 64]]
+			* kYQuantumT[i % 64];
 	}
 	//C(Cb,Cr)
 	for (i = Ysize; i < 2 * Csize; i++) {
-		dst_coef[i] = src_qua[64 * (i / 64) + kZigzagT[i % 64]] * kCQuantumT[i % 64];
+		dst_coef[i] = src_qua[64 * (i / 64) + kZigzagT[i % 64]]
+			* kCQuantumT[i % 64];
 	}
 
 }
@@ -258,7 +275,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 				absC >>= 1;
 				dIdx++;
 			}
-			mOBSP->SetBits((kYDcHuffmanT.CodeTP)[dIdx], (kYDcHuffmanT.SizeTP)[dIdx]);
+			mOBSP->SetBits((kYDcHuffmanT.CodeTP)[dIdx],
+				(kYDcHuffmanT.SizeTP)[dIdx]);
 			if (dIdx) {
 				if (diff < 0)
 					diff--;
@@ -271,7 +289,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 			absC = abs(src_qua[i]);
 			if (absC) {
 				while (run > 15) {
-					mOBSP->SetBits((kYAcHuffmanT.CodeTP)[kYZRLidx], (kYAcHuffmanT.SizeTP)[kYZRLidx]);
+					mOBSP->SetBits((kYAcHuffmanT.CodeTP)[kYZRLidx],
+						(kYAcHuffmanT.SizeTP)[kYZRLidx]);
 					run -= 16;
 				}
 				s = 0;
@@ -280,7 +299,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 					s++;
 				}
 				aIdx = run * 10 + s + (run == 15);
-				mOBSP->SetBits((kYAcHuffmanT.CodeTP)[aIdx], (kYAcHuffmanT.SizeTP)[aIdx]);
+				mOBSP->SetBits((kYAcHuffmanT.CodeTP)[aIdx],
+					(kYAcHuffmanT.SizeTP)[aIdx]);
 				v = src_qua[i];
 				if (v < 0)
 					v--;
@@ -289,7 +309,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 				run = 0;
 			} else {
 				if (i % 64 == 63)
-					mOBSP->SetBits((kYAcHuffmanT.CodeTP)[kYEOBidx], (kYAcHuffmanT.SizeTP)[kYEOBidx]);
+					mOBSP->SetBits((kYAcHuffmanT.CodeTP)[kYEOBidx],
+						(kYAcHuffmanT.SizeTP)[kYEOBidx]);
 				else
 					run++;
 			}
@@ -310,7 +331,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 				absC >>= 1;
 				dIdx++;
 			}
-			mOBSP->SetBits((kCDcHuffmanT.CodeTP)[dIdx], (kCDcHuffmanT.SizeTP)[dIdx]);
+			mOBSP->SetBits((kCDcHuffmanT.CodeTP)[dIdx],
+				(kCDcHuffmanT.SizeTP)[dIdx]);
 			if (dIdx) {
 				if (diff < 0)
 					diff--;
@@ -323,7 +345,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 			absC = abs(src_qua[i]);
 			if (absC) {
 				while (run > 15) {
-					mOBSP->SetBits((kCAcHuffmanT.CodeTP)[kCZRLidx], (kCAcHuffmanT.SizeTP)[kCZRLidx]);
+					mOBSP->SetBits((kCAcHuffmanT.CodeTP)[kCZRLidx],
+						(kCAcHuffmanT.SizeTP)[kCZRLidx]);
 					run -= 16;
 				}
 				s = 0;
@@ -332,7 +355,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 					s++;
 				}
 				aIdx = run * 10 + s + (run == 15);
-				mOBSP->SetBits((kCAcHuffmanT.CodeTP)[aIdx], (kCAcHuffmanT.SizeTP)[aIdx]);
+				mOBSP->SetBits((kCAcHuffmanT.CodeTP)[aIdx],
+					(kCAcHuffmanT.SizeTP)[aIdx]);
 				v = src_qua[i];
 				if (v < 0)
 					v--;
@@ -341,7 +365,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 				run = 0;
 			} else {
 				if (i % 64 == 63)
-					mOBSP->SetBits((kCAcHuffmanT.CodeTP)[kCEOBidx], (kCAcHuffmanT.SizeTP)[kCEOBidx]);
+					mOBSP->SetBits((kCAcHuffmanT.CodeTP)[kCEOBidx],
+						(kCAcHuffmanT.SizeTP)[kCEOBidx]);
 				else
 					run++;
 			}
@@ -361,7 +386,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 				absC >>= 1;
 				dIdx++;
 			}
-			mOBSP->SetBits((kCDcHuffmanT.CodeTP)[dIdx], (kCDcHuffmanT.SizeTP)[dIdx]);
+			mOBSP->SetBits((kCDcHuffmanT.CodeTP)[dIdx],
+				(kCDcHuffmanT.SizeTP)[dIdx]);
 			if (dIdx) {
 				if (diff < 0)
 					diff--;
@@ -374,7 +400,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 			absC = abs(src_qua[i]);
 			if (absC) {
 				while (run > 15) {
-					mOBSP->SetBits((kCAcHuffmanT.CodeTP)[kCZRLidx], (kCAcHuffmanT.SizeTP)[kCZRLidx]);
+					mOBSP->SetBits((kCAcHuffmanT.CodeTP)[kCZRLidx],
+						(kCAcHuffmanT.SizeTP)[kCZRLidx]);
 					run -= 16;
 				}
 				s = 0;
@@ -383,7 +410,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 					s++;
 				}
 				aIdx = run * 10 + s + (run == 15);
-				mOBSP->SetBits((kCAcHuffmanT.CodeTP)[aIdx], (kCAcHuffmanT.SizeTP)[aIdx]);
+				mOBSP->SetBits((kCAcHuffmanT.CodeTP)[aIdx],
+					(kCAcHuffmanT.SizeTP)[aIdx]);
 				v = src_qua[i];
 				if (v < 0)
 					v--;
@@ -392,7 +420,8 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 				run = 0;
 			} else {
 				if (i % 64 == 63)
-					mOBSP->SetBits((kCAcHuffmanT.CodeTP)[kCEOBidx], (kCAcHuffmanT.SizeTP)[kCEOBidx]);
+					mOBSP->SetBits((kCAcHuffmanT.CodeTP)[kCEOBidx],
+						(kCAcHuffmanT.SizeTP)[kCEOBidx]);
 				else
 					run++;
 			}
@@ -404,7 +433,9 @@ void huffman_encode(int *src_qua, OutBitStream *mOBSP, int sizeX, int sizeY) {
 int decode_huffman_word(InBitStream *mIBSP, int tc, int sc) { //sc:Y==0,C==1,tc:DC==0,AC==1
 	// ハフマンテーブル指定
 	const SHuffmanDecodeTable &theHT = (
-		sc == 0 ? (tc == 0 ? kYDcHuffmanDT : kYAcHuffmanDT) : (tc == 0 ? kCDcHuffmanDT : kCAcHuffmanDT)); // 使用するハフマンテーブル
+		sc == 0 ?
+			(tc == 0 ? kYDcHuffmanDT : kYAcHuffmanDT) :
+			(tc == 0 ? kCDcHuffmanDT : kCAcHuffmanDT)); // 使用するハフマンテーブル
 
 	int code = 0; // ハフマン符号語の候補：最大値16ビット
 	int length = 0; // ハフマン符号語候補のビット数

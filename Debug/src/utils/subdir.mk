@@ -39,16 +39,16 @@ CPP_DEPS += \
 src/utils/%.o: ../src/utils/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: nvcc compiler'
-	nvcc -G -g -O0 -gencode arch=compute_20,code=sm_21 -odir "src/utils" -M -o "$(@:%.o=%.d)" "$<"
-	nvcc -G -g -O0 --compile  -x c++ -o  "$@" "$<"
+	nvcc -I/usr/local/include/opencv -G -g -O0 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -odir "src/utils" -M -o "$(@:%.o=%.d)" "$<"
+	nvcc -I/usr/local/include/opencv -G -g -O0 --compile  -x c++ -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 src/utils/%.o: ../src/utils/%.cu
 	@echo 'Building file: $<'
 	@echo 'Invoking: nvcc compiler'
-	nvcc -G -g -O0 -gencode arch=compute_20,code=sm_21 -odir "src/utils" -M -o "$(@:%.o=%.d)" "$<"
-	nvcc --device-c -G -O0 -g -gencode arch=compute_20,code=sm_21  -x cu -o  "$@" "$<"
+	nvcc -I/usr/local/include/opencv -G -g -O0 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_20,code=sm_21 -odir "src/utils" -M -o "$(@:%.o=%.d)" "$<"
+	nvcc --compile -G -I/usr/local/include/opencv -O0 -g -gencode arch=compute_20,code=compute_20 -gencode arch=compute_20,code=sm_21  -x cu -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

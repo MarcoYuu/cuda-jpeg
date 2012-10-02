@@ -48,7 +48,7 @@ all: cuda_jpeg secondary-outputs
 cuda_jpeg: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: NVCC Linker'
-	nvcc --relocatable-device-code=true -gencode arch=compute_20,code=sm_21 -link -o  "cuda_jpeg" $(OBJS) $(USER_OBJS) $(LIBS)
+	nvcc  -link -o  "cuda_jpeg" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
