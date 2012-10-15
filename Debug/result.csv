@@ -1,0 +1,1442 @@
+cpu encode:Lena64.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.000144005,0.00348306,7.79629e-05,0.000305891,0.00401092
+
+cpu decode:Lena64.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.000251055,4.50611e-05,0.00426388,0.000289917,0.00484991
+
+gpu preprocess:Lena64.bmp
+,total
+cpu,0.00194097
+gpu,0.00193872
+
+gpu encode:Lena64.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,3.60012e-05,3.91006e-05,1.28746e-05,1.40667e-05,0.00115299,0.000227928,0.00148296
+gpu,2.896e-05,4.9792e-05,4.9856e-05,2.3776e-05,0.00132339,4.7936e-05,0.00152371
+
+gpu decode:Lena64.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,5.10216e-05,0.000293016,1.50204e-05,1.19209e-05,7.86781e-06,2.69413e-05,0.000405788
+gpu,4.848e-05,0.000294592,2.3648e-05,5.5552e-05,2.176e-05,2.7968e-05,0.000472
+
+cpu encode:Lena128.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.000373125,0.00631785,0.000139952,0.000247955,0.00707889
+
+cpu decode:Lena128.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.000766993,0.00018096,0.0158541,0.000467062,0.0172691
+
+gpu preprocess:Lena128.bmp
+,total
+cpu,0.00235486
+gpu,0.00235366
+
+gpu encode:Lena128.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,4.3869e-05,3.98159e-05,1.21593e-05,1.28746e-05,0.00108981,0.000342131,0.00154066
+gpu,4.5472e-05,8.7968e-05,0.000158592,6.1952e-05,0.00137632,4.4832e-05,0.00177514
+
+gpu decode:Lena128.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000169039,0.000876188,1.40667e-05,1.19209e-05,8.10623e-06,5.6982e-05,0.0011363
+gpu,0.000169056,0.000891008,5.5552e-05,0.000182816,5.8336e-05,5.5808e-05,0.00141258
+
+cpu encode:Lena256.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00254393,0.0349541,0.000567913,0.000889063,0.038955
+
+cpu decode:Lena256.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.0010221,0.00031209,0.0288799,0.00194097,0.032155
+
+gpu preprocess:Lena256.bmp
+,total
+cpu,0.00286603
+gpu,0.00288874
+
+gpu encode:Lena256.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,3.69549e-05,2.59876e-05,1.09673e-05,1.21593e-05,0.00131416,0.000786781,0.00218701
+gpu,6.4288e-05,0.00019248,0.00059824,0.000214368,0.00206042,3.456e-05,0.00316435
+
+gpu decode:Lena256.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.00010705,0.00125313,1.38283e-05,1.12057e-05,8.10623e-06,0.000144005,0.00153732
+gpu,0.000109664,0.00131325,0.00018544,0.000681088,0.000201024,0.000151456,0.00264192
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00982904,0.096034,0.00219989,0.00287795,0.110941
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00341415,0.00128102,0.114166,0.0072422,0.126103
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0105128
+gpu,0.0105106
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000133991,3.69549e-05,2.00272e-05,1.28746e-05,0.00333691,0.00245905,0.0059998
+gpu,0.0002504,0.000685984,0.00233555,0.000805504,0.00575075,3.856e-05,0.00986675
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000175953,0.00394583,1.50204e-05,9.05991e-06,1.50204e-05,0.00045085,0.00461173
+gpu,0.000178592,0.00414198,0.000688384,0.0026655,0.000770592,0.000451296,0.00889635
+
+cpu encode:Lena768.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0193999,0.208513,0.00494099,0.00628781,0.239142
+
+cpu decode:Lena768.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00709581,0.00278378,0.257841,0.0164011,0.284122
+
+gpu preprocess:Lena768.bmp
+,total
+cpu,0.0165641
+gpu,0.0167354
+
+gpu encode:Lena768.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000272036,3.60012e-05,6.91414e-06,1.4782e-05,0.00624394,0.00495005,0.0115237
+gpu,0.000438688,0.00148784,0.00523405,0.00179117,0.0111331,4.976e-05,0.0201346
+
+gpu decode:Lena768.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000211,0.0082581,1.88351e-05,8.10623e-06,5.96046e-06,0.000847101,0.00934911
+gpu,0.00021616,0.00843846,0.00153235,0.00596886,0.00168371,0.000850208,0.0186898
+
+cpu encode:Lena1024.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0196171,0.368054,0.00861907,0.0110021,0.407292
+
+cpu decode:Lena1024.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.0121331,0.00519204,0.454665,0.0301828,0.502174
+
+gpu preprocess:Lena1024.bmp
+,total
+cpu,0.0343931
+gpu,0.0348846
+
+gpu encode:Lena1024.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000488043,2.38419e-05,6.91414e-06,1.5974e-05,0.0101831,0.00923896,0.0199568
+gpu,0.00066064,0.0026,0.00929446,0.00317062,0.0193429,7.0368e-05,0.035139
+
+gpu decode:Lena1024.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000356913,0.0141199,1.50204e-05,7.15256e-06,5.00679e-06,0.001441,0.015945
+gpu,0.00152672,0.0143158,0.00269923,0.0105935,0.00303043,0.00144499,0.0336107
+
+cpu encode:Lena2056.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0638938,1.47647,0.0357871,0.0389318,1.61509
+
+cpu decode:Lena2056.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.045253,0.0204871,1.82813,0.11605,2.00992
+
+gpu preprocess:Lena2056.bmp
+,total
+cpu,0.0990019
+gpu,0.100679
+
+gpu encode:Lena2056.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.00214696,4.79221e-05,8.01086e-05,1.28746e-05,0.0197189,0.017041,0.0390477
+gpu,0.00229613,0.0103858,8.0448e-05,0.0042583,0.0353878,7.6608e-05,0.0524851
+
+gpu decode:Lena2056.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.00098896,0.0349979,3.88622e-05,2.31266e-05,5.00679e-06,0.00493979,0.0409937
+gpu,0.00112522,0.0351548,0.00365795,2.2592e-05,0.0109248,0.00599046,0.0568758
+
+cpu encode:Lena64.bmp
+color conversion,DCT,zig_quantize,huffman,total
+8.29697e-05,0.00147796,3.79086e-05,7.9155e-05,0.00167799
+
+cpu decode:Lena64.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.000117064,2.09808e-05,0.00191212,0.000123978,0.00217414
+
+gpu preprocess:Lena64.bmp
+,total
+cpu,0.00114393
+gpu,0.0011433
+
+gpu encode:Lena64.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,1.78814e-05,2.19345e-05,6.91414e-06,5.96046e-06,0.0008111,0.000223875,0.00108767
+gpu,1.6768e-05,3.7056e-05,4.6912e-05,2.0672e-05,0.000988736,0.0013217,0.00243184
+
+gpu decode:Lena64.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,3.00407e-05,0.00013113,9.05991e-06,6.19888e-06,3.8147e-06,1.90735e-05,0.000199318
+gpu,3.056e-05,0.000135136,2.2016e-05,5.3888e-05,1.8912e-05,1.9488e-05,0.00028
+
+cpu encode:Lena128.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.000287056,0.00693989,0.000150919,0.000262976,0.00764084
+
+cpu decode:Lena128.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.000329018,9.39369e-05,0.0076499,0.00048399,0.00855684
+
+gpu preprocess:Lena128.bmp
+,total
+cpu,0.00148606
+gpu,0.00148445
+
+gpu encode:Lena128.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,2.00272e-05,2.31266e-05,5.96046e-06,6.91414e-06,0.000838041,0.000331879,0.00122595
+gpu,2.6432e-05,7.3248e-05,0.000155168,5.9392e-05,0.00113248,3.168e-05,0.0014784
+
+gpu decode:Lena128.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,9.67979e-05,0.000404119,7.86781e-06,5.96046e-06,4.05312e-06,3.8147e-05,0.000556946
+gpu,0.000100416,0.00042032,5.184e-05,0.000179072,5.5616e-05,3.9296e-05,0.00084656
+
+cpu encode:Lena256.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00106287,0.0246809,0.000586987,0.000884056,0.0272148
+
+cpu decode:Lena256.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00107098,0.000336885,0.0301089,0.00186181,0.0333786
+
+gpu preprocess:Lena256.bmp
+,total
+cpu,0.00336695
+gpu,0.00338746
+
+gpu encode:Lena256.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,4.3869e-05,5.29289e-05,1.40667e-05,1.00136e-05,0.00133801,0.00107098,0.00252986
+gpu,6.8896e-05,0.000215872,0.000600992,0.00021504,0.00216752,3.6608e-05,0.00330493
+
+gpu decode:Lena256.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000146151,0.00125098,1.78814e-05,1.50204e-05,4.05312e-06,0.000128031,0.00156212
+gpu,0.00015024,0.00130349,0.000185056,0.000681504,0.000200768,0.00012944,0.0026505
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00420904,0.0956519,0.00221395,0.00295901,0.105034
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00347519,0.00134993,0.117321,0.0074532,0.129599
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.00861096
+gpu,0.00861402
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000124931,4.50611e-05,1.50204e-05,1.12057e-05,0.00340009,0.00247002,0.00606632
+gpu,0.000240832,0.00068608,0.00233466,0.000808224,0.00580704,5.4496e-05,0.00993133
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000265837,0.00461888,1.69277e-05,1.4782e-05,1.28746e-05,0.000454903,0.00538421
+gpu,0.000268672,0.00486496,0.000693824,0.00266352,0.00077328,0.000457184,0.00972144
+
+cpu encode:Lena768.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00973892,0.216678,0.00503206,0.00644708,0.237896
+
+cpu decode:Lena768.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+1.19209e-06,0.00736117,0.00297213,0.271252,0.0172081,0.298795
+
+gpu preprocess:Lena768.bmp
+,total
+cpu,0.0164468
+gpu,0.016603
+
+gpu encode:Lena768.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.00026989,3.60012e-05,1.00136e-05,2.28882e-05,0.00634599,0.00763297,0.0143178
+gpu,0.000436736,0.00147693,0.00523722,0.00180512,0.0122954,6.7616e-05,0.021319
+
+gpu decode:Lena768.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000280142,0.00874901,1.69277e-05,1.5974e-05,1.28746e-05,0.000903845,0.00997877
+gpu,0.000285088,0.00891875,0.00153059,0.00597126,0.00169094,0.00091152,0.0193082
+
+cpu encode:Lena1024.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0173662,0.387296,0.00882006,0.0118639,0.425346
+
+cpu decode:Lena1024.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.012825,0.005193,0.488487,0.0319831,0.538488
+
+gpu preprocess:Lena1024.bmp
+,total
+cpu,0.0283079
+gpu,0.0300107
+
+gpu encode:Lena1024.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.00122714,4.50611e-05,1.3113e-05,2.09808e-05,0.0102479,0.00978112,0.0213354
+gpu,0.000666464,0.00261274,0.0093041,0.00317962,0.0186445,8.8064e-05,0.0344955
+
+gpu decode:Lena1024.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000386,0.014688,1.69277e-05,8.10623e-06,1.5974e-05,0.00140381,0.0165188
+gpu,0.000390144,0.0148541,0.00270195,0.0105944,0.00304003,0.00140906,0.0329897
+
+cpu encode:Lena64.bmp
+color conversion,DCT,zig_quantize,huffman,total
+6.00815e-05,0.001441,3.29018e-05,7.29561e-05,0.00160694
+
+cpu decode:Lena64.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00010705,1.90735e-05,0.00181103,0.000112057,0.00204921
+
+gpu preprocess:Lena64.bmp
+,total
+cpu,0.001441
+gpu,0.00143933
+
+gpu encode:Lena64.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,1.5974e-05,2.09808e-05,5.96046e-06,5.96046e-06,0.000761032,0.000211,0.00102091
+gpu,1.4528e-05,3.5328e-05,4.6752e-05,2.0384e-05,0.00093984,2.544e-05,0.00108227
+
+gpu decode:Lena64.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,1.88351e-05,0.000135183,6.19888e-06,5.00679e-06,3.60012e-05,1.69277e-05,0.000218153
+gpu,1.9328e-05,0.00013936,1.968e-05,5.3024e-05,4.992e-05,1.7408e-05,0.00029872
+
+cpu encode:Lena128.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.000488043,0.011476,0.000135899,0.000241995,0.012342
+
+cpu decode:Lena128.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.000334978,7.98702e-05,0.00977206,0.000758886,0.0109458
+
+gpu preprocess:Lena128.bmp
+,total
+cpu,0.00238395
+gpu,0.00238173
+
+gpu encode:Lena128.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,4.29153e-05,4.1008e-05,1.19209e-05,1.19209e-05,0.00107622,0.000349998,0.00153399
+gpu,4.5472e-05,8.7264e-05,0.000158464,6.2176e-05,0.00136586,5.168e-05,0.00177091
+
+gpu decode:Lena128.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000172138,0.000945091,1.50204e-05,1.28746e-05,8.10623e-06,6.10352e-05,0.00121427
+gpu,0.0001712,0.000959584,5.5936e-05,0.000182656,5.8112e-05,6.192e-05,0.00148941
+
+cpu encode:Lena256.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00228095,0.0308449,0.00058794,0.000863075,0.0345769
+
+cpu decode:Lena256.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00247693,0.000754833,0.0390551,0.0018189,0.0441058
+
+gpu preprocess:Lena256.bmp
+,total
+cpu,0.00284696
+gpu,0.00287398
+
+gpu encode:Lena256.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,3.00407e-05,2.09808e-05,5.96046e-06,6.19888e-06,0.00127506,0.00077796,0.0021162
+gpu,5.8368e-05,0.000189184,0.000596352,0.000211136,0.00202026,2.6528e-05,0.00310182
+
+gpu decode:Lena256.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000103951,0.00132394,8.10623e-06,5.96046e-06,5.00679e-06,0.000123978,0.00157094
+gpu,0.000108736,0.00138422,0.000182592,0.000680032,0.000199232,0.00012528,0.0026801
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00415015,0.0938349,0.00223517,0.00286508,0.103085
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.00773811,0.00297999,0.114278,0.00721097,0.132208
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.014766
+gpu,0.0147664
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000106096,3.40939e-05,1.40667e-05,1.38283e-05,0.00338006,0.00248408,0.00603223
+gpu,0.000221728,0.00068256,0.00233398,0.000803648,0.00578147,6.2464e-05,0.00988586
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000252962,0.00427699,1.28746e-05,5.96046e-06,5.00679e-06,0.00043416,0.00498796
+gpu,0.000257408,0.00450771,0.000691072,0.00266227,0.000770272,0.000435328,0.00932406
+
+cpu encode:Lena768.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0143631,0.209138,0.00485516,0.00613689,0.234493
+
+cpu decode:Lena768.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00709605,0.00287795,0.256498,0.0165019,0.282974
+
+gpu preprocess:Lena768.bmp
+,total
+cpu,0.0163932
+gpu,0.0165197
+
+gpu encode:Lena768.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000285149,3.19481e-05,1.40667e-05,1.09673e-05,0.00637698,0.00511289,0.011832
+gpu,0.000448928,0.00148288,0.00524381,0.00179402,0.0114294,5.3152e-05,0.0204522
+
+gpu decode:Lena768.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000224829,0.0086782,1.71661e-05,1.40667e-05,5.96046e-06,0.00097084,0.00991106
+gpu,0.000229728,0.0088511,0.001532,0.00597142,0.00168099,0.00102579,0.019291
+
+cpu encode:Lena1024.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.023685,0.370455,0.00866413,0.0110641,0.413868
+
+cpu decode:Lena1024.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+1.19209e-06,0.0123951,0.00515699,0.455279,0.029773,0.502605
+
+gpu preprocess:Lena1024.bmp
+,total
+cpu,0.032356
+gpu,0.0328458
+
+gpu encode:Lena1024.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000474215,2.59876e-05,6.91414e-06,2.38419e-05,0.0102291,0.00826287,0.0190229
+gpu,0.000650112,0.00259766,0.00930346,0.00318512,0.0184281,5.6352e-05,0.0342208
+
+gpu decode:Lena1024.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000307798,0.014365,2.40803e-05,1.50204e-05,7.15256e-06,0.00152397,0.016243
+gpu,0.000313632,0.0145779,0.00270666,0.0105966,0.00303568,0.00153322,0.0327637
+
+cpu encode:Lena2056.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0630698,1.46801,0.035152,0.038512,1.60474
+
+cpu decode:Lena2056.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.0391519,0.0212231,1.82093,0.116398,1.99771
+
+gpu preprocess:Lena2056.bmp
+,total
+cpu,0.093379
+gpu,0.0961155
+
+gpu encode:Lena2056.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.00218606,4.48227e-05,0.000102997,2.59876e-05,0.0197411,0.0164559,0.0385568
+gpu,0.0023295,0.0103782,0.000103872,0.00426896,0.03592,8.5568e-05,0.0530862
+
+gpu decode:Lena2056.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.00095892,0.034785,3.98159e-05,2.31266e-05,5.00679e-06,0.00485992,0.0406718
+gpu,0.00109619,0.0349311,0.00365699,2.2528e-05,0.010925,0.00486314,0.0554949
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00641108,0.0921121,0.00215602,0.00286913,0.103548
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00341797,0.00131702,0.114277,0.007164,0.126176
+
+cpu encode:Lena256.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00159502,0.0395851,0.00077796,0.00122094,0.043179
+
+cpu decode:Lena256.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00150609,0.000473022,0.051748,0.00278306,0.0565102
+
+gpu preprocess:Lena256.bmp
+,total
+cpu,16.7961
+gpu,11.6535
+
+gpu encode:Lena256.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000121832,0.00548601,0.00535297,0.00536919,0.0118051,0.000304937,0.02844
+gpu,0.000149472,0.00553126,0.00546237,0.00539485,0.0119163,0.00012224,0.0285765
+
+gpu decode:Lena256.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.00308895,0.00188708,0.00542307,0.00536489,0.002707,0.000210047,0.018681
+gpu,0.00309405,0.00195347,0.0054448,0.0054896,0.0027865,0.000212096,0.0189805
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00456405,0.096112,0.00230289,0.00309992,0.106079
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00350809,0.00131297,0.115634,0.00747299,0.127928
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.014154
+gpu,0.0150347
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.00012517,6.50883e-05,3.38554e-05,3.69549e-05,0.00343704,0.00245595,0.00615406
+gpu,0.000236416,0.000708064,0.00235174,0.000821632,0.00582358,5.2224e-05,0.00999366
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.0002141,0.00470781,4.19617e-05,3.79086e-05,2.38419e-05,0.000424147,0.00544977
+gpu,0.000222048,0.00479888,0.000707104,0.00268355,0.000785632,0.000425088,0.0096223
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00930595,0.107077,0.00223112,0.00305009,0.121664
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.00801682,0.00304794,0.122579,0.00785995,0.141505
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0222981
+gpu,0.0222926
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000267982,0.0019269,0.00357795,0.00206685,0.00890303,6.38962e-05,0.0168066
+gpu,0.000266624,0.00193024,0.00357962,0.002068,0.00890576,4.4768e-05,0.016795
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000814915,0.00431705,0.00197101,0.00409508,0.00149393,0.000452995,0.013145
+gpu,0.000813216,0.00431766,0.00197197,0.00409587,0.00149594,0.000490272,0.0131849
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00681114,0.0970411,0.00227904,0.00292683,0.109058
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00359106,0.0013299,0.115811,0.00755405,0.128286
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0105312
+gpu,0.0105311
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000291109,0.00143909,0.00290298,0.001369,0.00706601,5.81741e-05,0.0131264
+gpu,0.000290464,0.00227421,0.00290458,0.00136925,0.00706723,4.1312e-05,0.013947
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000494957,0.00423694,0.00127792,0.00325298,0.00106907,0.000438929,0.0107708
+gpu,0.000494688,0.00423789,0.0012783,0.00363338,0.0010696,0.000439808,0.0111537
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00655198,0.104698,0.00222301,0.00292706,0.1164
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.008044,0.00299597,0.121137,0.00735116,0.139529
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0142322
+gpu,0.0142292
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000241995,0.00149083,0.00313306,0.00166297,0.0073061,5.91278e-05,0.0138941
+gpu,0.000240608,0.00149434,0.00313549,0.00166422,0.00730864,4.1024e-05,0.0138843
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000583887,0.00435519,0.00152016,0.00367093,0.00116301,0.000447989,0.0117412
+gpu,0.000585056,0.00435645,0.00152154,0.0036736,0.00116387,0.000450112,0.0117506
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00424004,0.0955629,0.00269294,0.00304699,0.105543
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00851798,0.00332689,0.120973,0.00745893,0.140277
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0196218
+gpu,0.0196218
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000241041,0.00122809,0.00291204,0.00133586,0.00681996,5.79357e-05,0.0125949
+gpu,0.000238752,0.00123136,0.00291411,0.00133677,0.00682262,4.2336e-05,0.012586
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000452995,0.00433111,0.00123906,0.00322199,0.00105095,0.00049305,0.0107892
+gpu,0.000452416,0.00433213,0.00123997,0.00353536,0.00105155,0.000496128,0.0111076
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00415587,0.0935962,0.00241399,0.00302887,0.103195
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00348687,0.00135899,0.115104,0.00722909,0.127179
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0129261
+gpu,0.0129181
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000272989,0.00132012,0.00309801,0.00145006,0.007339,6.19888e-05,0.0135422
+gpu,0.00027008,0.00132381,0.00324224,0.00145078,0.00734038,4.368e-05,0.013671
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000470877,0.00436687,0.00125885,0.00325894,0.00109005,0.000443935,0.0108895
+gpu,0.000469856,0.00436765,0.00125978,0.00326,0.00109165,0.000446432,0.0108954
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00529003,0.096766,0.00230503,0.00300193,0.107363
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.00811601,0.00316501,0.12314,0.007478,0.1419
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.010608
+gpu,0.010607
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000243902,0.0012939,0.00288391,0.00135803,0.00681806,5.88894e-05,0.0126567
+gpu,0.00024224,0.00129776,0.00288509,0.00135818,0.00682016,4.192e-05,0.0126453
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000495195,0.00428891,0.00124717,0.00325704,0.00107408,0.000432968,0.0107954
+gpu,0.00049424,0.00428906,0.00124714,0.00325824,0.00107494,0.000434368,0.010798
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00965095,0.106029,0.00223899,0.00299811,0.120917
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00348997,0.00128007,0.11475,0.00720692,0.126727
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.012326
+gpu,0.0123266
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000230074,0.00170493,0.00329995,0.00174212,0.00760317,5.88894e-05,0.0146391
+gpu,0.000228608,0.00170957,0.0033025,0.00174368,0.00760598,4.0672e-05,0.014631
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000622034,0.00422502,0.00164104,0.00358486,0.00123191,0.000442028,0.0117469
+gpu,0.000622816,0.00422685,0.0016423,0.00358595,0.00123392,0.000444192,0.011756
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00908208,0.098424,0.00230193,0.00303602,0.112844
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00345206,0.00132895,0.115562,0.0075829,0.127926
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0114369
+gpu,0.0114378
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000246048,0.00120902,0.00294495,0.00135112,0.00689197,6.60419e-05,0.0127091
+gpu,0.000245184,0.0012144,0.00302618,0.00135219,0.00689523,4.8064e-05,0.0127812
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000456095,0.00429392,0.00128317,0.00320911,0.00105309,0.000432968,0.0107284
+gpu,0.000456672,0.00429536,0.00128387,0.00321021,0.00105501,0.000434752,0.0107359
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00424194,0.095917,0.00242186,0.00308013,0.105661
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00361896,0.00135303,0.115412,0.00741005,0.127794
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0121088
+gpu,0.0121106
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000257969,0.00128984,0.0029881,0.00137591,0.00676298,5.79357e-05,0.0127327
+gpu,0.000255616,0.00129389,0.00299021,0.00137565,0.00676525,4.0992e-05,0.0127216
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000463009,0.00430799,0.00128102,0.00323105,0.00108099,0.000428915,0.010793
+gpu,0.000462144,0.00430912,0.00128278,0.003232,0.00108208,0.000431168,0.0107993
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00424194,0.0945139,0.00258899,0.00304413,0.104389
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.00359893,0.00139189,0.115448,0.0074501,0.12789
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0105891
+gpu,0.0105896
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000268936,0.0186758,0.175632,0.0182509,0.018342,6.8903e-05,0.231239
+gpu,0.000267424,0.0186788,0.175631,0.0182501,0.0183431,5.1232e-05,0.231222
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000208139,0.00429201,0.0164871,0.177607,0.052479,0.000438929,0.251512
+gpu,0.00020624,0.00429187,0.0164875,0.177612,0.0524784,0.000441184,0.251517
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00890899,0.097795,0.00236702,0.00305295,0.112124
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.00367498,0.00132799,0.11533,0.00752878,0.127863
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0143552
+gpu,0.014352
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000234842,0.00557423,0.0114598,0.00641084,0.00835896,6.10352e-05,0.0320997
+gpu,0.000233728,0.0055768,0.0114623,0.00641158,0.0083608,4.32e-05,0.0320884
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000224113,0.00460291,0.005656,0.0119319,0.0110881,0.000446081,0.0339491
+gpu,0.000234752,0.00460522,0.00565619,0.0119352,0.011092,0.000447776,0.0339711
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00437212,0.096832,0.00230002,0.00312209,0.106626
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00358677,0.00141501,0.11869,0.00750589,0.131198
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0135751
+gpu,0.0135746
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000264168,0.00188804,0.00352693,0.00199413,0.0082891,6.10352e-05,0.0160234
+gpu,0.000263456,0.00189168,0.00352954,0.00199443,0.00829197,4.2592e-05,0.0160137
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000776052,0.0042491,0.00189114,0.00387597,0.00139117,0.000430822,0.0126143
+gpu,0.000775904,0.00424986,0.00189158,0.00387683,0.001392,0.000432224,0.0126184
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00583601,0.0971198,0.00233102,0.00299001,0.108277
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00361395,0.00144601,0.115326,0.00758004,0.127966
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.023998
+gpu,0.0239926
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000252008,0.00189209,0.00368881,0.00203085,0.00906801,5.91278e-05,0.0169909
+gpu,0.000250656,0.00189606,0.00369059,0.00228064,0.0090705,4.1856e-05,0.0172303
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000771999,0.00432587,0.00192189,0.00384688,0.00146198,0.000432968,0.0127616
+gpu,0.00077216,0.00432685,0.00192234,0.00384867,0.00149978,0.000434112,0.0128039
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0139201,0.104168,0.0023129,0.00299311,0.123394
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00796413,0.00306201,0.1148,0.00736022,0.133186
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0194151
+gpu,0.0194124
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000276089,0.00192809,0.00355697,0.00203514,0.00862503,6.8903e-05,0.0164902
+gpu,0.000265408,0.00193213,0.0035601,0.00203581,0.00862787,4.8544e-05,0.0164699
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000946045,0.00424099,0.00192308,0.00410509,0.00166798,0.000438929,0.0133221
+gpu,0.000947136,0.0042417,0.00192387,0.00410739,0.00204234,0.000440352,0.0137028
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00752306,0.0968161,0.00226593,0.00295186,0.109557
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00349498,0.00135899,0.114856,0.00750208,0.127212
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0131609
+gpu,0.0131615
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000240088,0.00188088,0.00353503,0.00202608,0.00820398,5.81741e-05,0.0159442
+gpu,0.000237632,0.00188563,0.00353709,0.00202739,0.00820669,4.0512e-05,0.0159349
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000816822,0.00429106,0.00190187,0.00392699,0.00135803,0.000429869,0.0127246
+gpu,0.000818368,0.00429213,0.00190422,0.00392864,0.00135968,0.000431104,0.0127341
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00406599,0.0968442,0.00229287,0.00302315,0.106226
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+9.53674e-07,0.00770593,0.00133991,0.115372,0.00740409,0.131823
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.018477
+gpu,0.0184658
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000257015,0.00195003,0.00360703,0.00205398,0.00818396,6.00815e-05,0.0161121
+gpu,0.0002552,0.0019545,0.00360886,0.00205472,0.00818608,4.2752e-05,0.0161021
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000806093,0.00449491,0.00198793,0.00391912,0.00141287,0.000451088,0.013072
+gpu,0.000804832,0.00449597,0.00198909,0.00392035,0.00141421,0.000452672,0.0130771
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00419211,0.0976682,0.0022409,0.00300193,0.107103
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00816298,0.00319481,0.117646,0.00760484,0.136609
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.013283
+gpu,0.013284
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000234127,0.001899,0.00352502,0.0020349,0.00880885,6.31809e-05,0.0165651
+gpu,0.000233184,0.00190285,0.0035273,0.00203712,0.0088113,4.5888e-05,0.0165576
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000797987,0.00432682,0.00191784,0.00388408,0.00143814,0.000497818,0.0128627
+gpu,0.0007992,0.00432842,0.00192022,0.00388589,0.0014401,0.00049984,0.0128737
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00693798,0.0937662,0.00224996,0.00295115,0.105905
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00348282,0.0012939,0.115776,0.00725889,0.127811
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0194919
+gpu,0.0194901
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000245094,0.00182009,0.00345206,0.0019362,0.00829005,5.79357e-05,0.0158014
+gpu,0.00024288,0.00182419,0.00345405,0.00193747,0.00829258,4.0608e-05,0.0157918
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000736952,0.00427699,0.00187087,0.00379181,0.00132799,0.000509024,0.0125136
+gpu,0.000738464,0.00427773,0.00187171,0.00379354,0.00132899,0.000512032,0.0125225
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00856304,0.0960162,0.00225806,0.00305915,0.109896
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00356412,0.00135303,0.114406,0.00722599,0.126549
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.010283
+gpu,0.0102847
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000246048,0.00116897,0.00283289,0.00129795,0.00671101,5.79357e-05,0.0123148
+gpu,0.000243584,0.00117229,0.00366077,0.0012984,0.00671283,4.128e-05,0.0131292
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000429869,0.00443792,0.00118113,0.0031538,0.0010581,0.000436068,0.0106969
+gpu,0.000421344,0.00443843,0.00118141,0.00315408,0.00105808,0.000437568,0.0106909
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00644398,0.094821,0.00226116,0.00298381,0.10651
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00353217,0.00135398,0.114546,0.00731802,0.12675
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.013272
+gpu,0.0132741
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000238895,0.00209713,0.00353599,0.00195289,0.00811291,5.22137e-05,0.01599
+gpu,0.000237248,0.00210173,0.00353894,0.00195446,0.00811568,3.376e-05,0.0159818
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000766993,0.00431991,0.00186491,0.0038681,0.00136399,0.000430107,0.012614
+gpu,0.000767456,0.00432144,0.00186598,0.00387027,0.00136627,0.000431488,0.0126229
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00729799,0.0973618,0.00232005,0.00311303,0.110093
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00363398,0.00132799,0.114836,0.00760889,0.127407
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0132711
+gpu,0.0132717
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000250101,0.0021739,0.00356603,0.00219607,0.00856996,0.000287056,0.0170431
+gpu,0.000247456,0.00279549,0.00356717,0.00224845,0.0087927,4.6976e-05,0.0176982
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.00081706,0.00429296,0.00191307,0.00412917,0.00141215,0.000430107,0.0129945
+gpu,0.000816608,0.00429338,0.00191277,0.00412976,0.00141274,0.000431808,0.0129971
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00755095,0.0971732,0.0022769,0.00295496,0.109956
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00634813,0.00131798,0.116231,0.00719881,0.131096
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.019536
+gpu,0.0195296
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000252008,0.00220704,0.00360894,0.00205493,0.00818992,5.81741e-05,0.016371
+gpu,0.000250336,0.00221222,0.0036111,0.00205603,0.00819094,4.208e-05,0.0163627
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000843048,0.00432515,0.00195694,0.00402713,0.00141883,0.000437975,0.0130091
+gpu,0.000842208,0.00432566,0.00195674,0.00406336,0.00142006,0.000439264,0.0130473
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00745106,0.0970311,0.00225902,0.00298905,0.10973
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00353694,0.00131989,0.114259,0.00739217,0.126508
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0105338
+gpu,0.0105348
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000247002,0.00103498,0.00275517,0.0011518,0.00641012,5.6982e-05,0.011656
+gpu,0.000244288,0.00103926,0.0035919,0.00115328,0.0064111,4.1504e-05,0.0124813
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000365019,0.00441408,0.00103092,0.00302792,0.000955105,0.000441074,0.0102341
+gpu,0.000364192,0.00441485,0.00103146,0.00302944,0.000955616,0.000442944,0.0102385
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00992298,0.0996099,0.00231314,0.00296187,0.114808
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00358009,0.00135708,0.115265,0.00723982,0.127442
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0134349
+gpu,0.0134365
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000295162,0.00188994,0.00350595,0.00247097,0.00855684,5.50747e-05,0.0167739
+gpu,0.00029328,0.00189469,0.00350858,0.0024728,0.00856003,3.4752e-05,0.0167641
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.0007689,0.00499296,0.00191808,0.00381708,0.00142407,0.000437975,0.0133591
+gpu,0.000770624,0.00499427,0.00192,0.00381958,0.0014257,0.000439552,0.0133697
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00665116,0.0949221,0.00226116,0.00299382,0.106828
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00360298,0.00131202,0.114817,0.00732398,0.127056
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0102999
+gpu,0.0103008
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000262976,0.00103498,0.00271392,0.00115013,0.00641608,5.6982e-05,0.0116351
+gpu,0.000261344,0.0010383,0.00356624,0.00115069,0.0064177,4.1216e-05,0.0124755
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000352859,0.00439715,0.00107694,0.00300002,0.000960827,0.000456095,0.0102439
+gpu,0.000351328,0.00439709,0.00107728,0.00300141,0.000961952,0.000457472,0.0102465
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00995493,0.0939982,0.00218081,0.00290203,0.109036
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00346684,0.00140715,0.115062,0.00724101,0.127177
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00631809,0.159492,0.00311899,0.00437999,0.173309
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00499511,0.00191092,0.207851,0.0111251,0.225882
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,17.6674
+gpu,11.7792
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000283957,0.0054028,0.00529408,0.0055809,0.0124888,0.000478983,0.0295296
+gpu,0.000408768,0.00555805,0.00571798,0.0056753,0.0127518,0.000141088,0.030253
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.0031662,0.00618505,0.00544214,0.544869,0.00421906,0.000769854,0.564651
+gpu,0.00317101,0.00628102,0.00551987,0.545358,0.00450307,0.000775232,0.565608
+
+cpu encode:Lena64.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.000120878,0.00359488,8.98838e-05,0.000182152,0.00398779
+
+cpu decode:Lena64.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.000249147,5.48363e-05,0.00444102,0.000362873,0.00510788
+
+gpu preprocess:Lena64.bmp
+,total
+cpu,0.00202608
+gpu,0.00202355
+
+gpu encode:Lena64.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,4.88758e-05,5.60284e-05,3.50475e-05,2.90871e-05,0.0012002,0.000237942,0.00160718
+gpu,4.2432e-05,6.2624e-05,6.1056e-05,2.9344e-05,0.00137178,5.6384e-05,0.00162362
+
+gpu decode:Lena64.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000136137,0.000299931,3.40939e-05,2.7895e-05,1.90735e-05,2.09808e-05,0.000538111
+gpu,0.000130656,0.000298208,3.1776e-05,6.2048e-05,2.8064e-05,2.1184e-05,0.000571936
+
+cpu encode:Lena128.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.000560999,0.0136859,0.000313997,0.00056386,0.0151248
+
+cpu decode:Lena128.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.000735998,0.000183105,0.017879,0.00113106,0.0199292
+
+gpu preprocess:Lena128.bmp
+,total
+cpu,0.00148702
+gpu,0.00148534
+
+gpu encode:Lena128.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,2.09808e-05,1.78814e-05,8.10623e-06,6.19888e-06,0.000849962,0.000339985,0.00124311
+gpu,2.7776e-05,6.8224e-05,0.000156352,5.9136e-05,0.00115123,3.2416e-05,0.00149514
+
+gpu decode:Lena128.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000105858,0.000402212,7.86781e-06,6.91414e-06,4.05312e-06,3.79086e-05,0.000564814
+gpu,0.0001088,0.000417344,5.2608e-05,0.000180864,5.4944e-05,3.888e-05,0.00085344
+
+cpu encode:Lena256.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00153708,0.033998,0.000566959,0.000843048,0.0369451
+
+cpu decode:Lena256.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00237107,0.000725031,0.0383279,0.00174785,0.0431719
+
+gpu preprocess:Lena256.bmp
+,total
+cpu,0.00519109
+gpu,0.00518816
+
+gpu encode:Lena256.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,8.89301e-05,5.38826e-05,3.38554e-05,2.90871e-05,0.00175786,0.000831127,0.00279474
+gpu,0.000106496,0.000215712,0.000609696,0.00022176,0.00251507,6.1952e-05,0.00373069
+
+gpu decode:Lena256.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000238895,0.00324106,3.50475e-05,2.69413e-05,1.69277e-05,0.000213861,0.00377274
+gpu,0.000235008,0.00332995,0.000195776,0.00069696,0.000204256,0.000216896,0.00487885
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00929999,0.102858,0.00212193,0.00294495,0.117225
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00669503,0.00127912,0.119481,0.00706697,0.134522
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.0126309
+gpu,0.0126345
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,9.98974e-05,2.09808e-05,9.05991e-06,7.86781e-06,0.00350308,0.00253797,0.00617886
+gpu,0.000214144,0.000697184,0.00233562,0.00081216,0.00599904,3.4752e-05,0.0100929
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000145912,0.00434685,2.40803e-05,1.81198e-05,4.05312e-06,0.00048399,0.005023
+gpu,0.000149888,0.00457878,0.000705376,0.00269514,0.00075392,0.000485696,0.0093688
+
+cpu encode:Lena768.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0117488,0.213744,0.00496197,0.00637197,0.236827
+
+cpu decode:Lena768.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00722098,0.00299692,0.274802,0.016479,0.301499
+
+gpu preprocess:Lena768.bmp
+,total
+cpu,0.0155709
+gpu,0.0156912
+
+gpu encode:Lena768.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000266075,3.09944e-05,1.97887e-05,1.90735e-05,0.0064919,0.00611019,0.012938
+gpu,0.000438304,0.00154675,0.00523741,0.00180589,0.0125514,4.3104e-05,0.0216229
+
+gpu decode:Lena768.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000237942,0.00843,2.31266e-05,1.78814e-05,5.00679e-06,0.000828981,0.00954294
+gpu,0.00024112,0.00916458,0.00154656,0.0060391,0.00166099,0.000832064,0.0194844
+
+cpu encode:Lena1024.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.015583,0.368371,0.00844002,0.011179,0.403573
+
+cpu decode:Lena1024.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.022186,0.00511622,0.472526,0.028693,0.528521
+
+gpu preprocess:Lena1024.bmp
+,total
+cpu,0.0261021
+gpu,0.0265304
+
+gpu encode:Lena1024.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000536919,3.09944e-05,1.12057e-05,1.88351e-05,0.0105171,0.00896001,0.0200751
+gpu,0.00065632,0.00281946,0.010479,0.00320045,0.0194152,5.1136e-05,0.0366216
+
+gpu decode:Lena1024.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000334024,0.0137639,1.62125e-05,6.91414e-06,6.91414e-06,0.00140214,0.0155301
+gpu,0.00033888,0.0139814,0.00389171,0.0107174,0.00299722,0.00140413,0.0333307
+
+cpu encode:Lena2056.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0628011,1.4662,0.0354331,0.0405431,1.60498
+
+cpu decode:Lena2056.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.0477569,0.027813,1.90871,0.114147,2.09843
+
+gpu preprocess:Lena2056.bmp
+,total
+cpu,0.0973802
+gpu,0.100117
+
+gpu encode:Lena2056.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.00214505,4.41074e-05,8.91685e-05,2.40803e-05,0.0203779,0.0174301,0.0401103
+gpu,0.00229648,0.0117579,9.0176e-05,0.00429226,0.0365779,5.6736e-05,0.0550714
+
+gpu decode:Lena2056.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000993013,0.035156,4.48227e-05,2.59876e-05,5.00679e-06,0.00493383,0.0411587
+gpu,0.00110573,0.0353052,0.00369066,2.6016e-05,0.0109746,0.00493472,0.0560369
+
+cpu encode:Lena64.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.000142097,0.00336099,7.79629e-05,0.000172853,0.0037539
+
+cpu decode:Lena64.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.000310898,6.91414e-05,0.00522399,0.000295162,0.00589919
+
+gpu preprocess:Lena64.bmp
+,total
+cpu,0.00125194
+gpu,0.00134454
+
+gpu encode:Lena64.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,1.4782e-05,1.78814e-05,7.86781e-06,7.15256e-06,0.000848055,0.000219107,0.00111485
+gpu,1.3216e-05,3.2224e-05,4.9728e-05,2.1376e-05,0.00102944,3.1104e-05,0.00117709
+
+gpu decode:Lena64.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,2.28882e-05,0.000128984,8.10623e-06,6.91414e-06,5.00679e-06,1.28746e-05,0.000184774
+gpu,2.3744e-05,0.000132576,1.9232e-05,5.3344e-05,1.9008e-05,1.3472e-05,0.000261376
+
+cpu encode:Lena128.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.000560999,0.0131681,0.000159979,0.000272989,0.0141621
+
+cpu decode:Lena128.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.000339985,0.000102997,0.00794196,0.00048089,0.00886583
+
+gpu preprocess:Lena128.bmp
+,total
+cpu,0.00244498
+gpu,0.00243677
+
+gpu encode:Lena128.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,3.19481e-05,2.40803e-05,1.50204e-05,1.28746e-05,0.000869036,0.000343084,0.00129604
+gpu,3.744e-05,7.296e-05,0.000158752,6.1696e-05,0.00117174,3.3312e-05,0.0015359
+
+gpu decode:Lena128.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000112057,0.000405073,1.40667e-05,1.19209e-05,8.10623e-06,4.88758e-05,0.0006001
+gpu,0.000112448,0.000419456,5.472e-05,0.0001824,5.7248e-05,5.0464e-05,0.000876736
+
+cpu encode:Lena256.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00228,0.0295789,0.000552893,0.000877142,0.033289
+
+cpu decode:Lena256.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+1.19209e-06,0.00104499,0.000418186,0.0306661,0.00187492,0.0340054
+
+gpu preprocess:Lena256.bmp
+,total
+cpu,0.00290799
+gpu,0.00293482
+
+gpu encode:Lena256.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,3.19481e-05,2.90871e-05,1.90735e-05,7.15256e-06,0.00135684,0.0015111,0.0029552
+gpu,6.624e-05,0.000202528,0.0005976,0.000213504,0.00231158,3.0912e-05,0.00342237
+
+gpu decode:Lena256.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000128984,0.00123811,2.00272e-05,6.91414e-06,5.96046e-06,0.000118971,0.00151896
+gpu,0.00013344,0.00129894,0.00018496,0.000687328,0.000198944,0.000119584,0.0026232
+
+cpu encode:Lena512.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.00940609,0.097126,0.00217605,0.00293589,0.111644
+
+cpu decode:Lena512.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00780201,0.00290608,0.130882,0.00699186,0.148582
+
+gpu preprocess:Lena512.bmp
+,total
+cpu,0.00813699
+gpu,0.00814374
+
+gpu encode:Lena512.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,9.01222e-05,1.97887e-05,9.05991e-06,2.00272e-05,0.00350213,0.00254083,0.00618196
+gpu,0.000205952,0.0006976,0.00233466,0.000812096,0.00599856,3.6928e-05,0.0100858
+
+gpu decode:Lena512.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.0001719,0.00408792,1.00136e-05,7.15256e-06,5.96046e-06,0.000440836,0.00472379
+gpu,0.00016624,0.00433488,0.000693056,0.00269555,0.000756672,0.000443424,0.00908982
+
+cpu encode:Lena768.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0190179,0.216105,0.00502706,0.006639,0.246789
+
+cpu decode:Lena768.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.00721383,0.00277996,0.270358,0.0165279,0.29688
+
+gpu preprocess:Lena768.bmp
+,total
+cpu,0.0159669
+gpu,0.0160904
+
+gpu encode:Lena768.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.000257969,2.00272e-05,1.09673e-05,8.82149e-06,0.00650501,0.00527191,0.0120747
+gpu,0.000425888,0.00153741,0.00614237,0.00180979,0.0117143,4.3328e-05,0.0216731
+
+gpu decode:Lena768.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000249147,0.00925684,2.5034e-05,1.88351e-05,6.19888e-06,0.000845909,0.010402
+gpu,0.000251872,0.00942493,0.00154797,0.00603779,0.00166522,0.000849088,0.0197769
+
+cpu encode:Lena1024.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.0204241,0.374683,0.00868702,0.0113981,0.415192
+
+cpu decode:Lena1024.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.011981,0.00514793,0.47761,0.028518,0.523257
+
+gpu preprocess:Lena1024.bmp
+,total
+cpu,0.02701
+gpu,0.0274506
+
+gpu encode:Lena1024.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.00047493,3.21865e-05,1.90735e-05,2.00272e-05,0.0105269,0.0090251,0.0200982
+gpu,0.000657696,0.00270778,0.00949613,0.0032,0.0194968,4.736e-05,0.0356057
+
+gpu decode:Lena1024.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.000364065,0.0143249,2.69413e-05,1.81198e-05,5.96046e-06,0.0014329,0.0161729
+gpu,0.0003696,0.0145321,0.00272973,0.0109031,0.00299107,0.00143677,0.0329624
+
+cpu encode:Lena2056.bmp
+color conversion,DCT,zig_quantize,huffman,total
+0.064888,1.49324,0.0351071,0.0404758,1.63371
+
+cpu decode:Lena2056.bmp
+allocation,huffman,zig_quantize,Inv-DCT,color conversion,total
+0,0.0383689,0.0206878,1.91024,0.115561,2.08485
+
+gpu preprocess:Lena2056.bmp
+,total
+cpu,0.10035
+gpu,0.103038
+
+gpu encode:Lena2056.bmp
+,transfer memory,color conversion,DCT,zig_quantize,huffman,transfer memory,total
+cpu,0.00290513,4.79221e-05,0.000119209,3.31402e-05,0.0207231,0.017714,0.0415425
+gpu,0.00304534,0.0109855,0.000113152,0.00430003,0.038249,7.8016e-05,0.056771
+
+gpu decode:Lena2056.bmp
+,allocation,huffman,zig_quantize,Inv-DCT,color conversion,transfer memory,total
+cpu,0.00104594,0.0369291,4.50611e-05,2.71797e-05,1.12057e-05,0.00595307,0.0440116
+gpu,0.00113926,0.0370831,0.00369014,2.7072e-05,0.0109835,0.0059625,0.0588856
+

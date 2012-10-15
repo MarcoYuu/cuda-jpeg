@@ -1,0 +1,16 @@
+eclipse.preferences.version=1
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/LD_LIBRARY_PATH/delimiter=\:
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/LD_LIBRARY_PATH/operation=replace
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/LD_LIBRARY_PATH/value=/usr/local/cuda-5.0/lib64\:/usr/local/cuda/lib64\:/usr/local/cuda-5.0/jre/lib/amd64/server\:/usr/local/cuda-5.0/jre/lib/amd64\:/usr/local/cuda-5.0/jre/../lib/amd64
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/PATH/delimiter=\:
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/PATH/operation=replace
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/PATH/value=/usr/local/cuda/bin\:/usr/lib/lightdm/lightdm\:/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/usr/games
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/PKG_CONFIG_LIBDIR/delimiter=\:
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/PKG_CONFIG_LIBDIR/operation=replace
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/PKG_CONFIG_LIBDIR/value=
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/PKG_CONFIG_PATH/delimiter=\:
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/PKG_CONFIG_PATH/operation=replace
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/PKG_CONFIG_PATH/value=
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/append=true
+environment/project/com.nvidia.cuda.ide.configuration.debug.826797892/appendContributed=true
+org.eclipse.cdt.core.code_formatter=org.eclipse.cdt.core.defaultCodeFormatter

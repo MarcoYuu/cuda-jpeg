@@ -24,13 +24,10 @@ void idct(int *src_coef, int *dst_ycc, int sizeX, int sizeY);
 void zig_quantize(int *src_coef, int *dst_qua, int sizeX, int sizeY);
 void izig_quantize(int *src_qua, int *dst_coef, int sizeX, int sizeY);
 
-void huffman_encode(int *src_qua, OutBitStream *obit_stream, int sizeX, int sizeY);
-void decode_huffman(InBitStream *ibit_stream, int *dst_qua, int sizeX, int sizeY);
-
-class CpuJpegEncoder {
-public:
-	static bool encode(const int *yuv_src, int width, int height);
-};
+void huffman_encode(int *src_qua, OutBitStream *obit_stream, int sizeX,
+	int sizeY);
+void decode_huffman(InBitStream *ibit_stream, int *dst_qua, int sizeX,
+	int sizeY);
 
 #endif /* CPU_JPEG_H_ */
 
