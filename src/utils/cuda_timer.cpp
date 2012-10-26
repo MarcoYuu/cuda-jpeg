@@ -1,4 +1,4 @@
-/*
+﻿/*
  * cuda_timer.cpp
  *
  *  Created on: 2012/09/26

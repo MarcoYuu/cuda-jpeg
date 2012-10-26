@@ -8,6 +8,7 @@
 #define GPU_OUT_BIT_STREAM_H_
 
 #include "../type_definitions.h"
+#include "cuda_memory.hpp"
 
 #include <stdio.h>
 
@@ -34,32 +35,76 @@ public:
 };
 
 //デバイスのアドレスを指すポインタはホストに定義しなければならないっぽい
-struct GPUOutBitStreamBufferPointer {
-	byte* HeadOfBuf; // バッファの先頭アドレス
-	byte* WriteBufAddress; // 書き込みアドレス
-	byte* EndOfBuf; // バッファの終了アドレス
+class GPUOutBitStreamBufferPointer {
+private:
+//	byte* _head_of_buff; // バッファの先頭アドレス
+//	byte* _write_buff_address; // 書き込みアドレス
+//	byte* _end_of_buff; // バッファの終了アドレス
+
+	DeviceMemory<byte> _head_of_buff; // バッファの先頭アドレス
+	byte* _write_buff_address; // 書き込みアドレス
+	byte* _end_of_buff; // バッファの終了アドレス
+
+	size_t _buff_size;
+
+public:
+	GPUOutBitStreamBufferPointer(size_t buff_size) :
+		_buff_size(buff_size),
+		_head_of_buff(buff_size) {
+
+		_head_of_buff.fillZero();
+		_write_buff_address = _head_of_buff.device_data();
+		_end_of_buff = _head_of_buff.device_data() + _buff_size; // バッファの最終アドレス
+	}
+
+	byte* getHeadOfBuffer() {
+		return _head_of_buff.device_data();
+	}
+
+	byte* getEndOfBuf() {
+		return _end_of_buff;
+	}
+
+	byte* getWriteBufAddress() {
+		return _write_buff_address;
+	}
+
+	const byte* getHeadOfBuffer() const {
+		return _head_of_buff.device_data();
+	}
+
+	const byte* getEndOfBuf() const {
+		return _end_of_buff;
+	}
+
+	const byte* getWriteBufAddress() const {
+		return _write_buff_address;
+	}
 };
 
-void InitGPUBuffer(GPUOutBitStreamBufferPointer* bp, int size);
+//void InitGPUBuffer(GPUOutBitStreamBufferPointer* bp, int size);
 
 __device__ void IncBuf(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP);
 
 //------------------------------------------------------------
 // 8ビット以下のデータを１つのアドレスに書き込む
 //------------------------------------------------------------
-__device__ void SetFewBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
+__device__
+void SetFewBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
 	byte v, int numBits);
 
 //------------------------------------------------------------
 // 8ビット以下のデータを2つのアドレスに分けて書き込む
 //------------------------------------------------------------
-__device__ void SetBits2Byte(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
+__device__
+void SetBits2Byte(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
 	byte v, int numBits);
 
 //------------------------------------------------------------
 // 8ビット以下のデータを書き込む
 //------------------------------------------------------------
-__device__ void Set8Bits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
+__device__
+void Set8Bits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
 	byte v, int numBits);
 
 //------------------------------------------------------------
@@ -75,27 +120,32 @@ __device__ void Set8Bits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
 //
 // ビット単位で書き込む（最大16ビット）
 //------------------------------------------------------------
-__device__ void SetBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
+__device__
+void SetBits(GPUOutBitStream *d, byte *mBufP, byte *mEndOfBufP,
 	int v, int numBits);
 
 ////////////////////////////////////////////////////////////////////
 //MCU毎から1枚のバッファへ。上位ビットから書き込むので上の流用不可//
 ////////////////////////////////////////////////////////////////////
 
-__device__ void IncBuf_w(GPUOutBitStream *d);
+__device__
+void IncBuf_w(GPUOutBitStream *d);
 
 //------------------------------------------------------------
 // 8ビット以下のデータを１つのアドレスに書き込む
 //------------------------------------------------------------
-__device__ void SetFewBits_w(GPUOutBitStream *d, byte *mBufP, byte v,
+__device__
+void SetFewBits_w(GPUOutBitStream *d, byte *mBufP, byte v,
 	int numBits);
 
 //------------------------------------------------------------
 // 8ビット以下のデータを2つのアドレスに分けて書き込む
 //------------------------------------------------------------
-__device__ void SetBits2Byte_w(GPUOutBitStream *d, byte *mBufP, byte v,
+__device__
+void SetBits2Byte_w(GPUOutBitStream *d, byte *mBufP, byte v,
 	int numBits);
-__device__ void Set8Bits_w(GPUOutBitStream *d, byte *mBufP, byte v,
+__device__
+void Set8Bits_w(GPUOutBitStream *d, byte *mBufP, byte v,
 	int numBits);
 
 //------------------------------------------------------------
@@ -104,16 +154,19 @@ __device__ void Set8Bits_w(GPUOutBitStream *d, byte *mBufP, byte v,
 // byte *ImBufP,// 書き込み元先頭アドレス、マクロ毎のバッファ
 // int id//バグチェック用に使ってた
 //------------------------------------------------------------
-__device__ void WriteBits(GPUOutBitStream *Od, byte *OmBufP, byte *ImBufP,
+__device__
+void WriteBits(GPUOutBitStream *Od, byte *OmBufP, byte *ImBufP,
 	int id);
 
 //------------------------------------------------------------
 // 余ったビットに1を詰めるためのマスク,COutBitStream.hで定義してる
 //------------------------------------------------------------
-__device__ static const byte GPUkBitFullMaskT[8] = { 0x01, 0x03, 0x07, 0x0f,
-		0x1f, 0x3f, 0x7f, 0xff };
-__device__ static const byte GPUkBitFullMaskLowT[8] = { 0x80, 0xc0, 0xe0, 0xf0,
-		0xf8, 0xfc, 0xfe, 0xff };
+__device__
+static const byte GPUkBitFullMaskT[8] = { 0x01, 0x03, 0x07, 0x0f,
+	0x1f, 0x3f, 0x7f, 0xff };
+__device__
+static const byte GPUkBitFullMaskLowT[8] = { 0x80, 0xc0, 0xe0, 0xf0,
+	0xf8, 0xfc, 0xfe, 0xff };
 
 inline __device__ void IncBuf(GPUOutBitStream *d, byte *mBufP,
 	byte *mEndOfBufP) {

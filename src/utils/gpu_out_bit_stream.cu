@@ -23,9 +23,9 @@ GPUOutBitStream::GPUOutBitStream() :
 	mNumBits(0) {
 }
 
-void InitGPUBuffer(GPUOutBitStreamBufferPointer* bp, int size) {
-	cudaMemset(bp->HeadOfBuf, 0, sizeof(byte) * size);
-	bp->WriteBufAddress = bp->HeadOfBuf;
-	bp->EndOfBuf = bp->HeadOfBuf + size; // バッファの最終アドレス
-}
+//void InitGPUBuffer(GPUOutBitStreamBufferPointer* bp, int size) {
+//	cudaMemset(bp->HeadOfBuf, 0, sizeof(byte) * size);
+//	bp->WriteBufAddress = bp->HeadOfBuf;
+//	bp->EndOfBuf = bp->HeadOfBuf + size; // バッファの最終アドレス
+//}
 

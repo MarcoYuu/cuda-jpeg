@@ -1,9 +1,9 @@
-/******************************************************
- CInBitStream ビットストリーム・クラス Ver.1.1.0
- Copyright 2004 AsWe Co.,Ltd.
- All rights reserved.
- The comments are written in Japanese (Shift-JIS).
- ******************************************************/
+﻿/******************************************************
+CInBitStream ビットストリーム・クラス Ver.1.1.0
+Copyright 2004 AsWe Co.,Ltd.
+All rights reserved.
+The comments are written in Japanese (Shift-JIS).
+******************************************************/
 
 #include <assert.h>
 #include <string.h>	// 標準C++の場合
@@ -12,7 +12,7 @@
 // ビット取り出しのためのマスク
 static const int kBitTestMaskT[8] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 
-InBitStream::InBitStream(char* aBufP, int size) {
+InBitStream::InBitStream(const byte* aBufP, size_t size) {
 	// データバッファの設定
 	mBufP = (byte*) aBufP; // バッファ
 	mEndOfBufP = mBufP + size; // バッファの最終アドレス
@@ -24,13 +24,13 @@ InBitStream::InBitStream(char* aBufP, int size) {
 }
 
 // 読み出しアドレスのインクリメントとアクセス違反のチェック
-void InBitStream::IncBuf(void) {
+void InBitStream::incBuf() {
 	if (++mBufP >= mEndOfBufP) // 次のアクセスでエラー
 		mReadFlag = 0;
 }
 
 // ビット単位で読み出す
-int InBitStream::GetBits(int numOfBits) {
+int InBitStream::getBits(size_t numOfBits) {
 	if (numOfBits <= 0)
 		return 0; // エラー
 
@@ -38,7 +38,7 @@ int InBitStream::GetBits(int numOfBits) {
 	while (numOfBits) {
 		if (mBitPos < 0) { // 次のバイトを読み出すとき
 			mBitPos = 7; // 読み出しビット位置更新
-			IncBuf(); // アドレス更新
+			incBuf(); // アドレス更新
 		}
 
 		// 返値の作成
@@ -51,42 +51,40 @@ int InBitStream::GetBits(int numOfBits) {
 }
 
 // 1バイト読み出す
-byte InBitStream::GetByte(void) {
+byte InBitStream::getByte() {
 	//if (mReadFlag) {
 	assert(mReadFlag);
-		if (mBitPos != 7) { // 読み出し位置がバイトの途中ならば
-			IncBuf(); // 次のバイトの
-			mBitPos = 7; // 最初のビットから
-		}
-		byte r = *mBufP; // 1バイト読み出し
-		IncBuf(); // 読み出し位置更新
-		mNextFlag = 1; // ビット読み出し中にマーカを検出した場合0になるが、
-					   // GetByte()でマーカを処理するので次のバイトを読んでよい
-		return r;
+	if (mBitPos != 7) { // 読み出し位置がバイトの途中ならば
+		incBuf(); // 次のバイトの
+		mBitPos = 7; // 最初のビットから
+	}
+	byte r = *mBufP; // 1バイト読み出し
+	incBuf(); // 読み出し位置更新
+	mNextFlag = 1; // ビット読み出し中にマーカを検出した場合0になるが、
+	// GetByte()でマーカを処理するので次のバイトを読んでよい
+	return r;
 	//}
 }
 
 // 2バイト読み出す
-u_int InBitStream::GetWord(void) {
-	//if (mReadFlag) {
+u_int InBitStream::getWord() {
 	assert(mReadFlag);
-		if (mBitPos != 7) { // バイトの途中から読み出さない
-			IncBuf();
-			mBitPos = 7;
-		}
-		u_int r = (unsigned) *mBufP << 8;
-		IncBuf();
-		r |= (unsigned) *mBufP;
-		IncBuf();
+	if (mBitPos != 7) { // バイトの途中から読み出さない
+		incBuf();
+		mBitPos = 7;
+	}
+	u_int r = (unsigned) *mBufP << 8;
+	incBuf();
+	r |= (unsigned) *mBufP;
+	incBuf();
 
-		return r;
-	//}
+	return r;
 }
 
 // nバイト読み出す
-void InBitStream::CopyByte(char* disP, int n) {
+void InBitStream::copyByte(byte* disP, size_t n) {
 	if (mBitPos != 7) { // バイトの途中から読み出さない
-		IncBuf();
+		incBuf();
 		mBitPos = 7;
 	}
 
@@ -96,14 +94,14 @@ void InBitStream::CopyByte(char* disP, int n) {
 }
 
 // nバイト進める
-void InBitStream::SkipByte(int n) {
+void InBitStream::skipByte(size_t n) {
 	if ((mBufP += n) >= mEndOfBufP) // 次のアクセスでエラー
 		mReadFlag = 0;
 	mBitPos = 7;
 }
 
 // 次の読み出しアドレス
-char* InBitStream::GetNextAddress(void) {
+char* InBitStream::getNextAddress() {
 	if (mBitPos == 7) // 読み出し途中でないなら
 		return (char*) mBufP;
 	else if (mBufP < mEndOfBufP)

@@ -8,7 +8,12 @@
 #ifndef CUDA_JPEG_TYPES_H_
 #define CUDA_JPEG_TYPES_H_
 
+#include <vector>
+
 typedef unsigned char byte;
 typedef unsigned int u_int;
+
+typedef std::vector<byte> ByteBuffer;
+typedef std::vector<int> IntBuffer;
 
 #endif /* CUDA_JPEG_TYPES_H_ */

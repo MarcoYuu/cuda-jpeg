@@ -1,4 +1,4 @@
-#include <ctime>
+﻿#include <ctime>
 #include <numeric>
 
 #if defined(_WIN32) | defined(_WIN64)
@@ -72,7 +72,7 @@ public:
 		return count.QuadPart / mCPUFreqency;
 	}
 
-	bool isAvailable() {
+	static bool isAvailable() {
 		LARGE_INTEGER tmp;
 		return ((QueryPerformanceCounter(&tmp) == 0) ? false : true);
 	}
@@ -167,7 +167,7 @@ double StopWatch::getTotalTime() const {
 	return r;
 }
 
-int StopWatch::getLapCount() const {
+size_t StopWatch::getLapCount() const {
 	return m_lap.size();
 }
 

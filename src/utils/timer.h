@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <vector>
 
@@ -30,7 +30,7 @@ public:
 	void lap();
 	void clear();
 
-	int getLapCount() const;
+	size_t getLapCount() const;
 	double getTotalTime() const;
 	double getLastElapsedTime() const;
 	const LapList& getLapList() const;

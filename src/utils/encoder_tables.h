@@ -1,4 +1,4 @@
-/******************************************************
+﻿/******************************************************
 EncoderTables Ver.1.1.0 JPEG符号化クラス用テーブル
 	Copyright 2004 AsWe.Co.Ltd. All rights reserved.
 The comments are written in Japanese (Shift-JIS).

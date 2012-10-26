@@ -2,7 +2,6 @@
 #include <cstdlib>
 
 #include "utils/util_cv.h"
-#include "utils/encoder_tables.h"
 #include "utils/encoder_tables_device.cuh"
 #include "utils/out_bit_stream.h"
 #include "utils/in_bit_stream.h"

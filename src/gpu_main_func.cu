@@ -11,8 +11,10 @@ using namespace std;
 #include "cpu_jpeg.h"
 #include "gpu_jpeg.cuh"
 
+#include "utils/util_cv.h"
 #include "utils/timer.h"
 #include "utils/cuda_timer.h"
+#include "utils/cuda_memory.hpp"
 #include "utils/util_cv.h"
 #include "utils/encoder_tables.h"
 #include "utils/in_bit_stream.h"
@@ -33,14 +35,14 @@ static void parse_arg(int argc, char *argv[], string &in_file,
 }
 
 void set_dct_coefficient(float CosT[8][8], float ICosT[8][8]) {
-//cos,chenのアルゴリズムを使う場合不要
+	//cos,chenのアルゴリズムを使う場合不要
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
 			CosT[y][x] = (y == 0 ? kDisSqrt2 : 1)
 				* cos((2 * x + 1) * y * kPaiDiv16);
 		}
 	}
-//IDCTの方はCu,Cvを別で考えなくちゃいけない
+	//IDCTの方はCu,Cvを別で考えなくちゃいけない
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
 			ICosT[y][x] = cos((2 * x + 1) * y * kPaiDiv16);
@@ -49,84 +51,57 @@ void set_dct_coefficient(float CosT[8][8], float ICosT[8][8]) {
 }
 
 void gpu_exec(int argc, char *argv[]) {
-	StopWatch watch(StopWatch::CPU_OPTIMUM);
-	CudaStopWatch cudaWatch;
-
-//----------------------------------------------------------------------------
-// 画像読み込み
-//============================================================================
-	cout << "start gpu process." << endl;
-	cout << "@start timer." << endl;
-	watch.start();
-	cudaWatch.start();
-
-	cout << "--load image." << endl;
+	//----------------------------------------------------------------------------
+	// 画像読み込み
+	//============================================================================
 	string file_name, out_file_name;
 	parse_arg(argc, argv, file_name, out_file_name);
 
-	UtilCVImage *p_cvimg_src = utilCV_LoadImage(file_name.c_str(),
-		UTIL_CVIM_COLOR);
-	const int sizeX = p_cvimg_src->im.width, sizeY = p_cvimg_src->im.height;
-	const int size = sizeX * sizeY;
-	const int C_size = sizeX * sizeY / 4;
-	const int YCC_size = size + sizeX * sizeY / 2;
+	BitmapCVUtil source(file_name, BitmapCVUtil::RGB_COLOR);
+	const int width = source.getWidth();
+	const int height = source.getHeight();
+	const int Y_size = width * height;
+	const int C_size = Y_size / 4;
+	const int YCC_size = Y_size + C_size * 2;
 
-//----------------------------------------------------------------------------
-// 色変換テーブルの作成
-//============================================================================
-	cout << "--start create conversion table." << endl;
-	int *trans_table_Y = (int*) malloc(sizeof(int) * sizeX * sizeY);
-	int *trans_table_C = (int*) malloc(sizeof(int) * sizeX * sizeY);
-	make_trans_table(trans_table_Y, trans_table_C, sizeX, sizeY);
+	//----------------------------------------------------------------------------
+	// 色変換テーブルの作成
+	//============================================================================
+	CudaMemory<int> trans_table_Y(width * height);
+	CudaMemory<int> trans_table_C(width * height);
+	make_trans_table(trans_table_Y.host_data(), trans_table_C.host_data(), width, height);
 
-	int *itrans_table_Y = (int*) malloc(sizeof(int) * sizeX * sizeY);
-	int *itrans_table_C = (int*) malloc(sizeof(int) * sizeX * sizeY);
-	make_itrans_table(itrans_table_Y, itrans_table_C, sizeX, sizeY);
+	CudaMemory<int> itrans_table_Y(width * height);
+	CudaMemory<int> itrans_table_C(width * height);
+	make_itrans_table(itrans_table_Y.host_data(), itrans_table_C.host_data(), width, height);
 
-//なぜかこれより前でcudaMallocするとsegmentation fault起きる(らしい)
-
-//----------------------------------------------------------------------------
-// DCT係数のセット
-//============================================================================
-	cout << "--start set_dct_coefficient." << endl;
+	//----------------------------------------------------------------------------
+	// DCT係数のセット
+	//============================================================================
 	float CosT[8][8];
 	float ICosT[8][8];
 	set_dct_coefficient(CosT, ICosT);
 
-//----------------------------------------------------------------------------
-// ハフマン符号化用メモリ確保
-//============================================================================
-	cout << "--start allocate device memory(for encode)." << endl;
-	GPUOutBitStream *GPUmOBSP = new GPUOutBitStream[YCC_size / 64];
-	GPUOutBitStream *GPUmOBSP_d;
-	cudaMalloc((void**) &GPUmOBSP_d, sizeof(GPUOutBitStream) * (YCC_size / 64));
-	cudaMemcpy(GPUmOBSP_d, GPUmOBSP, sizeof(GPUOutBitStream) * (YCC_size / 64),
-		cudaMemcpyHostToDevice);
-	byte* dst_NumBits = new byte[(sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2))
-		/ 64];
+	//----------------------------------------------------------------------------
+	// ハフマン符号化用メモリ確保
+	//============================================================================
+	CudaMemory<GPUOutBitStream> GPUmOBSP(YCC_size / 64);
+	GPUmOBSP.syncDeviceMemory();
 
-	GPUOutBitStreamBufferPointer buf_d;
-	cudaMalloc((void**) &(buf_d.HeadOfBuf),
-		sizeof(byte) * (YCC_size / 64) * MBS);
-	InitGPUBuffer(&buf_d, (YCC_size / 64) * MBS);
+	ByteBuffer dst_NumBits((width * height + 2 * (width / 2) * (height / 2)) / 64);
+
+	GPUOutBitStreamBufferPointer buf_d(sizeof(byte) * (YCC_size / 64) * MBS);
 
 	byte *mHeadOfBufP_d;
-	cudaMalloc((void**) &mHeadOfBufP_d, sizeof(byte) * (size * 3)); //*3
-	cudaMemset(mHeadOfBufP_d, 0, sizeof(byte) * (size * 3));
+	cudaMalloc((void**) &mHeadOfBufP_d, sizeof(byte) * (Y_size * 3)); //*3
+	cudaMemset(mHeadOfBufP_d, 0, sizeof(byte) * (Y_size * 3));
 
-//----------------------------------------------------------------------------
-// Encode用定数転送,コンスタントメモリも使ってみたい
-//============================================================================
-	cout << "--start allocate device memory(constant for encode)." << endl;
-
+	//----------------------------------------------------------------------------
+	// Encode用定数転送,コンスタントメモリも使ってみたい
+	//============================================================================
 	//先に送っておくもの
-	int *trans_Y_d, *trans_C_d;
-	cudaMalloc((void**) &trans_Y_d, sizeof(int) * sizeX * sizeY);
-	cudaMemcpy(trans_Y_d, trans_table_Y, sizeof(int) * sizeX * sizeY,
-		cudaMemcpyHostToDevice);
-	cudaMalloc((void**) &trans_C_d, sizeof(int) * sizeX * sizeY);
-	cudaMemcpy(trans_C_d, trans_table_C, sizeof(int) * sizeX * sizeY,
-		cudaMemcpyHostToDevice);
+	trans_table_C.syncDeviceMemory();
+	trans_table_Y.syncDeviceMemory();
 
 	float *CosT_d;
 	cudaMalloc((void**) &CosT_d, sizeof(float) * 64);
@@ -142,57 +117,41 @@ void gpu_exec(int argc, char *argv[]) {
 	cudaMalloc((void**) &zigzag_d, sizeof(int) * 64);
 	cudaMemcpy(zigzag_d, kZigzagT, sizeof(int) * 64, cudaMemcpyHostToDevice);
 
-//----------------------------------------------------------------------------
-// Decode用定数転送,コンスタントメモリも使ってみたい
-//============================================================================
-	cout << "--start allocate device memory(constant for decode)." << endl;
-	int *itrans_Y_d, *itrans_C_d;
-	cudaMalloc((void**) &itrans_Y_d, sizeof(int) * sizeX * sizeY);
-	cudaMemcpy(itrans_Y_d, itrans_table_Y, sizeof(int) * sizeX * sizeY,
-		cudaMemcpyHostToDevice);
-	cudaMalloc((void**) &itrans_C_d, sizeof(int) * sizeX * sizeY);
-	cudaMemcpy(itrans_C_d, itrans_table_C, sizeof(int) * sizeX * sizeY,
-		cudaMemcpyHostToDevice);
+	//----------------------------------------------------------------------------
+	// Decode用定数転送,コンスタントメモリも使ってみたい
+	//============================================================================
+	itrans_table_C.syncDeviceMemory();
+	itrans_table_Y.syncDeviceMemory();
 
 	float *ICosT_d;
 	cudaMalloc((void**) &ICosT_d, sizeof(float) * 64);
 	cudaMemcpy(ICosT_d, ICosT, sizeof(float) * 64, cudaMemcpyHostToDevice);
 
 	int *ycc_d;
-	cudaMalloc((void**) &ycc_d,
-		sizeof(int) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)));
-	cudaMemset(ycc_d, 0,
-		sizeof(int) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)));
+	cudaMalloc((void**) &ycc_d, sizeof(int) * (width * height + 2 * (width / 2) * (height / 2)));
+	cudaMemset(ycc_d, 0, sizeof(int) * (width * height + 2 * (width / 2) * (height / 2)));
 
-//----------------------------------------------------------------------------
-// Decode用メモリ確保,コンスタントメモリも使ってみたい
-//============================================================================
-	cout << "--start allocate device memory(for decode)." << endl;
+	//----------------------------------------------------------------------------
+	// Decode用メモリ確保,コンスタントメモリも使ってみたい
+	//============================================================================
 	int *coef_d;
-	cudaMalloc((void**) &coef_d,
-		sizeof(int) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)));
-	cudaMemset(coef_d, 0,
-		sizeof(int) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)));
+	cudaMalloc((void**) &coef_d, sizeof(int) * (width * height + 2 * (width / 2) * (height / 2)));
+	cudaMemset(coef_d, 0, sizeof(int) * (width * height + 2 * (width / 2) * (height / 2)));
 
 	float *f_d;
-	cudaMalloc((void**) &f_d,
-		sizeof(float) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)));
-	cudaMemset(f_d, 0,
-		sizeof(float) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)));
+	cudaMalloc((void**) &f_d, sizeof(float) * (width * height + 2 * (width / 2) * (height / 2)));
+	cudaMemset(f_d, 0, sizeof(float) * (width * height + 2 * (width / 2) * (height / 2)));
 
 	int *qua_d;
-	cudaMalloc((void**) &qua_d,
-		sizeof(int) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)));
-	cudaMemset(qua_d, 0,
-		sizeof(int) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)));
+	cudaMalloc((void**) &qua_d, sizeof(int) * (width * height + 2 * (width / 2) * (height / 2)));
+	cudaMemset(qua_d, 0, sizeof(int) * (width * height + 2 * (width / 2) * (height / 2)));
 
 	byte *src_d;
-	cudaMalloc((void**) &src_d, sizeof(byte) * sizeX * sizeY * 3);
+	cudaMalloc((void**) &src_d, sizeof(byte) * width * height * 3);
 
-//----------------------------------------------------------------------------
-// カーネルDimension設定
-//============================================================================
-	cout << "end preprocess." << endl;
+	//----------------------------------------------------------------------------
+	// カーネルDimension設定
+	//============================================================================
 	const int THREADS = 256;
 
 	const int DCT4_TH = 1;
@@ -203,345 +162,134 @@ void gpu_exec(int argc, char *argv[]) {
 	const int HUF0_TH = 16;
 	const int HUF1_TH = 4; //divide使うなら最速
 
-	dim3 Dg0_0(sizeX * sizeY / THREADS, 1, 1), Db0_0(THREADS, 1, 1);
-	dim3 Dg0_1(sizeX * sizeY / THREADS / 2, 1, 1), Db0_1(sizeY / 2, 1, 1);
+	dim3 Dg0_0(width * height / THREADS, 1, 1), Db0_0(THREADS, 1, 1);
+	dim3 Dg0_1(width * height / THREADS / 2, 1, 1), Db0_1(height / 2, 1, 1);
 
-	dim3 Dg1((sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)) / 64 / DCT4_TH, 1,
-		1), Db1(DCT4_TH, 8, 8); //DCT4_THは16が最大
+	dim3 Dg1((width * height + 2 * (width / 2) * (height / 2)) / 64 / DCT4_TH, 1, 1), Db1(DCT4_TH, 8, 8); //DCT4_THは16が最大
 
-	dim3 Dg2_0(size / QUA0_TH, 1, 1), Db2_0(QUA0_TH, 1, 1);
+	dim3 Dg2_0(Y_size / QUA0_TH, 1, 1), Db2_0(QUA0_TH, 1, 1);
 	dim3 Dg2_1((2 * C_size) / QUA1_TH, 1, 1), Db2_1(QUA1_TH, 1, 1);
 
 	dim3 Dg3_0(YCC_size / 64 / HUF0_TH, 1, 1), Db3_0(HUF0_TH, 1, 1); //YCC_size
 	dim3 Dg3_1(YCC_size / 64 / HUF1_TH, 1, 1), Db3_1(HUF1_TH, 1, 1); //YCC_size
 
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-	cout << "@end timer." << endl;
-	cout << "\n\nPRE-PROCESS STATE\n" << "time:" << cudaWatch.getTotalTime()
-		<< "[sec]\n" << "time:" << watch.getTotalTime() << "[sec]*cpu\n\n"
-		<< endl;
+	//----------------------------------------------------------------------------
+	// ここより前は前処理想定
+	//============================================================================
 
-	ofstream ofs("result.csv", std::ios::app);
-	ofs << "gpu preprocess:" << file_name << endl;
-	ofs << ",total" << endl;
-	ofs << "cpu," << watch.getTotalTime() << endl;
-	ofs << "gpu," << cudaWatch.getTotalTime() << "\n" << endl;
-	watch.clear();
-	cudaWatch.clear();
+	//----------------------------------------------------------------------------
+	// Encode
+	//============================================================================
+	//----------------------------------------------------------------------------
+	// 画像読み込み
+	//============================================================================
+	BitmapCVUtil result(width, height, 8, source.getBytePerPixel());
 
-//----------------------------------------------------------------------------
-//
-//
-//
-// ここより前は前処理想定
-//
-//
-//
-//
-//============================================================================
+	//----------------------------------------------------------------------------
+	// メモリ転送
+	//============================================================================
+	cudaMemcpy(src_d, source.getRawData(), sizeof(byte) * width * height * 3, cudaMemcpyHostToDevice);
 
-//----------------------------------------------------------------------------
-//
-//
-//
-// Encode
-//
-//
-//
-//
-//============================================================================
+	//----------------------------------------------------------------------------
+	// RGB->yuv
+	//============================================================================
+	gpu_color_trans_Y<<<Dg0_0, Db0_0>>>(src_d, ycc_d, trans_table_Y.device_data());
+	gpu_color_trans_C<<<Dg0_0, Db0_0>>>(src_d, ycc_d, trans_table_C.device_data(), height, C_size);
 
-// ループ想定
-//----------------------------------------------------------------------------
-// 画像読み込み
-//============================================================================
-	cout << "--load image." << endl;
-	UtilCVImage *p_cvimg_dst = utilCV_CreateImage(sizeX, sizeY, 8,
-		p_cvimg_src->im.px_byte);
-
-//----------------------------------------------------------------------------
-// メモリ転送
-//============================================================================
-	cout << "--start gpu encode." << endl;
-	cout << "@start timer." << endl;
-	watch.start();
-	cudaWatch.start();
-
-	cout << "--transfer memory to device." << endl;
-	cudaMemcpy(src_d, (unsigned char*) p_cvimg_src->im.p_buf,
-		sizeof(byte) * sizeX * sizeY * 3, cudaMemcpyHostToDevice);
-
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-
-//----------------------------------------------------------------------------
-// RGB->yuv
-//============================================================================
-	cout << "--start color conversion." << endl;
-	watch.start();
-	cudaWatch.start();
-	gpu_color_trans_Y<<<Dg0_0, Db0_0>>>(src_d, ycc_d, trans_Y_d);
-	gpu_color_trans_C<<<Dg0_0, Db0_0>>>(src_d, ycc_d, trans_C_d, sizeY, C_size);
-
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-
-//----------------------------------------------------------------------------
-// DCT
-//============================================================================
-	cout << "--start DCT." << endl;
-	watch.start();
-	cudaWatch.start();
+	//----------------------------------------------------------------------------
+	// DCT
+	//============================================================================
 	gpu_dct_0<<<Dg1, Db1>>>(ycc_d, f_d, CosT_d);
 	gpu_dct_1<<<Dg1, Db1>>>(f_d, coef_d, CosT_d);
 
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-
-//----------------------------------------------------------------------------
-// 量子化
-//============================================================================
-	cout << "--start gpu_zig_quantize." << endl;
-	watch.start();
-	cudaWatch.start();
+	//----------------------------------------------------------------------------
+	// 量子化
+	//============================================================================
 	gpu_zig_quantize_Y<<<Dg2_0, Db2_0>>>(coef_d, qua_d, zigzag_d, Qua_Y_d);
-	gpu_zig_quantize_C<<<Dg2_1, Db2_1>>>(coef_d, qua_d, zigzag_d, Qua_C_d,
-		size);
+	gpu_zig_quantize_C<<<Dg2_1, Db2_1>>>(coef_d, qua_d, zigzag_d, Qua_C_d, Y_size);
+	//----------------------------------------------------------------------------
+	// ハフマン符号化
+	//============================================================================
+	gpu_huffman_mcu<<<Dg3_0, Db3_0>>>(qua_d, GPUmOBSP.device_data(), buf_d.getWriteBufAddress(), buf_d.getEndOfBuf(), width, height);
 
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
+	// 逐次処理のためCPUに戻す
+	GPUmOBSP.syncHostMemory();
+	cpu_huffman_middle(GPUmOBSP.host_data(), width, height, dst_NumBits.data());
+	GPUmOBSP.syncDeviceMemory();
 
-//----------------------------------------------------------------------------
-// ハフマン符号化
-//============================================================================
-	cout << "--start huffman_encode." << endl;
-	watch.start();
-	cudaWatch.start();
+	gpu_huffman_write_devide0<<<Dg3_1, Db3_1>>>(GPUmOBSP.device_data(), buf_d.getWriteBufAddress(), mHeadOfBufP_d, width, height);
+	gpu_huffman_write_devide1<<<Dg3_1, Db3_1>>>(GPUmOBSP.device_data(), buf_d.getWriteBufAddress(), mHeadOfBufP_d, width, height);
+	gpu_huffman_write_devide2<<<Dg3_1, Db3_1>>>(GPUmOBSP.device_data(), buf_d.getWriteBufAddress(), mHeadOfBufP_d, width, height);
 
-	gpu_huffman_mcu<<<Dg3_0, Db3_0>>>(qua_d, GPUmOBSP_d, buf_d.WriteBufAddress,
-		buf_d.EndOfBuf, sizeX, sizeY);
+	//----------------------------------------------------------------------------
+	// 結果メモリ転送 :出力は「dst_dataとdst_NumBits」の２つ
+	//============================================================================
+	int dst_size = GPUmOBSP[YCC_size / 64 - 1].mBytePos + (GPUmOBSP[YCC_size / 64 - 1].mBitPos == 7 ? 0 : 1);
+	ByteBuffer dst_data(dst_size);
+	cudaMemcpy(dst_data.data(), mHeadOfBufP_d, sizeof(byte) * dst_size, cudaMemcpyDeviceToHost);
 
-// 逐次処理のためCPUに戻す
-	cudaMemcpy(GPUmOBSP, GPUmOBSP_d, sizeof(GPUOutBitStream) * (YCC_size / 64),
-		cudaMemcpyDeviceToHost);
-	cpu_huffman_middle(GPUmOBSP, sizeX, sizeY, dst_NumBits);
-	cudaMemcpy(GPUmOBSP_d, GPUmOBSP, sizeof(GPUOutBitStream) * (YCC_size / 64),
-		cudaMemcpyHostToDevice);
+	//----------------------------------------------------------------------------
+	// Decode
+	//============================================================================
+	//----------------------------------------------------------------------------
+	// メモリ確保
+	//============================================================================
+	InBitStream *mIBSP = new InBitStream(dst_data.data(), dst_size);
+	IntBuffer c_qua(width * height + 2 * (width / 2) * (height / 2));
 
-	gpu_huffman_write_devide0<<<Dg3_1, Db3_1>>>(GPUmOBSP_d,
-		buf_d.WriteBufAddress, mHeadOfBufP_d, sizeX, sizeY);
-	gpu_huffman_write_devide1<<<Dg3_1, Db3_1>>>(GPUmOBSP_d,
-		buf_d.WriteBufAddress, mHeadOfBufP_d, sizeX, sizeY);
-	gpu_huffman_write_devide2<<<Dg3_1, Db3_1>>>(GPUmOBSP_d,
-		buf_d.WriteBufAddress, mHeadOfBufP_d, sizeX, sizeY);
-
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-
-//----------------------------------------------------------------------------
-// 結果メモリ転送 :出力は「dst_dataとdst_NumBits」の２つ
-//============================================================================
-	cout << "--transfer memory to host." << endl;
-	int dst_size = GPUmOBSP[YCC_size / 64 - 1].mBytePos
-		+ (GPUmOBSP[YCC_size / 64 - 1].mBitPos == 7 ? 0 : 1);
-	char *dst_data = (char *) malloc(sizeof(char) * dst_size);
-	cudaMemcpy(dst_data, mHeadOfBufP_d, sizeof(byte) * dst_size,
-		cudaMemcpyDeviceToHost);
-
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-	cout << "@end timer." << endl;
-	cout << "\n\nGPU ENCODING STATE\n" << "size:" << sizeX * sizeY * 3 << " -> "
-		<< dst_size << "\n" << "time:" << cudaWatch.getTotalTime() << "[sec]\n"
-		<< "time:" << watch.getTotalTime() << "[sec]*cpu\n\n" << endl;
-
-	ofs << "gpu encode:" << file_name << endl;
-	ofs << ",transfer memory," << "color conversion," << "DCT,"
-		<< "zig_quantize," << "huffman," << "transfer memory," << "total"
-		<< endl;
-	ofs << "cpu,";
-	for (int i = 0; i < watch.getLapCount(); ++i) {
-		ofs << watch.getLapList()[i] << ",";
-	}
-	ofs << watch.getTotalTime() << endl;
-	ofs << "gpu,";
-	for (int i = 0; i < cudaWatch.getLapCount(); ++i) {
-		ofs << cudaWatch.getLapList()[i] << ",";
-	}
-	ofs << cudaWatch.getTotalTime() << "\n" << endl;
-	watch.clear();
-	cudaWatch.clear();
-//----------------------------------------------------------------------------
-//
-//
-// Decode
-//
-//
-//
-//
-//
-//============================================================================
-	cout << "--start gpu decode." << endl;
-	cout << "@start timer." << endl;
-
-//----------------------------------------------------------------------------
-// メモリ確保
-//============================================================================
-	cout << "--start memory allocation." << endl;
-	watch.start();
-	cudaWatch.start();
-	InBitStream *mIBSP = new InBitStream(dst_data, dst_size);
-	int* c_qua = (int*) (malloc(
-		sizeof(int) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2))));
-
-//並列展開するためのサイズ情報を入れるための構造体
+	//並列展開するためのサイズ情報を入れるための構造体
 	GPUInBitStream *GPUmIBSP = new GPUInBitStream[YCC_size / 64]; //
 	GPUInBitStream *GPUmIBSP_d;
 	cudaMalloc((void**) &GPUmIBSP_d, sizeof(GPUInBitStream) * (YCC_size / 64));
-	cudaMemcpy(GPUmIBSP_d, GPUmIBSP, sizeof(GPUInBitStream) * (YCC_size / 64),
-		cudaMemcpyHostToDevice);
+	cudaMemcpy(GPUmIBSP_d, GPUmIBSP, sizeof(GPUInBitStream) * (YCC_size / 64), cudaMemcpyHostToDevice);
 
-//生データを入れるためのバッファ（全体バッファ）
+	//生データを入れるためのバッファ（全体バッファ）
 	GPUCInBitStream_BufP IbufP;
 	cudaMalloc((void**) &(IbufP.mHeadOfBufP), dst_size);
 	cudaMemset(IbufP.mHeadOfBufP, 0, dst_size);
 
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-
-//----------------------------------------------------------------------------
-// ハフマン復号
-//============================================================================
-	cout << "--start decode_huffman." << endl;
-	watch.start();
-	cudaWatch.start();
-// CPU
-	decode_huffman(mIBSP, c_qua, sizeX, sizeY);
-// GPU:GPUInstream.hにバグがある可能性もあるので留意
-	cudaMemcpy(qua_d, c_qua,
-		sizeof(int) * (sizeX * sizeY + 2 * (sizeX / 2) * (sizeY / 2)),
+	//----------------------------------------------------------------------------
+	// ハフマン復号
+	//============================================================================
+	// CPU
+	decode_huffman(mIBSP, c_qua.data(), width, height);
+	// GPU:GPUInstream.hにバグがある可能性もあるので留意
+	cudaMemcpy(qua_d, c_qua.data(), sizeof(int) * (width * height + 2 * (width / 2) * (height / 2)),
 		cudaMemcpyHostToDevice);
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-//----------------------------------------------------------------------------
-// 逆量子化
-//============================================================================
-	cout << "--start gpu_izig_quantize." << endl;
-	watch.start();
-	cudaWatch.start();
+
+	//----------------------------------------------------------------------------
+	// 逆量子化
+	//============================================================================
 	gpu_izig_quantize_Y<<<Dg2_0, Db2_0>>>(qua_d, coef_d, zigzag_d, Qua_Y_d);
-	gpu_izig_quantize_C<<<Dg2_1, Db2_1>>>(qua_d, coef_d, zigzag_d, Qua_C_d,
-		size);
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-//----------------------------------------------------------------------------
-// 逆DCT
-//============================================================================
-	cout << "--start Inv-DCT." << endl;
-	watch.start();
-	cudaWatch.start();
+	gpu_izig_quantize_C<<<Dg2_1, Db2_1>>>(qua_d, coef_d, zigzag_d, Qua_C_d, Y_size);
+
+	//----------------------------------------------------------------------------
+	// 逆DCT
+	//============================================================================
 	gpu_idct_0<<<Dg1, Db1>>>(coef_d, f_d, ICosT_d);
 	gpu_idct_1<<<Dg1, Db1>>>(f_d, ycc_d, ICosT_d);
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-//----------------------------------------------------------------------------
-// yuv->RGB
-//============================================================================
-	cout << "--start color conversion." << endl;
-	watch.start();
-	cudaWatch.start();
-	gpu_color_itrans<<<Dg0_0, Db0_0>>>(ycc_d, src_d, itrans_Y_d, itrans_C_d,
-		C_size);
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
-//----------------------------------------------------------------------------
-// 結果転送
-//============================================================================
-	watch.start();
-	cudaWatch.start();
 
-	cudaMemcpy((byte*) p_cvimg_dst->im.p_buf, src_d,
-		sizeof(byte) * sizeX * sizeY * 3, cudaMemcpyDeviceToHost);
+	//----------------------------------------------------------------------------
+	// yuv->RGB
+	//============================================================================
+	gpu_color_itrans<<<Dg0_0, Db0_0>>>(ycc_d, src_d, itrans_table_Y.device_data(), itrans_table_C.device_data(), C_size);
 
-	watch.lap();
-	watch.stop();
-	cudaWatch.lap();
-	cudaWatch.stop();
+	//----------------------------------------------------------------------------
+	// 結果転送
+	//============================================================================
+	cudaMemcpy((byte*) result.getRawData(), src_d, sizeof(byte) * width * height * 3, cudaMemcpyDeviceToHost);
 
-	cout << "@end timer." << endl;
-	cout << "\n\nGPU DECODING STATE\n" << "time:" << cudaWatch.getTotalTime()
-		<< "[sec]\n" << "time:" << watch.getTotalTime() << "[sec]*cpu\n\n"
-		<< endl;
-
-	ofs << "gpu decode:" << file_name << endl;
-	ofs << ",allocation," << "huffman," << "zig_quantize," << "Inv-DCT,"
-		<< "color conversion," << "transfer memory," << "total" << endl;
-	ofs << "cpu,";
-	for (int i = 0; i < watch.getLapCount(); ++i) {
-		ofs << watch.getLapList()[i] << ",";
-	}
-	ofs << watch.getTotalTime() << endl;
-	ofs << "gpu,";
-	for (int i = 0; i < cudaWatch.getLapCount(); ++i) {
-		ofs << cudaWatch.getLapList()[i] << ",";
-	}
-	ofs << cudaWatch.getTotalTime() << "\n" << endl;
-	watch.clear();
-	cudaWatch.clear();
-
-	cout << "save imege..." << endl;
 	out_file_name = "gpu_" + out_file_name;
-	utilCV_SaveImage(out_file_name.c_str(), p_cvimg_dst);
+	result.saveToFile(out_file_name);
 
-	cout << "end gpu process." << endl;
-	cout << "------------------------------------------------------\n\n"
-		<< endl;
-
-//----------------------------------------------------------------------------
-// 開放処理
-//============================================================================
-	free(trans_table_Y);
-	free(trans_table_C);
-
-	free(c_qua);
-	free(dst_data);
-
-	delete[] GPUmOBSP;
-
-	cudaFree(trans_Y_d);
-	cudaFree(trans_C_d);
+	//----------------------------------------------------------------------------
+	// 開放処理
+	//============================================================================
 	cudaFree(CosT_d);
 	cudaFree(Qua_Y_d);
 	cudaFree(Qua_C_d);
 	cudaFree(zigzag_d);
 
-	cudaFree(itrans_Y_d);
-	cudaFree(itrans_C_d);
 	cudaFree(ICosT_d);
 
 	cudaFree(src_d);
@@ -549,12 +297,7 @@ void gpu_exec(int argc, char *argv[]) {
 	cudaFree(coef_d);
 	cudaFree(f_d);
 	cudaFree(qua_d);
-	cudaFree(GPUmOBSP_d);
-	cudaFree(buf_d.HeadOfBuf);
 	cudaFree(mHeadOfBufP_d);
-
-	utilCV_ReleaseImage(&p_cvimg_src);
-	utilCV_ReleaseImage(&p_cvimg_dst);
 
 	delete mIBSP;
 }
