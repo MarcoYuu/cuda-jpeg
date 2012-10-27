@@ -16,16 +16,10 @@
 #define __host__
 #endif
 
-GPUOutBitStream::GPUOutBitStream() :
+GPUOutBitStreamState::GPUOutBitStreamState() :
 	mBytePos(0),
 	mBitPos(7), // 最上位ビット
 	mWriteFlag(1), // アクセス許可
 	mNumBits(0) {
 }
-
-//void InitGPUBuffer(GPUOutBitStreamBufferPointer* bp, int size) {
-//	cudaMemset(bp->HeadOfBuf, 0, sizeof(byte) * size);
-//	bp->WriteBufAddress = bp->HeadOfBuf;
-//	bp->EndOfBuf = bp->HeadOfBuf + size; // バッファの最終アドレス
-//}
 

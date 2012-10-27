@@ -62,19 +62,19 @@ __global__ void gpu_izig_quantize_C(int *src_qua, int *dst_coef, int size);
 //-------------------------------------------------------------------
 // Huffman Coding
 //-------------------------------------------------------------------
-__global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBufP, byte *mEndOfBufP,
+__global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStreamState *mOBSP, byte *mBufP, byte *mEndOfBufP,
 	int sizeX, int sizeY);
 
 //完全逐次処理、CPUで行った方が圧倒的に速い
-void cpu_huffman_middle(GPUOutBitStream *ImOBSP, int sizeX, int sizeY, byte* dst_NumBits);
+void cpu_huffman_middle(GPUOutBitStreamState *ImOBSP, int sizeX, int sizeY, byte* dst_NumBits);
 
 //排他処理のため3つに分ける
 //1MCUは最小4bit(EOBのみ)なので1Byteのバッファに最大3MCUが競合する。だから3つに分ける。
-__global__ void gpu_huffman_write_devide0(GPUOutBitStream *mOBSP, byte *mBufP, byte *OmBufP,
+__global__ void gpu_huffman_write_devide0(GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
 	int sizeX, int sizeY);
-__global__ void gpu_huffman_write_devide1(GPUOutBitStream *mOBSP, byte *mBufP, byte *OmBufP,
+__global__ void gpu_huffman_write_devide1(GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
 	int sizeX, int sizeY);
-__global__ void gpu_huffman_write_devide2(GPUOutBitStream *mOBSP, byte *mBufP, byte *OmBufP,
+__global__ void gpu_huffman_write_devide2(GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
 	int sizeX, int sizeY);
 
 #endif /* GPU_JPEG_H_ */

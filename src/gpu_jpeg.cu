@@ -198,7 +198,7 @@ __global__ void gpu_izig_quantize_C(int *src_qua, int *dst_coef, int size) {
 
 }
 
-__global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBufP, byte *mEndOfBufP,
+__global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStreamState *dst, byte *mBufP, byte *mEndOfBufP,
 	int sizeX, int sizeY) { //,
 	int id = blockIdx.x * blockDim.x + threadIdx.x; //マクロブロック番号
 	int mid = 64 * (blockIdx.x * blockDim.x + threadIdx.x);
@@ -227,11 +227,11 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 			absC >>= 1;
 			dIdx++;
 		}
-		SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kYDcCodeT_d[dIdx], kYDcSizeT_d[dIdx]);
+		SetBits(&dst[id], tmp_p, mEndOfBufP, kYDcCodeT_d[dIdx], kYDcSizeT_d[dIdx]);
 		if (dIdx) {
 			if (diff < 0)
 				diff--;
-			SetBits(&mOBSP[id], tmp_p, mEndOfBufP, diff, dIdx);
+			SetBits(&dst[id], tmp_p, mEndOfBufP, diff, dIdx);
 		}
 		run = 0;
 
@@ -240,7 +240,7 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 			absC = abs(src_qua[mid + i]);
 			if (absC) {
 				while (run > 15) {
-					SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kYAcCodeT_d[kYZRLidx_d],
+					SetBits(&dst[id], tmp_p, mEndOfBufP, kYAcCodeT_d[kYZRLidx_d],
 						kYAcSizeT_d[kYZRLidx_d]);
 					run -= 16;
 				}
@@ -250,15 +250,15 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 					s++;
 				}
 				aIdx = run * 10 + s + (run == 15);
-				SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kYAcCodeT_d[aIdx], kYAcSizeT_d[aIdx]);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, kYAcCodeT_d[aIdx], kYAcSizeT_d[aIdx]);
 				v = src_qua[mid + i];
 				if (v < 0)
 					v--;
-				SetBits(&mOBSP[id], tmp_p, mEndOfBufP, v, s);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, v, s);
 				run = 0;
 			} else {
 				if (i == 63) {
-					SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kYAcCodeT_d[kYEOBidx_d],
+					SetBits(&dst[id], tmp_p, mEndOfBufP, kYAcCodeT_d[kYEOBidx_d],
 						kYAcSizeT_d[kYEOBidx_d]);
 				} else
 					run++;
@@ -276,11 +276,11 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 			absC >>= 1;
 			dIdx++;
 		}
-		SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kCDcCodeT_d[dIdx], kCDcSizeT_d[dIdx]);
+		SetBits(&dst[id], tmp_p, mEndOfBufP, kCDcCodeT_d[dIdx], kCDcSizeT_d[dIdx]);
 		if (dIdx) {
 			if (diff < 0)
 				diff--;
-			SetBits(&mOBSP[id], tmp_p, mEndOfBufP, diff, dIdx);
+			SetBits(&dst[id], tmp_p, mEndOfBufP, diff, dIdx);
 		}
 		run = 0;
 
@@ -289,7 +289,7 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 			absC = abs(src_qua[mid + i]);
 			if (absC) {
 				while (run > 15) {
-					SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kCAcCodeT_d[kCZRLidx_d],
+					SetBits(&dst[id], tmp_p, mEndOfBufP, kCAcCodeT_d[kCZRLidx_d],
 						kCAcSizeT_d[kCZRLidx_d]);
 					run -= 16;
 				}
@@ -299,15 +299,15 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 					s++;
 				}
 				aIdx = run * 10 + s + (run == 15);
-				SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kCAcCodeT_d[aIdx], kCAcSizeT_d[aIdx]);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, kCAcCodeT_d[aIdx], kCAcSizeT_d[aIdx]);
 				v = src_qua[mid + i];
 				if (v < 0)
 					v--;
-				SetBits(&mOBSP[id], tmp_p, mEndOfBufP, v, s);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, v, s);
 				run = 0;
 			} else {
 				if (i == 63) {
-					SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kCAcCodeT_d[kCEOBidx_d],
+					SetBits(&dst[id], tmp_p, mEndOfBufP, kCAcCodeT_d[kCEOBidx_d],
 						kCAcSizeT_d[kCEOBidx_d]);
 				} else
 					run++;
@@ -325,11 +325,11 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 			absC >>= 1;
 			dIdx++;
 		}
-		SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kCDcCodeT_d[dIdx], kCDcSizeT_d[dIdx]);
+		SetBits(&dst[id], tmp_p, mEndOfBufP, kCDcCodeT_d[dIdx], kCDcSizeT_d[dIdx]);
 		if (dIdx) {
 			if (diff < 0)
 				diff--;
-			SetBits(&mOBSP[id], tmp_p, mEndOfBufP, diff, dIdx);
+			SetBits(&dst[id], tmp_p, mEndOfBufP, diff, dIdx);
 		}
 		run = 0;
 
@@ -338,7 +338,7 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 			absC = abs(src_qua[mid + i]);
 			if (absC) {
 				while (run > 15) {
-					SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kCAcCodeT_d[kCZRLidx_d],
+					SetBits(&dst[id], tmp_p, mEndOfBufP, kCAcCodeT_d[kCZRLidx_d],
 						kCAcSizeT_d[kCZRLidx_d]);
 					run -= 16;
 				}
@@ -348,15 +348,15 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 					s++;
 				}
 				aIdx = run * 10 + s + (run == 15);
-				SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kCAcCodeT_d[aIdx], kCAcSizeT_d[aIdx]);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, kCAcCodeT_d[aIdx], kCAcSizeT_d[aIdx]);
 				v = src_qua[mid + i];
 				if (v < 0)
 					v--;
-				SetBits(&mOBSP[id], tmp_p, mEndOfBufP, v, s);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, v, s);
 				run = 0;
 			} else {
 				if (i == 63) {
-					SetBits(&mOBSP[id], tmp_p, mEndOfBufP, kCAcCodeT_d[kCEOBidx_d],
+					SetBits(&dst[id], tmp_p, mEndOfBufP, kCAcCodeT_d[kCEOBidx_d],
 						kCAcSizeT_d[kCEOBidx_d]);
 				} else
 					run++;
@@ -366,16 +366,15 @@ __global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStream *mOBSP, byte *mBuf
 }
 
 //完全逐次処理、CPUで行った方が圧倒的に速い
-void cpu_huffman_middle(GPUOutBitStream *ImOBSP, int sizeX, int sizeY, byte* dst_NumBits) { //,
+void cpu_huffman_middle(GPUOutBitStreamState *ImOBSP, int sizeX, int sizeY, byte* num_bits) { //,
 	int i;
 	const int blsize = (sizeX * sizeY + sizeX * sizeY / 2) / 64; //2*(size/2)*(size/2)
 
 	//BitPosは7が上位で0が下位なので注意,更に位置なので注意。7なら要素は0,0なら要素は7
-
 	ImOBSP[0].mNumBits = ImOBSP[0].mBytePos * 8 + (7 - ImOBSP[0].mBitPos);
 
 	//出力用、構造体無駄な要素が入っちゃうので
-	dst_NumBits[0] = ImOBSP[0].mNumBits;
+	num_bits[0] = ImOBSP[0].mNumBits;
 
 	ImOBSP[0].mBytePos = 0;
 	ImOBSP[0].mBitPos = 7;
@@ -385,7 +384,7 @@ void cpu_huffman_middle(GPUOutBitStream *ImOBSP, int sizeX, int sizeY, byte* dst
 		ImOBSP[i].mNumBits = ImOBSP[i].mBytePos * 8 + (7 - ImOBSP[i].mBitPos);
 
 		//出力用、構造体無駄な要素が入っちゃうので
-		dst_NumBits[i] = ImOBSP[i].mNumBits;
+		num_bits[i] = ImOBSP[i].mNumBits;
 
 		ImOBSP[i].mBitPos = ImOBSP[i - 1].mBitPos;
 		ImOBSP[i].mBytePos = ImOBSP[i - 1].mBytePos;
@@ -397,27 +396,26 @@ void cpu_huffman_middle(GPUOutBitStream *ImOBSP, int sizeX, int sizeY, byte* dst
 			ImOBSP[i].mBitPos += 8;
 		}
 		ImOBSP[i].mBytePos += ImOBSP[i - 1].mNumBits / 8;
-
 	}
 }
 
 //排他処理のため3つに分ける
 //1MCUは最小4bit(EOBのみ)なので1Byteのバッファに最大3MCUが競合する。だから3つに分ける。
-__global__ void gpu_huffman_write_devide0(GPUOutBitStream *mOBSP, byte *mBufP, byte *OmBufP,
+__global__ void gpu_huffman_write_devide0(GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
 	int sizeX, int sizeY) { //,
 	int id = (blockIdx.x * blockDim.x + threadIdx.x); //マクロブロック番号
 	if (id % 3 == 0) {
 		WriteBits(&mOBSP[id], OmBufP, &mBufP[id * MBS], id);
 	}
 }
-__global__ void gpu_huffman_write_devide1(GPUOutBitStream *mOBSP, byte *mBufP, byte *OmBufP,
+__global__ void gpu_huffman_write_devide1(GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
 	int sizeX, int sizeY) { //,
 	int id = (blockIdx.x * blockDim.x + threadIdx.x); //マクロブロック番号
 	if (id % 3 == 1) {
 		WriteBits(&mOBSP[id], OmBufP, &mBufP[id * MBS], id);
 	}
 }
-__global__ void gpu_huffman_write_devide2(GPUOutBitStream *mOBSP, byte *mBufP, byte *OmBufP,
+__global__ void gpu_huffman_write_devide2(GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
 	int sizeX, int sizeY) { //,
 	int id = (blockIdx.x * blockDim.x + threadIdx.x); //マクロブロック番号
 	if (id % 3 == 2) {

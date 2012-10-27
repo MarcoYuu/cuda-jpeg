@@ -14,27 +14,10 @@ using namespace std;
 #include "utils/encoder_tables.h"
 
 //----------------------------------------------------------------------------
-// コマンドライン引数解析
-//============================================================================
-static void parse_arg(int argc, char *argv[], string &in_file, string &out_file) {
-	if (argc == 3) {
-		in_file = argv[1];
-		out_file = argv[2];
-	} else {
-		cout << "Please input source file." << endl;
-		abort();
-	}
-}
-
-//----------------------------------------------------------------------------
 // CPU Jpeg圧縮テストルーチン
 //============================================================================
-void cpu_exec(int argc, char *argv[]) {
+void cpu_exec(const std::string &file_name, const std::string &out_file_name) {
 	StopWatch watch(StopWatch::CPU_OPTIMUM);
-
-	// コマンドライン引数からファイル名取得
-	string file_name, out_file_name;
-	parse_arg(argc, argv, file_name, out_file_name);
 
 	// 画像データを読み出し
 	BitmapCVUtil source(file_name, BitmapCVUtil::RGB_COLOR);
@@ -47,9 +30,9 @@ void cpu_exec(int argc, char *argv[]) {
 
 	ByteBuffer encode_result;
 	{
-		std::cout << "-----------------------------------------------" << std::endl;
-		std::cout << " Encode" << std::endl;
-		std::cout << "-----------------------------------------------" << std::endl;
+		std::cout << "	-----------------------------------------------" << std::endl;
+		std::cout << "	 Encode" << std::endl;
+		std::cout << "	-----------------------------------------------" << std::endl;
 
 		JpegEncoder encoder(width, height);
 
@@ -58,14 +41,14 @@ void cpu_exec(int argc, char *argv[]) {
 			encode_result);
 		watch.lap();
 		watch.stop();
-		std::cout << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
+		std::cout << "	" << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
 	}
 
 	BitmapCVUtil result(width, height, 8, source.getBytePerPixel());
 	{
-		std::cout << "-----------------------------------------------" << std::endl;
-		std::cout << " Decode" << std::endl;
-		std::cout << "-----------------------------------------------" << std::endl;
+		std::cout << "	-----------------------------------------------" << std::endl;
+		std::cout << "	 Decode" << std::endl;
+		std::cout << "	-----------------------------------------------" << std::endl;
 
 		JpegDecoder decoder(width, height);
 
@@ -74,7 +57,7 @@ void cpu_exec(int argc, char *argv[]) {
 			width * height * 3);
 		watch.lap();
 		watch.stop();
-		std::cout << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
+		std::cout << "	" << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
 	}
 
 	result.saveToFile("cpu_decoder_" + out_file_name);
