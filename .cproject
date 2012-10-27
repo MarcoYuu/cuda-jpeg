@@ -41,23 +41,10 @@
 							</tool>
 							<tool command="nvcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="nvcc.linker.base.1152999458" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.libs.1899206198" name="ライブラリー (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="opencv_calib3d"/>
-									<listOptionValue builtIn="false" value="opencv_contrib"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
-									<listOptionValue builtIn="false" value="opencv_features2d"/>
-									<listOptionValue builtIn="false" value="opencv_flann"/>
-									<listOptionValue builtIn="false" value="opencv_gpu"/>
 									<listOptionValue builtIn="false" value="opencv_highgui"/>
-									<listOptionValue builtIn="false" value="opencv_imgproc"/>
-									<listOptionValue builtIn="false" value="opencv_legacy"/>
-									<listOptionValue builtIn="false" value="opencv_ml"/>
-									<listOptionValue builtIn="false" value="opencv_nonfree"/>
-									<listOptionValue builtIn="false" value="opencv_objdetect"/>
-									<listOptionValue builtIn="false" value="opencv_photo"/>
-									<listOptionValue builtIn="false" value="opencv_stitching"/>
-									<listOptionValue builtIn="false" value="opencv_ts"/>
-									<listOptionValue builtIn="false" value="opencv_video"/>
-									<listOptionValue builtIn="false" value="opencv_videostab"/>
+									<listOptionValue builtIn="false" value="opencv_core"/>
+									<listOptionValue builtIn="false" value="opencv_highgui"/>
 								</option>
 								<inputType id="nvcc.linker.input.738260869" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -89,27 +76,12 @@
 						<entry flags="BUILTIN" kind="includePath" name="/usr/local/include"/>
 					</externalSetting>
 					<externalSetting contentTypes="org.eclipse.cdt.managedbuilder.core.compiledObjectFile">
-						<entry flags="" kind="libraryFile" name="opencv_calib3d"/>
-						<entry flags="" kind="libraryFile" name="opencv_contrib"/>
 						<entry flags="" kind="libraryFile" name="opencv_core"/>
-						<entry flags="" kind="libraryFile" name="opencv_features2d"/>
-						<entry flags="" kind="libraryFile" name="opencv_flann"/>
-						<entry flags="" kind="libraryFile" name="opencv_gpu"/>
 						<entry flags="" kind="libraryFile" name="opencv_highgui"/>
-						<entry flags="" kind="libraryFile" name="opencv_imgproc"/>
-						<entry flags="" kind="libraryFile" name="opencv_legacy"/>
-						<entry flags="" kind="libraryFile" name="opencv_ml"/>
-						<entry flags="" kind="libraryFile" name="opencv_nonfree"/>
-						<entry flags="" kind="libraryFile" name="opencv_objdetect"/>
-						<entry flags="" kind="libraryFile" name="opencv_photo"/>
-						<entry flags="" kind="libraryFile" name="opencv_stitching"/>
-						<entry flags="" kind="libraryFile" name="opencv_ts"/>
-						<entry flags="" kind="libraryFile" name="opencv_video"/>
-						<entry flags="" kind="libraryFile" name="opencv_videostab"/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
-			<storageModule atk="false" atkmm-1.6="false" banshee-collection-indexer="false" banshee-core="false" banshee-hyena="false" banshee-hyena-data-sqlite="false" banshee-hyena-gui="false" banshee-lastfm="false" banshee-lastfm-gui="false" banshee-mono-media="false" banshee-musicbrainz="false" banshee-nowplaying="false" banshee-services="false" banshee-thickclient="false" banshee-webbrowser="false" cairo="false" cairo-fc="false" cairo-ft="false" cairo-gobject="false" cairo-pdf="false" cairo-png="false" cairo-ps="false" cairo-svg="false" cairo-xcb="false" cairo-xcb-shm="false" cairo-xlib="false" cairo-xlib-xrender="false" cairomm-1.0="false" cairomm-ft-1.0="false" cairomm-pdf-1.0="false" cairomm-png-1.0="false" cairomm-ps-1.0="false" cairomm-svg-1.0="false" cairomm-xlib-1.0="false" cairomm-xlib-xrender-1.0="false" compositeproto="false" damageproto="false" dbus-python="false" dri="false" fixesproto="false" fontconfig="false" fontutil="false" freetype2="false" gdk-2.0="false" gdk-3.0="false" gdk-pixbuf-2.0="false" gdk-pixbuf-xlib-2.0="false" gdk-x11-2.0="false" gdk-x11-3.0="false" gdkmm-2.4="false" gdkmm-3.0="false" ginn="false" gio-2.0="false" gio-unix-2.0="false" giomm-2.4="false" gl="false" glew="false" glib-2.0="false" glibmm-2.4="false" glibmm-utils="false" glu="false" gmodule-2.0="false" gmodule-export-2.0="false" gmodule-no-export-2.0="false" gnome-icon-theme="false" gobject-2.0="false" gstreamer-0.10="false" gstreamer-app-0.10="false" gstreamer-audio-0.10="false" gstreamer-base-0.10="false" gstreamer-cdda-0.10="false" gstreamer-check-0.10="false" gstreamer-controller-0.10="false" gstreamer-dataprotocol-0.10="false" gstreamer-fft-0.10="false" gstreamer-floatcast-0.10="false" gstreamer-interfaces-0.10="false" gstreamer-net-0.10="false" gstreamer-netbuffer-0.10="false" gstreamer-pbutils-0.10="false" gstreamer-plugins-base-0.10="false" gstreamer-riff-0.10="false" gstreamer-rtp-0.10="false" gstreamer-rtsp-0.10="false" gstreamer-sdp-0.10="false" gstreamer-tag-0.10="false" gstreamer-video-0.10="false" gstreamermm-0.10="false" gthread-2.0="false" gtkmm-2.4="false" gtkmm-3.0="false" gtkmm-utils="false" gtkplus-2.0="false" gtkplus-3.0="false" gtkplus-unix-print-2.0="false" gtkplus-unix-print-3.0="false" gtkplus-x11-2.0="false" gtkplus-x11-3.0="false" ibus-table="false" ice="false" inputproto="false" iso-codes="false" kbproto="false" libavcodec="false" libavformat="false" libavutil="false" libcrypto="false" libdrm="false" libdrm_intel="false" libdrm_nouveau="false" libdrm_radeon="false" libgdiplus="false" libkms="false" libpng="false" libpng12="false" libssl="false" libswscale="false" libxml-2.0="false" libxmlplusplus-2.6="false" m17n-db="false" mobile-broadband-provider-info="false" moduleId="packages" nautilus-sendto="false" notify-python="false" opencv="true" openssl="false" pango="false" pangocairo="false" pangoft2="false" pangomm-1.4="false" pangox="false" pangoxft="false" pixman-1="false" pm-utils="false" pthread-stubs="false" pygtksourceview-2.0="false" python="false" python-2.7="false" randrproto="false" renderproto="false" shared-mime-info="false" sigcplusplus-2.0="false" sm="false" tomboy-addins="false" udev="false" udisks="false" usbutils="false" x11="false" xau="false" xbitmaps="false" xcb="false" xcb-render="false" xcb-shm="false" xcomposite="false" xcursor="false" xdamage="false" xdmcp="false" xext="false" xextproto="false" xfixes="false" xft="false" xi="false" xinerama="false" xineramaproto="false" xorg-sgml-doctools="false" xorg-wacom="false" xproto="false" xrandr="false" xrender="false" xt="false" xtrans="false" yelp-xsl="false" zeitgeist-daemon="false" zlib="false"/>
+			<storageModule atk="false" atkmm-1.6="false" banshee-collection-indexer="false" banshee-core="false" banshee-hyena="false" banshee-hyena-data-sqlite="false" banshee-hyena-gui="false" banshee-lastfm="false" banshee-lastfm-gui="false" banshee-mono-media="false" banshee-musicbrainz="false" banshee-nowplaying="false" banshee-services="false" banshee-thickclient="false" banshee-webbrowser="false" cairo="false" cairo-fc="false" cairo-ft="false" cairo-gobject="false" cairo-pdf="false" cairo-png="false" cairo-ps="false" cairo-svg="false" cairo-xcb="false" cairo-xcb-shm="false" cairo-xlib="false" cairo-xlib-xrender="false" cairomm-1.0="false" cairomm-ft-1.0="false" cairomm-pdf-1.0="false" cairomm-png-1.0="false" cairomm-ps-1.0="false" cairomm-svg-1.0="false" cairomm-xlib-1.0="false" cairomm-xlib-xrender-1.0="false" compositeproto="false" damageproto="false" dbus-python="false" dri="false" eigen2="false" fixesproto="false" fontconfig="false" fontutil="false" freetype2="false" gdk-2.0="false" gdk-3.0="false" gdk-pixbuf-2.0="false" gdk-pixbuf-xlib-2.0="false" gdk-x11-2.0="false" gdk-x11-3.0="false" gdkmm-2.4="false" gdkmm-3.0="false" geany="false" ginn="false" gio-2.0="false" gio-unix-2.0="false" giomm-2.4="false" gl="false" glew="false" glib-2.0="false" glibmm-2.4="false" glibmm-utils="false" glu="false" glui="false" gmodule-2.0="false" gmodule-export-2.0="false" gmodule-no-export-2.0="false" gnome-icon-theme="false" gobject-2.0="false" gstreamer-0.10="false" gstreamer-app-0.10="false" gstreamer-audio-0.10="false" gstreamer-base-0.10="false" gstreamer-basevideo-0.10="false" gstreamer-cdda-0.10="false" gstreamer-check-0.10="false" gstreamer-codecparsers-0.10="false" gstreamer-controller-0.10="false" gstreamer-dataprotocol-0.10="false" gstreamer-fft-0.10="false" gstreamer-floatcast-0.10="false" gstreamer-interfaces-0.10="false" gstreamer-net-0.10="false" gstreamer-netbuffer-0.10="false" gstreamer-pbutils-0.10="false" gstreamer-plugins-bad-0.10="false" gstreamer-plugins-base-0.10="false" gstreamer-riff-0.10="false" gstreamer-rtp-0.10="false" gstreamer-rtsp-0.10="false" gstreamer-sdp-0.10="false" gstreamer-tag-0.10="false" gstreamer-video-0.10="false" gstreamermm-0.10="false" gthread-2.0="false" gtkmm-2.4="false" gtkmm-3.0="false" gtkmm-utils="false" gtkplus-2.0="false" gtkplus-3.0="false" gtkplus-unix-print-2.0="false" gtkplus-unix-print-3.0="false" gtkplus-x11-2.0="false" gtkplus-x11-3.0="false" ibus-table="false" ice="false" inputproto="false" iso-codes="false" kbproto="false" libavc1394="false" libavcodec="false" libavformat="false" libavutil="false" libcrypto="false" libdc1394-2="false" libdrm="false" libdrm_intel="false" libdrm_nouveau="false" libdrm_radeon="false" libgdiplus="false" libkms="false" libpcre="false" libpcrecpp="false" libpcreposix="false" libpng="false" libpng12="false" libquvi-scripts="false" libraw1394="false" libssl="false" libswscale="false" libv4l1="false" libv4l2="false" libv4lconvert="false" libva="false" libva-egl="false" libva-glx="false" libva-tpi="false" libva-x11="false" libxine="false" libxml-2.0="false" libxmlplusplus-2.6="false" m17n-db="false" mobile-broadband-provider-info="false" moduleId="packages" nautilus-python="false" nautilus-sendto="false" notify-python="false" ogg="false" opencv="false" opencv_calib3d="false" opencv_contrib="false" opencv_core="true" opencv_features2d="false" opencv_flann="false" opencv_gpu="false" opencv_highgui="true" opencv_imgproc="false" opencv_legacy="false" opencv_ml="false" opencv_nonfree="false" opencv_objdetect="false" opencv_photo="false" opencv_stitching="false" opencv_ts="false" opencv_video="false" opencv_videostab="false" openssl="false" paco="false" pango="false" pangocairo="false" pangoft2="false" pangomm-1.4="false" pangox="false" pangoxft="false" pixman-1="false" pm-utils="false" pthread-stubs="false" pygtksourceview-2.0="false" python="false" python-2.7="false" randrproto="false" renderproto="false" shared-desktop-ontologies="false" shared-mime-info="false" sigcplusplus-2.0="false" slang="false" sm="false" tbb="false" tomboy-addins="false" udev="false" udisks="false" usbutils="false" vo-aacenc="false" vo-amrwbenc="false" vorbis="false" vorbisenc="false" vorbisfile="false" vpx="false" x11="false" xau="false" xbitmaps="false" xcb="false" xcb-render="false" xcb-shm="false" xcomposite="false" xcursor="false" xdamage="false" xdmcp="false" xext="false" xextproto="false" xfixes="false" xft="false" xi="false" xinerama="false" xineramaproto="false" xkeyboard-config="false" xorg-sgml-doctools="false" xorg-wacom="false" xproto="false" xrandr="false" xrender="false" xt="false" xtrans="false" yelp-xsl="false" zeitgeist-daemon="false" zlib="false"/>
 		</cconfiguration>
 		<cconfiguration id="com.nvidia.cuda.ide.configuration.release.654051710">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.nvidia.cuda.ide.configuration.release.654051710" moduleId="org.eclipse.cdt.core.settings" name="Release">
@@ -235,13 +207,13 @@
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.cpp.637445117">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.cu.632062340">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.c.411805777">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.cu.870514610">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.c.411805777">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.cu.632062340">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.c.44154797">

@@ -51,13 +51,14 @@ void cpu_exec(int argc, char *argv[]) {
 		std::cout << " Encode" << std::endl;
 		std::cout << "-----------------------------------------------" << std::endl;
 
-		watch.start();
 		JpegEncoder encoder(width, height);
+
+		watch.start();
+		size_t data_size = encoder.encode((byte*) source.getRawData(), width * height * 3,
+			encode_result);
 		watch.lap();
 		watch.stop();
 		std::cout << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
-
-		size_t data_size = encoder.encode((byte*) source.getRawData(), width * height * 3, encode_result);
 	}
 
 	BitmapCVUtil result(width, height, 8, source.getBytePerPixel());
@@ -66,17 +67,19 @@ void cpu_exec(int argc, char *argv[]) {
 		std::cout << " Decode" << std::endl;
 		std::cout << "-----------------------------------------------" << std::endl;
 
-		watch.start();
 		JpegDecoder decoder(width, height);
+
+		watch.start();
+		decoder.decode(encode_result.data(), encode_result.size(), (byte*) result.getRawData(),
+			width * height * 3);
 		watch.lap();
 		watch.stop();
 		std::cout << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
-
-		decoder.decode(encode_result.data(), encode_result.size(), (byte*) result.getRawData(), width * height * 3);
-		result.saveToFile("cpu_decoder_" + out_file_name);
 	}
 
-	std::cout << "===============================================" << std::endl;
+	result.saveToFile("cpu_decoder_" + out_file_name);
+
+	std::cout << "-----------------------------------------------" << std::endl;
 	std::cout << " Finish CPU Encoding & Decoding" << std::endl;
-	std::cout << "-----------------------------------------------\n\n" << std::endl;
+	std::cout << "===============================================\n\n" << std::endl;
 }
