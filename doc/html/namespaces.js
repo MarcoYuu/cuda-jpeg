@@ -1,6 +1,18 @@
 var namespaces =
 [
     [ "jpeg", "namespacejpeg.html", "namespacejpeg" ],
+    [ "jpeg::cuda", "namespacejpeg_1_1cuda.html", "namespacejpeg_1_1cuda" ],
+    [ "jpeg::cuda::encode_table", "namespacejpeg_1_1cuda_1_1encode__table.html", null ],
+    [ "jpeg::cuda::encode_table::HuffmanEncode", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode.html", null ],
+    [ "jpeg::cuda::encode_table::HuffmanEncode::AC", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1AC.html", null ],
+    [ "jpeg::cuda::encode_table::HuffmanEncode::AC::component", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1AC_1_1component.html", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1AC_1_1component" ],
+    [ "jpeg::cuda::encode_table::HuffmanEncode::AC::luminance", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1AC_1_1luminance.html", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1AC_1_1luminance" ],
+    [ "jpeg::cuda::encode_table::HuffmanEncode::DC", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1DC.html", null ],
+    [ "jpeg::cuda::encode_table::HuffmanEncode::DC::component", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1DC_1_1component.html", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1DC_1_1component" ],
+    [ "jpeg::cuda::encode_table::HuffmanEncode::DC::luminance", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1DC_1_1luminance.html", "namespacejpeg_1_1cuda_1_1encode__table_1_1HuffmanEncode_1_1DC_1_1luminance" ],
+    [ "jpeg::cuda::encode_table::Quantize", "namespacejpeg_1_1cuda_1_1encode__table_1_1Quantize.html", "namespacejpeg_1_1cuda_1_1encode__table_1_1Quantize" ],
+    [ "jpeg::cuda::encode_table::Sampling", "namespacejpeg_1_1cuda_1_1encode__table_1_1Sampling.html", "namespacejpeg_1_1cuda_1_1encode__table_1_1Sampling" ],
+    [ "jpeg::cuda::encode_table::Zigzag", "namespacejpeg_1_1cuda_1_1encode__table_1_1Zigzag.html", "namespacejpeg_1_1cuda_1_1encode__table_1_1Zigzag" ],
     [ "jpeg::encode_table", "namespacejpeg_1_1encode__table.html", "namespacejpeg_1_1encode__table" ],
     [ "jpeg::encode_table::HuffmanDecode", "namespacejpeg_1_1encode__table_1_1HuffmanDecode.html", "namespacejpeg_1_1encode__table_1_1HuffmanDecode" ],
     [ "jpeg::encode_table::HuffmanDecode::AC", "namespacejpeg_1_1encode__table_1_1HuffmanDecode_1_1AC.html", "namespacejpeg_1_1encode__table_1_1HuffmanDecode_1_1AC" ],

@@ -7,6 +7,8 @@ var searchData=
   ['decode_5fhuffman',['decode_huffman',['../namespacejpeg.html#af22e1dc5512e8b1f86e46a902794de79',1,'jpeg']]],
   ['decode_5fhuffman_5fword',['decode_huffman_word',['../namespacejpeg.html#a1425c3b9d076aa84ac788b2e77f20460',1,'jpeg']]],
   ['device_5fdata',['device_data',['../classutil_1_1cuda_1_1device__memory.html#a75e080080672daf53f33cc2b41a82498',1,'util::cuda::device_memory::device_data()'],['../classutil_1_1cuda_1_1device__memory.html#a5f857c9a83a43f00503f0c0f06353fec',1,'util::cuda::device_memory::device_data() const ']]],
+  ['device_5fmemory',['device_memory',['../classutil_1_1cuda_1_1device__memory.html',1,'util::cuda']]],
   ['device_5fmemory',['device_memory',['../classutil_1_1cuda_1_1device__memory.html#aaf0b20138cf20f66b73a610a4ca37d3c',1,'util::cuda::device_memory::device_memory(const device_memory&lt; T &gt; &amp;)'],['../classutil_1_1cuda_1_1device__memory.html#a3a422d0d50b21c79f2950fcd6768f7e2',1,'util::cuda::device_memory::device_memory(size_t size)'],['../classutil_1_1cuda_1_1device__memory.html#a2d00d64b7101c915b2206a2dab6ba4f7',1,'util::cuda::device_memory::device_memory(const T *data, size_t size)']]],
-  ['device_5fmemory',['device_memory',['../classutil_1_1cuda_1_1device__memory.html',1,'util::cuda']]]
+  ['device_5fmemory_3c_20byte_20_3e',['device_memory< byte >',['../classutil_1_1cuda_1_1device__memory.html',1,'util::cuda']]],
+  ['device_5fmemory_3c_20jpeg_3a_3acuda_3a_3agpuoutbitstreamstate_20_3e',['device_memory< jpeg::cuda::GPUOutBitStreamState >',['../classutil_1_1cuda_1_1device__memory.html',1,'util::cuda']]]
 ];
