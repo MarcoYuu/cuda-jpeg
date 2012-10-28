@@ -94,7 +94,7 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 			//----------------------------------------------------------------------------
 			// メモリ転送
 			//============================================================================
-			src.write((byte*) source.getRawData(), width * height * 3);
+			src.write_device((byte*) source.getRawData(), width * height * 3);
 
 			//----------------------------------------------------------------------------
 			// RGB->yuv

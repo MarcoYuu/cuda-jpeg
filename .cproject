@@ -43,8 +43,6 @@
 								<option id="nvcc.linker.option.libs.1899206198" name="ライブラリー (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="opencv_core"/>
 									<listOptionValue builtIn="false" value="opencv_highgui"/>
-									<listOptionValue builtIn="false" value="opencv_core"/>
-									<listOptionValue builtIn="false" value="opencv_highgui"/>
 								</option>
 								<inputType id="nvcc.linker.input.738260869" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -122,23 +120,8 @@
 							</tool>
 							<tool command="nvcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="nvcc.linker.base.1607289057" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.libs.1458696254" name="ライブラリー (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="opencv_calib3d"/>
-									<listOptionValue builtIn="false" value="opencv_contrib"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
-									<listOptionValue builtIn="false" value="opencv_features2d"/>
-									<listOptionValue builtIn="false" value="opencv_flann"/>
-									<listOptionValue builtIn="false" value="opencv_gpu"/>
 									<listOptionValue builtIn="false" value="opencv_highgui"/>
-									<listOptionValue builtIn="false" value="opencv_imgproc"/>
-									<listOptionValue builtIn="false" value="opencv_legacy"/>
-									<listOptionValue builtIn="false" value="opencv_ml"/>
-									<listOptionValue builtIn="false" value="opencv_nonfree"/>
-									<listOptionValue builtIn="false" value="opencv_objdetect"/>
-									<listOptionValue builtIn="false" value="opencv_photo"/>
-									<listOptionValue builtIn="false" value="opencv_stitching"/>
-									<listOptionValue builtIn="false" value="opencv_ts"/>
-									<listOptionValue builtIn="false" value="opencv_video"/>
-									<listOptionValue builtIn="false" value="opencv_videostab"/>
 								</option>
 								<inputType id="nvcc.linker.input.473189971" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -163,23 +146,8 @@
 						<entry flags="BUILTIN" kind="includePath" name="/usr/local/include"/>
 					</externalSetting>
 					<externalSetting contentTypes="org.eclipse.cdt.managedbuilder.core.compiledObjectFile">
-						<entry flags="" kind="libraryFile" name="opencv_calib3d"/>
-						<entry flags="" kind="libraryFile" name="opencv_contrib"/>
 						<entry flags="" kind="libraryFile" name="opencv_core"/>
-						<entry flags="" kind="libraryFile" name="opencv_features2d"/>
-						<entry flags="" kind="libraryFile" name="opencv_flann"/>
-						<entry flags="" kind="libraryFile" name="opencv_gpu"/>
 						<entry flags="" kind="libraryFile" name="opencv_highgui"/>
-						<entry flags="" kind="libraryFile" name="opencv_imgproc"/>
-						<entry flags="" kind="libraryFile" name="opencv_legacy"/>
-						<entry flags="" kind="libraryFile" name="opencv_ml"/>
-						<entry flags="" kind="libraryFile" name="opencv_nonfree"/>
-						<entry flags="" kind="libraryFile" name="opencv_objdetect"/>
-						<entry flags="" kind="libraryFile" name="opencv_photo"/>
-						<entry flags="" kind="libraryFile" name="opencv_stitching"/>
-						<entry flags="" kind="libraryFile" name="opencv_ts"/>
-						<entry flags="" kind="libraryFile" name="opencv_video"/>
-						<entry flags="" kind="libraryFile" name="opencv_videostab"/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>
