@@ -1,0 +1,735 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<title>cuda_jpeg: クラス util::OutBitStream</title>
+
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript">
+  $(document).ready(initResizable);
+</script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+
+</head>
+<body>
+<div id="top"><!-- do not remove this div! -->
+
+
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  
+  
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">cuda_jpeg
+   &#160;<span id="projectnumber">0.1</span>
+   </div>
+   
+  </td>
+  
+  
+  
+ </tr>
+ </tbody>
+</table>
+</div>
+
+<!-- 作成： Doxygen 1.7.6.1 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'検索');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>メインページ</span></a></li>
+      <li><a href="pages.html"><span>関連ページ</span></a></li>
+      <li><a href="namespaces.html"><span>ネームスペース</span></a></li>
+      <li class="current"><a href="annotated.html"><span>クラス</span></a></li>
+      <li><a href="files.html"><span>ファイル</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="検索" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="annotated.html"><span>構成</span></a></li>
+      <li><a href="classes.html"><span>構成索引</span></a></li>
+      <li><a href="inherits.html"><span>クラス階層</span></a></li>
+      <li><a href="functions.html"><span>構成メンバ</span></a></li>
+    </ul>
+  </div>
+</div>
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+  initNavTree('classutil_1_1OutBitStream.html','');
+</script>
+<div id="doc-content">
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public メソッド</a> &#124;
+<a href="#pri-methods">Private メソッド</a> &#124;
+<a href="#pri-attribs">Private 変数</a>  </div>
+  <div class="headertitle">
+<div class="title">クラス util::OutBitStream</div>  </div>
+</div><!--header-->
+<div class="contents">
+<!-- doxytag: class="util::OutBitStream" -->
+<p><code>#include &lt;out_bit_stream.h&gt;</code></p>
+
+<p><a href="classutil_1_1OutBitStream-members.html">すべてのメンバ一覧</a></p>
+<table class="memberdecls">
+<tr><td colspan="2"><h2><a name="pub-methods"></a>
+Public メソッド</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#ab81480dd36025e76b8f338fe90c97bd3">OutBitStream</a> (size_t size)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#aac5b8b4fa2e21512b92edb9cc2a28ebf">~OutBitStream</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#aaf736364bae4a2d606831e0ba4921d15">setBits</a> (size_t v, size_t numBits)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#aa16f2369c0fc9d49e040eb32f8893b2e">setByte</a> (<a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> dat)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a4ea89db188a961bd99aa91a0aaa93a30">setWord</a> (<a class="el" href="type__definitions_8h.html#ac319c165d52643e43249fe003e18bdf3">u_int</a> dat)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#adc0a51b466297b400ff654f8a8a84906">copyByte</a> (char *srcP, size_t n)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a1ba0be5687444aea07aceeb7cea1c2a2">getStreamAddress</a> (void)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a1aa8fcb71dad6152d11236bbe6390c7e">getStreamSize</a> (void)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a1b08e1dfcd658b81f38d0d2772436980">reset</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#aeb1375098df895510befbe74f5569d09">resize</a> (size_t size)</td></tr>
+<tr><td colspan="2"><h2><a name="pri-methods"></a>
+Private メソッド</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d">incBuf</a> (void)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#adadbd51d3a7002a2e20562cac2c92945">fillBit</a> (void)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a3efaad075eff44231bb40d5b16a0dbe6">set8Bits</a> (<a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> v, size_t numBits)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a3f0ca680e269d0efcbabed8ca206d21b">setFewBits</a> (<a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> v, size_t numBits)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a5d2345ee4ff17ed4e1f5f9a7e7d183ab">setBits2Byte</a> (<a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> v, size_t numBits)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a80bc7ae41b1bcffc62d5c234268ea582">OutBitStream</a> (<a class="el" href="classutil_1_1OutBitStream.html">OutBitStream</a> &amp;)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#aa2f59901f3537f12e6b495cf4cfdd7f2">operator=</a> (<a class="el" href="classutil_1_1OutBitStream.html">OutBitStream</a> &amp;)</td></tr>
+<tr><td colspan="2"><h2><a name="pri-attribs"></a>
+Private 変数</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#aa66304ba93290e2851f8433c32d9a6c6">mHeadOfBufP</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a575c6093ec9f9e8597e272ebb66fe592">mBufP</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">バッファの先頭アドレス  <a href="#a575c6093ec9f9e8597e272ebb66fe592"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a8579220382e152fcceeb8e9b59c20c91">mEndOfBufP</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">書き込みアドレス  <a href="#a8579220382e152fcceeb8e9b59c20c91"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a41b6cba12e060d111a617e0579c8c9ee">mBitPos</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">バッファの終了アドレス  <a href="#a41b6cba12e060d111a617e0579c8c9ee"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a766c7b7845c270fe0791e524508d1765">mWriteFlag</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">書き込みビット位置（上位ビットが7、下位ビットが0）  <a href="#a766c7b7845c270fe0791e524508d1765"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1OutBitStream.html#a11464b3e3f03f446bfdb95f5077884c6">_size</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">1:書き込み可, 0:書き込み不可  <a href="#a11464b3e3f03f446bfdb95f5077884c6"></a><br/></td></tr>
+</table>
+<hr/><a name="details" id="details"></a><h2>説明</h2>
+<div class="textblock"><p>ビット出力クラス</p>
+<dl class="author"><dt><b>作者:</b></dt><dd>AsWe.Co midified by yuumomma </dd></dl>
+<dl class="version"><dt><b>バージョン:</b></dt><dd>1.0 </dd></dl>
+</div><hr/><h2>コンストラクタとデストラクタ</h2>
+<a class="anchor" id="ab81480dd36025e76b8f338fe90c97bd3"></a><!-- doxytag: member="util::OutBitStream::OutBitStream" ref="ab81480dd36025e76b8f338fe90c97bd3" args="(size_t size)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1OutBitStream.html#ab81480dd36025e76b8f338fe90c97bd3">util::OutBitStream::OutBitStream</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>コンストラクタ </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td>バッファのサイズ(byte) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aac5b8b4fa2e21512b92edb9cc2a28ebf"></a><!-- doxytag: member="util::OutBitStream::~OutBitStream" ref="aac5b8b4fa2e21512b92edb9cc2a28ebf" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1OutBitStream.html#aac5b8b4fa2e21512b92edb9cc2a28ebf">util::OutBitStream::~OutBitStream</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>デストラクタ </p>
+
+</div>
+</div>
+<a class="anchor" id="a80bc7ae41b1bcffc62d5c234268ea582"></a><!-- doxytag: member="util::OutBitStream::OutBitStream" ref="a80bc7ae41b1bcffc62d5c234268ea582" args="(OutBitStream &amp;)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1OutBitStream.html#ab81480dd36025e76b8f338fe90c97bd3">util::OutBitStream::OutBitStream</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classutil_1_1OutBitStream.html">OutBitStream</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<hr/><h2>関数</h2>
+<a class="anchor" id="adc0a51b466297b400ff654f8a8a84906"></a><!-- doxytag: member="util::OutBitStream::copyByte" ref="adc0a51b466297b400ff654f8a8a84906" args="(char *srcP, size_t n)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#adc0a51b466297b400ff654f8a8a84906">util::OutBitStream::copyByte</a> </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>srcP</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>nバイト書き込む </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">srcP</td><td>書き込む値 </td></tr>
+    <tr><td class="paramname">n</td><td>書き込むバイト数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classutil_1_1OutBitStream_adc0a51b466297b400ff654f8a8a84906_cgraph.png" border="0" usemap="#classutil_1_1OutBitStream_adc0a51b466297b400ff654f8a8a84906_cgraph" alt=""/></div>
+<map name="classutil_1_1OutBitStream_adc0a51b466297b400ff654f8a8a84906_cgraph" id="classutil_1_1OutBitStream_adc0a51b466297b400ff654f8a8a84906_cgraph">
+<area shape="rect" id="node3" href="classutil_1_1OutBitStream.html#adadbd51d3a7002a2e20562cac2c92945" title="util::OutBitStream::fillBit" alt="" coords="243,5,405,35"/><area shape="rect" id="node5" href="classutil_1_1OutBitStream.html#a3f0ca680e269d0efcbabed8ca206d21b" title="util::OutBitStream::setFewBits" alt="" coords="453,5,653,35"/><area shape="rect" id="node7" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d" title="util::OutBitStream::incBuf" alt="" coords="701,5,872,35"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="adadbd51d3a7002a2e20562cac2c92945"></a><!-- doxytag: member="util::OutBitStream::fillBit" ref="adadbd51d3a7002a2e20562cac2c92945" args="(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#adadbd51d3a7002a2e20562cac2c92945">util::OutBitStream::fillBit</a> </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classutil_1_1OutBitStream_adadbd51d3a7002a2e20562cac2c92945_cgraph.png" border="0" usemap="#classutil_1_1OutBitStream_adadbd51d3a7002a2e20562cac2c92945_cgraph" alt=""/></div>
+<map name="classutil_1_1OutBitStream_adadbd51d3a7002a2e20562cac2c92945_cgraph" id="classutil_1_1OutBitStream_adadbd51d3a7002a2e20562cac2c92945_cgraph">
+<area shape="rect" id="node3" href="classutil_1_1OutBitStream.html#a3f0ca680e269d0efcbabed8ca206d21b" title="util::OutBitStream::setFewBits" alt="" coords="216,5,416,35"/><area shape="rect" id="node5" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d" title="util::OutBitStream::incBuf" alt="" coords="464,5,635,35"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a1ba0be5687444aea07aceeb7cea1c2a2"></a><!-- doxytag: member="util::OutBitStream::getStreamAddress" ref="a1ba0be5687444aea07aceeb7cea1c2a2" args="(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a>* <a class="el" href="classutil_1_1OutBitStream.html#a1ba0be5687444aea07aceeb7cea1c2a2">util::OutBitStream::getStreamAddress</a> </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>ストリームの先頭アドレス </p>
+<dl class="return"><dt><b>戻り値:</b></dt><dd>先頭アドレス </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1aa8fcb71dad6152d11236bbe6390c7e"></a><!-- doxytag: member="util::OutBitStream::getStreamSize" ref="a1aa8fcb71dad6152d11236bbe6390c7e" args="(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classutil_1_1OutBitStream.html#a1aa8fcb71dad6152d11236bbe6390c7e">util::OutBitStream::getStreamSize</a> </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>ストリームの有効サイズ </p>
+<dl class="return"><dt><b>戻り値:</b></dt><dd>有効サイズ </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aca81271bf6ee588e7a270ef34327ea1d"></a><!-- doxytag: member="util::OutBitStream::incBuf" ref="aca81271bf6ee588e7a270ef34327ea1d" args="(void)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d">util::OutBitStream::incBuf</a> </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aa2f59901f3537f12e6b495cf4cfdd7f2"></a><!-- doxytag: member="util::OutBitStream::operator=" ref="aa2f59901f3537f12e6b495cf4cfdd7f2" args="(OutBitStream &amp;)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void util::OutBitStream::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classutil_1_1OutBitStream.html">OutBitStream</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a1b08e1dfcd658b81f38d0d2772436980"></a><!-- doxytag: member="util::OutBitStream::reset" ref="a1b08e1dfcd658b81f38d0d2772436980" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#a1b08e1dfcd658b81f38d0d2772436980">util::OutBitStream::reset</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>すべての書き込み内容を破棄し、初期状態に戻す </p>
+
+</div>
+</div>
+<a class="anchor" id="aeb1375098df895510befbe74f5569d09"></a><!-- doxytag: member="util::OutBitStream::resize" ref="aeb1375098df895510befbe74f5569d09" args="(size_t size)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#aeb1375098df895510befbe74f5569d09">util::OutBitStream::resize</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>すべての書き込み内容を破棄し、バッファサイズを変更する </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a3efaad075eff44231bb40d5b16a0dbe6"></a><!-- doxytag: member="util::OutBitStream::set8Bits" ref="a3efaad075eff44231bb40d5b16a0dbe6" args="(byte v, size_t numBits)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#a3efaad075eff44231bb40d5b16a0dbe6">util::OutBitStream::set8Bits</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a>&#160;</td>
+          <td class="paramname"><em>v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>numBits</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classutil_1_1OutBitStream_a3efaad075eff44231bb40d5b16a0dbe6_cgraph.png" border="0" usemap="#classutil_1_1OutBitStream_a3efaad075eff44231bb40d5b16a0dbe6_cgraph" alt=""/></div>
+<map name="classutil_1_1OutBitStream_a3efaad075eff44231bb40d5b16a0dbe6_cgraph" id="classutil_1_1OutBitStream_a3efaad075eff44231bb40d5b16a0dbe6_cgraph">
+<area shape="rect" id="node3" href="classutil_1_1OutBitStream.html#a3f0ca680e269d0efcbabed8ca206d21b" title="util::OutBitStream::setFewBits" alt="" coords="243,5,443,35"/><area shape="rect" id="node7" href="classutil_1_1OutBitStream.html#a5d2345ee4ff17ed4e1f5f9a7e7d183ab" title="util::OutBitStream::setBits2Byte" alt="" coords="239,59,447,88"/><area shape="rect" id="node5" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d" title="util::OutBitStream::incBuf" alt="" coords="496,32,667,61"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="aaf736364bae4a2d606831e0ba4921d15"></a><!-- doxytag: member="util::OutBitStream::setBits" ref="aaf736364bae4a2d606831e0ba4921d15" args="(size_t v, size_t numBits)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#aaf736364bae4a2d606831e0ba4921d15">util::OutBitStream::setBits</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>numBits</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>ビット単位で書き込む（最大16ビット） </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>書き込む値 </td></tr>
+    <tr><td class="paramname">numBits</td><td>書き込むビット数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classutil_1_1OutBitStream_aaf736364bae4a2d606831e0ba4921d15_cgraph.png" border="0" usemap="#classutil_1_1OutBitStream_aaf736364bae4a2d606831e0ba4921d15_cgraph" alt=""/></div>
+<map name="classutil_1_1OutBitStream_aaf736364bae4a2d606831e0ba4921d15_cgraph" id="classutil_1_1OutBitStream_aaf736364bae4a2d606831e0ba4921d15_cgraph">
+<area shape="rect" id="node3" href="classutil_1_1OutBitStream.html#a3efaad075eff44231bb40d5b16a0dbe6" title="util::OutBitStream::set8Bits" alt="" coords="231,32,412,61"/><area shape="rect" id="node5" href="classutil_1_1OutBitStream.html#a3f0ca680e269d0efcbabed8ca206d21b" title="util::OutBitStream::setFewBits" alt="" coords="467,5,667,35"/><area shape="rect" id="node9" href="classutil_1_1OutBitStream.html#a5d2345ee4ff17ed4e1f5f9a7e7d183ab" title="util::OutBitStream::setBits2Byte" alt="" coords="463,59,671,88"/><area shape="rect" id="node7" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d" title="util::OutBitStream::incBuf" alt="" coords="720,32,891,61"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a5d2345ee4ff17ed4e1f5f9a7e7d183ab"></a><!-- doxytag: member="util::OutBitStream::setBits2Byte" ref="a5d2345ee4ff17ed4e1f5f9a7e7d183ab" args="(byte v, size_t numBits)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#a5d2345ee4ff17ed4e1f5f9a7e7d183ab">util::OutBitStream::setBits2Byte</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a>&#160;</td>
+          <td class="paramname"><em>v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>numBits</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classutil_1_1OutBitStream_a5d2345ee4ff17ed4e1f5f9a7e7d183ab_cgraph.png" border="0" usemap="#classutil_1_1OutBitStream_a5d2345ee4ff17ed4e1f5f9a7e7d183ab_cgraph" alt=""/></div>
+<map name="classutil_1_1OutBitStream_a5d2345ee4ff17ed4e1f5f9a7e7d183ab_cgraph" id="classutil_1_1OutBitStream_a5d2345ee4ff17ed4e1f5f9a7e7d183ab_cgraph">
+<area shape="rect" id="node3" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d" title="util::OutBitStream::incBuf" alt="" coords="264,5,435,35"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="aa16f2369c0fc9d49e040eb32f8893b2e"></a><!-- doxytag: member="util::OutBitStream::setByte" ref="aa16f2369c0fc9d49e040eb32f8893b2e" args="(byte dat)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#aa16f2369c0fc9d49e040eb32f8893b2e">util::OutBitStream::setByte</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a>&#160;</td>
+          <td class="paramname"><em>dat</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>1バイト書き込む </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dat</td><td>書き込む値 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classutil_1_1OutBitStream_aa16f2369c0fc9d49e040eb32f8893b2e_cgraph.png" border="0" usemap="#classutil_1_1OutBitStream_aa16f2369c0fc9d49e040eb32f8893b2e_cgraph" alt=""/></div>
+<map name="classutil_1_1OutBitStream_aa16f2369c0fc9d49e040eb32f8893b2e_cgraph" id="classutil_1_1OutBitStream_aa16f2369c0fc9d49e040eb32f8893b2e_cgraph">
+<area shape="rect" id="node3" href="classutil_1_1OutBitStream.html#adadbd51d3a7002a2e20562cac2c92945" title="util::OutBitStream::fillBit" alt="" coords="232,5,395,35"/><area shape="rect" id="node7" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d" title="util::OutBitStream::incBuf" alt="" coords="691,32,861,61"/><area shape="rect" id="node5" href="classutil_1_1OutBitStream.html#a3f0ca680e269d0efcbabed8ca206d21b" title="util::OutBitStream::setFewBits" alt="" coords="443,5,643,35"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a3f0ca680e269d0efcbabed8ca206d21b"></a><!-- doxytag: member="util::OutBitStream::setFewBits" ref="a3f0ca680e269d0efcbabed8ca206d21b" args="(byte v, size_t numBits)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#a3f0ca680e269d0efcbabed8ca206d21b">util::OutBitStream::setFewBits</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a>&#160;</td>
+          <td class="paramname"><em>v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>numBits</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classutil_1_1OutBitStream_a3f0ca680e269d0efcbabed8ca206d21b_cgraph.png" border="0" usemap="#classutil_1_1OutBitStream_a3f0ca680e269d0efcbabed8ca206d21b_cgraph" alt=""/></div>
+<map name="classutil_1_1OutBitStream_a3f0ca680e269d0efcbabed8ca206d21b_cgraph" id="classutil_1_1OutBitStream_a3f0ca680e269d0efcbabed8ca206d21b_cgraph">
+<area shape="rect" id="node3" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d" title="util::OutBitStream::incBuf" alt="" coords="253,5,424,35"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a4ea89db188a961bd99aa91a0aaa93a30"></a><!-- doxytag: member="util::OutBitStream::setWord" ref="a4ea89db188a961bd99aa91a0aaa93a30" args="(u_int dat)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classutil_1_1OutBitStream.html#a4ea89db188a961bd99aa91a0aaa93a30">util::OutBitStream::setWord</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#ac319c165d52643e43249fe003e18bdf3">u_int</a>&#160;</td>
+          <td class="paramname"><em>dat</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>2バイト書き込む </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dat</td><td>書き込む値 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classutil_1_1OutBitStream_a4ea89db188a961bd99aa91a0aaa93a30_cgraph.png" border="0" usemap="#classutil_1_1OutBitStream_a4ea89db188a961bd99aa91a0aaa93a30_cgraph" alt=""/></div>
+<map name="classutil_1_1OutBitStream_a4ea89db188a961bd99aa91a0aaa93a30_cgraph" id="classutil_1_1OutBitStream_a4ea89db188a961bd99aa91a0aaa93a30_cgraph">
+<area shape="rect" id="node3" href="classutil_1_1OutBitStream.html#adadbd51d3a7002a2e20562cac2c92945" title="util::OutBitStream::fillBit" alt="" coords="237,5,400,35"/><area shape="rect" id="node7" href="classutil_1_1OutBitStream.html#aca81271bf6ee588e7a270ef34327ea1d" title="util::OutBitStream::incBuf" alt="" coords="696,32,867,61"/><area shape="rect" id="node5" href="classutil_1_1OutBitStream.html#a3f0ca680e269d0efcbabed8ca206d21b" title="util::OutBitStream::setFewBits" alt="" coords="448,5,648,35"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<hr/><h2>変数</h2>
+<a class="anchor" id="a11464b3e3f03f446bfdb95f5077884c6"></a><!-- doxytag: member="util::OutBitStream::_size" ref="a11464b3e3f03f446bfdb95f5077884c6" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classutil_1_1OutBitStream.html#a11464b3e3f03f446bfdb95f5077884c6">util::OutBitStream::_size</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>1:書き込み可, 0:書き込み不可 </p>
+
+</div>
+</div>
+<a class="anchor" id="a41b6cba12e060d111a617e0579c8c9ee"></a><!-- doxytag: member="util::OutBitStream::mBitPos" ref="a41b6cba12e060d111a617e0579c8c9ee" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classutil_1_1OutBitStream.html#a41b6cba12e060d111a617e0579c8c9ee">util::OutBitStream::mBitPos</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>バッファの終了アドレス </p>
+
+</div>
+</div>
+<a class="anchor" id="a575c6093ec9f9e8597e272ebb66fe592"></a><!-- doxytag: member="util::OutBitStream::mBufP" ref="a575c6093ec9f9e8597e272ebb66fe592" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a>* <a class="el" href="classutil_1_1OutBitStream.html#a575c6093ec9f9e8597e272ebb66fe592">util::OutBitStream::mBufP</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>バッファの先頭アドレス </p>
+
+</div>
+</div>
+<a class="anchor" id="a8579220382e152fcceeb8e9b59c20c91"></a><!-- doxytag: member="util::OutBitStream::mEndOfBufP" ref="a8579220382e152fcceeb8e9b59c20c91" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a>* <a class="el" href="classutil_1_1OutBitStream.html#a8579220382e152fcceeb8e9b59c20c91">util::OutBitStream::mEndOfBufP</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>書き込みアドレス </p>
+
+</div>
+</div>
+<a class="anchor" id="aa66304ba93290e2851f8433c32d9a6c6"></a><!-- doxytag: member="util::OutBitStream::mHeadOfBufP" ref="aa66304ba93290e2851f8433c32d9a6c6" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a>* <a class="el" href="classutil_1_1OutBitStream.html#aa66304ba93290e2851f8433c32d9a6c6">util::OutBitStream::mHeadOfBufP</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a766c7b7845c270fe0791e524508d1765"></a><!-- doxytag: member="util::OutBitStream::mWriteFlag" ref="a766c7b7845c270fe0791e524508d1765" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classutil_1_1OutBitStream.html#a766c7b7845c270fe0791e524508d1765">util::OutBitStream::mWriteFlag</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>書き込みビット位置（上位ビットが7、下位ビットが0） </p>
+
+</div>
+</div>
+<hr/>このクラスの説明は次のファイルから生成されました:<ul>
+<li>src/utils/<a class="el" href="out__bit__stream_8h.html">out_bit_stream.h</a></li>
+<li>src/utils/<a class="el" href="out__bit__stream_8cpp.html">out_bit_stream.cpp</a></li>
+</ul>
+</div><!-- contents -->
+</div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>全て</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>クラス</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>ネームスペース</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>ファイル</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>関数</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>変数</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>型定義</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>列挙型</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>列挙型の値</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>マクロ定義</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+  <div id="nav-path" class="navpath">
+    <ul>
+      <li class="navelem"><a class="el" href="namespaceutil.html">util</a>      </li>
+      <li class="navelem"><a class="el" href="classutil_1_1OutBitStream.html">OutBitStream</a>      </li>
+
+    <li class="footer">cuda_jpegに対してMon Oct 29 2012 01:39:28に生成されました。
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
+   </ul>
+ </div>
+
+
+</body>
+</html>

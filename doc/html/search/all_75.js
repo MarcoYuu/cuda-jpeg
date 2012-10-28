@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['cuda',['cuda',['../namespaceutil_1_1cuda.html',1,'util']]],
+  ['u_5fint',['u_int',['../type__definitions_8h.html#ac319c165d52643e43249fe003e18bdf3',1,'type_definitions.h']]],
+  ['util',['util',['../namespaceutil.html',1,'']]],
+  ['util_5fcv_2ecpp',['util_cv.cpp',['../util__cv_8cpp.html',1,'']]],
+  ['util_5fcv_2eh',['util_cv.h',['../util__cv_8h.html',1,'']]],
+  ['util_5fcvim_5fcolor',['UTIL_CVIM_COLOR',['../namespaceutil.html#ad2d22738c49fb89a453c8262eb641588a9f6cf199c51a8d4285496191f4808e38',1,'util']]],
+  ['util_5fcvim_5fgrayscale',['UTIL_CVIM_GRAYSCALE',['../namespaceutil.html#ad2d22738c49fb89a453c8262eb641588ad8143d4bb09c5b37afab110b5a5780f5',1,'util']]],
+  ['utilcv_5faddweighted',['utilCV_AddWeighted',['../namespaceutil.html#a4bb0695203cffa99ed4caf431eec919e',1,'util']]],
+  ['utilcv_5fcloneimage',['utilCV_CloneImage',['../namespaceutil.html#a3eb38e7ebc90ffc919b62ab73ea58466',1,'util']]],
+  ['utilcv_5fcreateimage',['utilCV_CreateImage',['../namespaceutil.html#a69199987f11bbc40f9d9c4bb7f7d31c6',1,'util']]],
+  ['utilcv_5floadimage',['utilCV_LoadImage',['../namespaceutil.html#a9e1ec1de3f66c6535db1453947a4d26d',1,'util']]],
+  ['utilcv_5freleaseimage',['utilCV_ReleaseImage',['../namespaceutil.html#a25a5e44fac2c275e54ad8257fe09dda9',1,'util']]],
+  ['utilcv_5fsaveimage',['utilCV_SaveImage',['../namespaceutil.html#ab114310930882ba70de3f2fcd86255a2',1,'util']]],
+  ['utilcvimagestruct',['UtilCVImageStruct',['../structutil_1_1UtilCVImageStruct.html',1,'util']]],
+  ['utilcvimagetype',['UtilCVImageType',['../namespaceutil.html#ad2d22738c49fb89a453c8262eb641588',1,'util']]],
+  ['utilimage',['UtilImage',['../structutil_1_1UtilImage.html',1,'util']]]
+];

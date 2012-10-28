@@ -2,3 +2,6 @@ Release/
 Debug/
 *.d
 *.o
+*.md5
+*.map
+doc/latex

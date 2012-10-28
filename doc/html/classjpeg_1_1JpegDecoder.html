@@ -1,0 +1,566 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<title>cuda_jpeg: クラス jpeg::JpegDecoder</title>
+
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript">
+  $(document).ready(initResizable);
+</script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+
+</head>
+<body>
+<div id="top"><!-- do not remove this div! -->
+
+
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  
+  
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">cuda_jpeg
+   &#160;<span id="projectnumber">0.1</span>
+   </div>
+   
+  </td>
+  
+  
+  
+ </tr>
+ </tbody>
+</table>
+</div>
+
+<!-- 作成： Doxygen 1.7.6.1 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'検索');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>メインページ</span></a></li>
+      <li><a href="pages.html"><span>関連ページ</span></a></li>
+      <li><a href="namespaces.html"><span>ネームスペース</span></a></li>
+      <li class="current"><a href="annotated.html"><span>クラス</span></a></li>
+      <li><a href="files.html"><span>ファイル</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="検索" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="annotated.html"><span>構成</span></a></li>
+      <li><a href="classes.html"><span>構成索引</span></a></li>
+      <li><a href="inherits.html"><span>クラス階層</span></a></li>
+      <li><a href="functions.html"><span>構成メンバ</span></a></li>
+    </ul>
+  </div>
+</div>
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+  initNavTree('classjpeg_1_1JpegDecoder.html','');
+</script>
+<div id="doc-content">
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public メソッド</a> &#124;
+<a href="#pri-methods">Private メソッド</a> &#124;
+<a href="#pri-attribs">Private 変数</a>  </div>
+  <div class="headertitle">
+<div class="title">クラス jpeg::JpegDecoder</div>  </div>
+</div><!--header-->
+<div class="contents">
+<!-- doxytag: class="jpeg::JpegDecoder" -->
+<p><code>#include &lt;cpu_jpeg.h&gt;</code></p>
+
+<p><a href="classjpeg_1_1JpegDecoder-members.html">すべてのメンバ一覧</a></p>
+<table class="memberdecls">
+<tr><td colspan="2"><h2><a name="pub-methods"></a>
+Public メソッド</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#a50eea49f6a1d4f0fef3b644031ef3d6f">JpegDecoder</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#af80d602302bcf1355b9a47ad4c802b79">JpegDecoder</a> (size_t width, size_t height)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#adfefe1f130f00aa39cd1f082af73323c">setImageSize</a> (size_t width, size_t height)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#ae180fd53d81cd7cfd76cb16eab3b4abd">decode</a> (const <a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *src, size_t src_size, <a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *result, size_t result_size)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#ab38c7b93ef7d3935c2b02cdbb4f2818a">decode</a> (const <a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *src, size_t src_size, <a class="el" href="type__definitions_8h.html#a120beb7458dace27938a1570bd204780">ByteBuffer</a> &amp;result)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#a51ec8a2fdce57972ba54554292005b38">decode</a> (const <a class="el" href="type__definitions_8h.html#a120beb7458dace27938a1570bd204780">ByteBuffer</a> &amp;src, <a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *result, size_t result_size)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#a88d3275d75023114faf536e26060c87d">decode</a> (const <a class="el" href="type__definitions_8h.html#a120beb7458dace27938a1570bd204780">ByteBuffer</a> &amp;src, <a class="el" href="type__definitions_8h.html#a120beb7458dace27938a1570bd204780">ByteBuffer</a> &amp;result)</td></tr>
+<tr><td colspan="2"><h2><a name="pri-methods"></a>
+Private メソッド</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#a9c522350e150f134d17fd0b016dd777e">inner_decode</a> (<a class="el" href="classutil_1_1InBitStream.html">util::InBitStream</a> *in_bit, <a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *result)</td></tr>
+<tr><td colspan="2"><h2><a name="pri-attribs"></a>
+Private 変数</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="type__definitions_8h.html#a1d286aa98e3a34d956b34aa9b89fd4db">IntBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#a96f332eeafc8467618b92a80287ffd08">_yuv_data</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="type__definitions_8h.html#a1d286aa98e3a34d956b34aa9b89fd4db">IntBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#a010298fd9a95e71bc44521f6ea526d07">_coefficient</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="type__definitions_8h.html#a1d286aa98e3a34d956b34aa9b89fd4db">IntBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#a35e85902ba19679b7d7afacdfc5aeb07">_quantized</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#aabcb3f3f327f7e07edef38a6a1fe8cde">_width</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1JpegDecoder.html#a02c224381e0747c6fa259f2b1bb2d0dc">_height</a></td></tr>
+</table>
+<hr/><a name="details" id="details"></a><h2>説明</h2>
+<div class="textblock"><p>Jpegデコーダ</p>
+<dl class="author"><dt><b>作者:</b></dt><dd>yuumomma </dd></dl>
+<dl class="version"><dt><b>バージョン:</b></dt><dd>1.0 </dd></dl>
+</div><hr/><h2>コンストラクタとデストラクタ</h2>
+<a class="anchor" id="a50eea49f6a1d4f0fef3b644031ef3d6f"></a><!-- doxytag: member="jpeg::JpegDecoder::JpegDecoder" ref="a50eea49f6a1d4f0fef3b644031ef3d6f" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classjpeg_1_1JpegDecoder.html#a50eea49f6a1d4f0fef3b644031ef3d6f">jpeg::JpegDecoder::JpegDecoder</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>コンストラクタ</p>
+<p>利用可能な状態にするためには幅と高さをセットする必要がある </p>
+
+</div>
+</div>
+<a class="anchor" id="af80d602302bcf1355b9a47ad4c802b79"></a><!-- doxytag: member="jpeg::JpegDecoder::JpegDecoder" ref="af80d602302bcf1355b9a47ad4c802b79" args="(size_t width, size_t height)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classjpeg_1_1JpegDecoder.html#a50eea49f6a1d4f0fef3b644031ef3d6f">jpeg::JpegDecoder::JpegDecoder</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>height</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>コンストラクタ </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">width</td><td>幅 </td></tr>
+    <tr><td class="paramname">height</td><td>高さ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/><h2>関数</h2>
+<a class="anchor" id="ae180fd53d81cd7cfd76cb16eab3b4abd"></a><!-- doxytag: member="jpeg::JpegDecoder::decode" ref="ae180fd53d81cd7cfd76cb16eab3b4abd" args="(const byte *src, size_t src_size, byte *result, size_t result_size)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classjpeg_1_1JpegDecoder.html#ae180fd53d81cd7cfd76cb16eab3b4abd">jpeg::JpegDecoder::decode</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>src_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *&#160;</td>
+          <td class="paramname"><em>result</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>result_size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>デコードする </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">src</td><td>JpegEncoderにより生成されたソースデータ </td></tr>
+    <tr><td class="paramname">src_size</td><td>ソースサイズ </td></tr>
+    <tr><td class="paramname">result</td><td>結果を格納するバッファ </td></tr>
+    <tr><td class="paramname">result_size</td><td>結果バッファの有効なバイト数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1JpegDecoder_ae180fd53d81cd7cfd76cb16eab3b4abd_cgraph.png" border="0" usemap="#classjpeg_1_1JpegDecoder_ae180fd53d81cd7cfd76cb16eab3b4abd_cgraph" alt=""/></div>
+<map name="classjpeg_1_1JpegDecoder_ae180fd53d81cd7cfd76cb16eab3b4abd_cgraph" id="classjpeg_1_1JpegDecoder_ae180fd53d81cd7cfd76cb16eab3b4abd_cgraph">
+<area shape="rect" id="node3" href="classjpeg_1_1JpegDecoder.html#a9c522350e150f134d17fd0b016dd777e" title="jpeg::JpegDecoder::inner_decode" alt="" coords="235,111,451,140"/><area shape="rect" id="node5" href="namespacejpeg.html#af22e1dc5512e8b1f86e46a902794de79" title="jpeg::decode_huffman" alt="" coords="519,31,668,60"/><area shape="rect" id="node14" href="namespacejpeg.html#ad691893bbfae23716286a2dd3f35108b" title="jpeg::izig_quantize" alt="" coords="528,84,659,113"/><area shape="rect" id="node16" href="namespacejpeg.html#ab73e5a47940b3303bded195a0943d3a3" title="jpeg::idct" alt="" coords="556,137,631,167"/><area shape="rect" id="node18" href="namespacejpeg.html#a2972e360476e797d85a6b2e7b1881e36" title="jpeg::color_trans_yuv_to_rgb" alt="" coords="499,191,688,220"/><area shape="rect" id="node7" href="namespacejpeg.html#a1425c3b9d076aa84ac788b2e77f20460" title="jpeg::decode_huffman_word" alt="" coords="737,5,921,35"/><area shape="rect" id="node9" href="classutil_1_1InBitStream.html#aeddb4b556dd18c7539e3bbc72125dbc8" title="util::InBitStream::getBits" alt="" coords="971,32,1136,61"/><area shape="rect" id="node11" href="classutil_1_1InBitStream.html#ad86f68b1c62203b8eace536ad0fe688c" title="1:読み出し可, 0:読み出し不可" alt="" coords="1185,32,1345,61"/><area shape="rect" id="node20" href="namespacejpeg.html#ae8a765a0a8baba6653149f88e0567ce4" title="jpeg::revise_value" alt="" coords="767,191,892,220"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="ab38c7b93ef7d3935c2b02cdbb4f2818a"></a><!-- doxytag: member="jpeg::JpegDecoder::decode" ref="ab38c7b93ef7d3935c2b02cdbb4f2818a" args="(const byte *src, size_t src_size, ByteBuffer &amp;result)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classjpeg_1_1JpegDecoder.html#ae180fd53d81cd7cfd76cb16eab3b4abd">jpeg::JpegDecoder::decode</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>src_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#a120beb7458dace27938a1570bd204780">ByteBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>result</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>デコードする </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">src</td><td>JpegEncoderにより生成されたソースデータ </td></tr>
+    <tr><td class="paramname">src_size</td><td>ソースサイズ </td></tr>
+    <tr><td class="paramname">result</td><td>結果を格納するバッファ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1JpegDecoder_ab38c7b93ef7d3935c2b02cdbb4f2818a_cgraph.png" border="0" usemap="#classjpeg_1_1JpegDecoder_ab38c7b93ef7d3935c2b02cdbb4f2818a_cgraph" alt=""/></div>
+<map name="classjpeg_1_1JpegDecoder_ab38c7b93ef7d3935c2b02cdbb4f2818a_cgraph" id="classjpeg_1_1JpegDecoder_ab38c7b93ef7d3935c2b02cdbb4f2818a_cgraph">
+<area shape="rect" id="node3" href="classjpeg_1_1JpegDecoder.html#a9c522350e150f134d17fd0b016dd777e" title="jpeg::JpegDecoder::inner_decode" alt="" coords="235,111,451,140"/><area shape="rect" id="node5" href="namespacejpeg.html#af22e1dc5512e8b1f86e46a902794de79" title="jpeg::decode_huffman" alt="" coords="519,31,668,60"/><area shape="rect" id="node14" href="namespacejpeg.html#ad691893bbfae23716286a2dd3f35108b" title="jpeg::izig_quantize" alt="" coords="528,84,659,113"/><area shape="rect" id="node16" href="namespacejpeg.html#ab73e5a47940b3303bded195a0943d3a3" title="jpeg::idct" alt="" coords="556,137,631,167"/><area shape="rect" id="node18" href="namespacejpeg.html#a2972e360476e797d85a6b2e7b1881e36" title="jpeg::color_trans_yuv_to_rgb" alt="" coords="499,191,688,220"/><area shape="rect" id="node7" href="namespacejpeg.html#a1425c3b9d076aa84ac788b2e77f20460" title="jpeg::decode_huffman_word" alt="" coords="737,5,921,35"/><area shape="rect" id="node9" href="classutil_1_1InBitStream.html#aeddb4b556dd18c7539e3bbc72125dbc8" title="util::InBitStream::getBits" alt="" coords="971,32,1136,61"/><area shape="rect" id="node11" href="classutil_1_1InBitStream.html#ad86f68b1c62203b8eace536ad0fe688c" title="1:読み出し可, 0:読み出し不可" alt="" coords="1185,32,1345,61"/><area shape="rect" id="node20" href="namespacejpeg.html#ae8a765a0a8baba6653149f88e0567ce4" title="jpeg::revise_value" alt="" coords="767,191,892,220"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a51ec8a2fdce57972ba54554292005b38"></a><!-- doxytag: member="jpeg::JpegDecoder::decode" ref="a51ec8a2fdce57972ba54554292005b38" args="(const ByteBuffer &amp;src, byte *result, size_t result_size)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classjpeg_1_1JpegDecoder.html#ae180fd53d81cd7cfd76cb16eab3b4abd">jpeg::JpegDecoder::decode</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="type__definitions_8h.html#a120beb7458dace27938a1570bd204780">ByteBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *&#160;</td>
+          <td class="paramname"><em>result</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>result_size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>デコードする </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">src</td><td>JpegEncoderにより生成されたソースデータ </td></tr>
+    <tr><td class="paramname">result</td><td>結果を格納するバッファ </td></tr>
+    <tr><td class="paramname">result_size</td><td>結果バッファの有効なバイト数 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1JpegDecoder_a51ec8a2fdce57972ba54554292005b38_cgraph.png" border="0" usemap="#classjpeg_1_1JpegDecoder_a51ec8a2fdce57972ba54554292005b38_cgraph" alt=""/></div>
+<map name="classjpeg_1_1JpegDecoder_a51ec8a2fdce57972ba54554292005b38_cgraph" id="classjpeg_1_1JpegDecoder_a51ec8a2fdce57972ba54554292005b38_cgraph">
+<area shape="rect" id="node3" href="classjpeg_1_1JpegDecoder.html#a9c522350e150f134d17fd0b016dd777e" title="jpeg::JpegDecoder::inner_decode" alt="" coords="235,111,451,140"/><area shape="rect" id="node5" href="namespacejpeg.html#af22e1dc5512e8b1f86e46a902794de79" title="jpeg::decode_huffman" alt="" coords="519,31,668,60"/><area shape="rect" id="node14" href="namespacejpeg.html#ad691893bbfae23716286a2dd3f35108b" title="jpeg::izig_quantize" alt="" coords="528,84,659,113"/><area shape="rect" id="node16" href="namespacejpeg.html#ab73e5a47940b3303bded195a0943d3a3" title="jpeg::idct" alt="" coords="556,137,631,167"/><area shape="rect" id="node18" href="namespacejpeg.html#a2972e360476e797d85a6b2e7b1881e36" title="jpeg::color_trans_yuv_to_rgb" alt="" coords="499,191,688,220"/><area shape="rect" id="node7" href="namespacejpeg.html#a1425c3b9d076aa84ac788b2e77f20460" title="jpeg::decode_huffman_word" alt="" coords="737,5,921,35"/><area shape="rect" id="node9" href="classutil_1_1InBitStream.html#aeddb4b556dd18c7539e3bbc72125dbc8" title="util::InBitStream::getBits" alt="" coords="971,32,1136,61"/><area shape="rect" id="node11" href="classutil_1_1InBitStream.html#ad86f68b1c62203b8eace536ad0fe688c" title="1:読み出し可, 0:読み出し不可" alt="" coords="1185,32,1345,61"/><area shape="rect" id="node20" href="namespacejpeg.html#ae8a765a0a8baba6653149f88e0567ce4" title="jpeg::revise_value" alt="" coords="767,191,892,220"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a88d3275d75023114faf536e26060c87d"></a><!-- doxytag: member="jpeg::JpegDecoder::decode" ref="a88d3275d75023114faf536e26060c87d" args="(const ByteBuffer &amp;src, ByteBuffer &amp;result)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classjpeg_1_1JpegDecoder.html#ae180fd53d81cd7cfd76cb16eab3b4abd">jpeg::JpegDecoder::decode</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="type__definitions_8h.html#a120beb7458dace27938a1570bd204780">ByteBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#a120beb7458dace27938a1570bd204780">ByteBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>result</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>デコードする </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">src</td><td>JpegEncoderにより生成されたソースデータ </td></tr>
+    <tr><td class="paramname">result</td><td>結果を格納するバッファ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1JpegDecoder_a88d3275d75023114faf536e26060c87d_cgraph.png" border="0" usemap="#classjpeg_1_1JpegDecoder_a88d3275d75023114faf536e26060c87d_cgraph" alt=""/></div>
+<map name="classjpeg_1_1JpegDecoder_a88d3275d75023114faf536e26060c87d_cgraph" id="classjpeg_1_1JpegDecoder_a88d3275d75023114faf536e26060c87d_cgraph">
+<area shape="rect" id="node3" href="classjpeg_1_1JpegDecoder.html#a9c522350e150f134d17fd0b016dd777e" title="jpeg::JpegDecoder::inner_decode" alt="" coords="235,111,451,140"/><area shape="rect" id="node5" href="namespacejpeg.html#af22e1dc5512e8b1f86e46a902794de79" title="jpeg::decode_huffman" alt="" coords="519,31,668,60"/><area shape="rect" id="node14" href="namespacejpeg.html#ad691893bbfae23716286a2dd3f35108b" title="jpeg::izig_quantize" alt="" coords="528,84,659,113"/><area shape="rect" id="node16" href="namespacejpeg.html#ab73e5a47940b3303bded195a0943d3a3" title="jpeg::idct" alt="" coords="556,137,631,167"/><area shape="rect" id="node18" href="namespacejpeg.html#a2972e360476e797d85a6b2e7b1881e36" title="jpeg::color_trans_yuv_to_rgb" alt="" coords="499,191,688,220"/><area shape="rect" id="node7" href="namespacejpeg.html#a1425c3b9d076aa84ac788b2e77f20460" title="jpeg::decode_huffman_word" alt="" coords="737,5,921,35"/><area shape="rect" id="node9" href="classutil_1_1InBitStream.html#aeddb4b556dd18c7539e3bbc72125dbc8" title="util::InBitStream::getBits" alt="" coords="971,32,1136,61"/><area shape="rect" id="node11" href="classutil_1_1InBitStream.html#ad86f68b1c62203b8eace536ad0fe688c" title="1:読み出し可, 0:読み出し不可" alt="" coords="1185,32,1345,61"/><area shape="rect" id="node20" href="namespacejpeg.html#ae8a765a0a8baba6653149f88e0567ce4" title="jpeg::revise_value" alt="" coords="767,191,892,220"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a9c522350e150f134d17fd0b016dd777e"></a><!-- doxytag: member="jpeg::JpegDecoder::inner_decode" ref="a9c522350e150f134d17fd0b016dd777e" args="(util::InBitStream *in_bit, byte *result)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classjpeg_1_1JpegDecoder.html#a9c522350e150f134d17fd0b016dd777e">jpeg::JpegDecoder::inner_decode</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classutil_1_1InBitStream.html">util::InBitStream</a> *&#160;</td>
+          <td class="paramname"><em>in_bit</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="type__definitions_8h.html#a0c8186d9b9b7880309c27230bbb5e69d">byte</a> *&#160;</td>
+          <td class="paramname"><em>result</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1JpegDecoder_a9c522350e150f134d17fd0b016dd777e_cgraph.png" border="0" usemap="#classjpeg_1_1JpegDecoder_a9c522350e150f134d17fd0b016dd777e_cgraph" alt=""/></div>
+<map name="classjpeg_1_1JpegDecoder_a9c522350e150f134d17fd0b016dd777e_cgraph" id="classjpeg_1_1JpegDecoder_a9c522350e150f134d17fd0b016dd777e_cgraph">
+<area shape="rect" id="node3" href="namespacejpeg.html#af22e1dc5512e8b1f86e46a902794de79" title="jpeg::decode_huffman" alt="" coords="289,31,439,60"/><area shape="rect" id="node12" href="namespacejpeg.html#ad691893bbfae23716286a2dd3f35108b" title="jpeg::izig_quantize" alt="" coords="299,84,429,113"/><area shape="rect" id="node14" href="namespacejpeg.html#ab73e5a47940b3303bded195a0943d3a3" title="jpeg::idct" alt="" coords="327,137,401,167"/><area shape="rect" id="node16" href="namespacejpeg.html#a2972e360476e797d85a6b2e7b1881e36" title="jpeg::color_trans_yuv_to_rgb" alt="" coords="269,191,459,220"/><area shape="rect" id="node5" href="namespacejpeg.html#a1425c3b9d076aa84ac788b2e77f20460" title="jpeg::decode_huffman_word" alt="" coords="508,5,692,35"/><area shape="rect" id="node7" href="classutil_1_1InBitStream.html#aeddb4b556dd18c7539e3bbc72125dbc8" title="util::InBitStream::getBits" alt="" coords="741,32,907,61"/><area shape="rect" id="node9" href="classutil_1_1InBitStream.html#ad86f68b1c62203b8eace536ad0fe688c" title="1:読み出し可, 0:読み出し不可" alt="" coords="956,32,1116,61"/><area shape="rect" id="node18" href="namespacejpeg.html#ae8a765a0a8baba6653149f88e0567ce4" title="jpeg::revise_value" alt="" coords="537,191,663,220"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="adfefe1f130f00aa39cd1f082af73323c"></a><!-- doxytag: member="jpeg::JpegDecoder::setImageSize" ref="adfefe1f130f00aa39cd1f082af73323c" args="(size_t width, size_t height)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classjpeg_1_1JpegDecoder.html#adfefe1f130f00aa39cd1f082af73323c">jpeg::JpegDecoder::setImageSize</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>height</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>エンコードするイメージのサイズを指定する </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">width</td><td>幅 </td></tr>
+    <tr><td class="paramname">height</td><td>高さ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/><h2>変数</h2>
+<a class="anchor" id="a010298fd9a95e71bc44521f6ea526d07"></a><!-- doxytag: member="jpeg::JpegDecoder::_coefficient" ref="a010298fd9a95e71bc44521f6ea526d07" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="type__definitions_8h.html#a1d286aa98e3a34d956b34aa9b89fd4db">IntBuffer</a> <a class="el" href="classjpeg_1_1JpegDecoder.html#a010298fd9a95e71bc44521f6ea526d07">jpeg::JpegDecoder::_coefficient</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a02c224381e0747c6fa259f2b1bb2d0dc"></a><!-- doxytag: member="jpeg::JpegDecoder::_height" ref="a02c224381e0747c6fa259f2b1bb2d0dc" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classjpeg_1_1JpegDecoder.html#a02c224381e0747c6fa259f2b1bb2d0dc">jpeg::JpegDecoder::_height</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a35e85902ba19679b7d7afacdfc5aeb07"></a><!-- doxytag: member="jpeg::JpegDecoder::_quantized" ref="a35e85902ba19679b7d7afacdfc5aeb07" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="type__definitions_8h.html#a1d286aa98e3a34d956b34aa9b89fd4db">IntBuffer</a> <a class="el" href="classjpeg_1_1JpegDecoder.html#a35e85902ba19679b7d7afacdfc5aeb07">jpeg::JpegDecoder::_quantized</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aabcb3f3f327f7e07edef38a6a1fe8cde"></a><!-- doxytag: member="jpeg::JpegDecoder::_width" ref="aabcb3f3f327f7e07edef38a6a1fe8cde" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classjpeg_1_1JpegDecoder.html#aabcb3f3f327f7e07edef38a6a1fe8cde">jpeg::JpegDecoder::_width</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a96f332eeafc8467618b92a80287ffd08"></a><!-- doxytag: member="jpeg::JpegDecoder::_yuv_data" ref="a96f332eeafc8467618b92a80287ffd08" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="type__definitions_8h.html#a1d286aa98e3a34d956b34aa9b89fd4db">IntBuffer</a> <a class="el" href="classjpeg_1_1JpegDecoder.html#a96f332eeafc8467618b92a80287ffd08">jpeg::JpegDecoder::_yuv_data</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<hr/>このクラスの説明は次のファイルから生成されました:<ul>
+<li>src/<a class="el" href="cpu__jpeg_8h.html">cpu_jpeg.h</a></li>
+<li>src/<a class="el" href="cpu__jpeg_8cpp.html">cpu_jpeg.cpp</a></li>
+</ul>
+</div><!-- contents -->
+</div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>全て</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>クラス</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>ネームスペース</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>ファイル</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>関数</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>変数</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>型定義</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>列挙型</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>列挙型の値</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>マクロ定義</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+  <div id="nav-path" class="navpath">
+    <ul>
+      <li class="navelem"><a class="el" href="namespacejpeg.html">jpeg</a>      </li>
+      <li class="navelem"><a class="el" href="classjpeg_1_1JpegDecoder.html">JpegDecoder</a>      </li>
+
+    <li class="footer">cuda_jpegに対してMon Oct 29 2012 01:39:28に生成されました。
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
+   </ul>
+ </div>
+
+
+</body>
+</html>
