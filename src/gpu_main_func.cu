@@ -16,9 +16,13 @@
 #include "utils/util_cv.h"
 #include "utils/encoder_tables.h"
 #include "utils/in_bit_stream.h"
-#include "utils/gpu_in_bit_stream.cuh"
 
 using namespace std;
+
+using namespace util;
+using namespace util::cuda;
+using namespace jpeg;
+using namespace jpeg::cuda;
 
 void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 	//----------------------------------------------------------------------------

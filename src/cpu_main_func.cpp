@@ -5,13 +5,16 @@
 #include <fstream>
 #include <iostream>
 
-using namespace std;
-
 #include "cpu_jpeg.h"
 
 #include "utils/timer.h"
 #include "utils/util_cv.h"
 #include "utils/encoder_tables.h"
+
+using namespace std;
+using namespace util;
+using namespace jpeg;
+
 
 //----------------------------------------------------------------------------
 // CPU Jpeg圧縮テストルーチン

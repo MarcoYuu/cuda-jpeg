@@ -7,71 +7,31 @@
 #ifndef ENCODER_TABLE_H_
 #define ENCODER_TABLE_H_
 
-namespace encode_table{
+namespace jpeg {
+	namespace encode_table{
 
-	//----------------------------------------------------------------------------
-	// ジグザグシーケンス
-	//============================================================================
-	struct Zigzag {
-		/** ジグザグシーケンス用  */
-		static const int sequence[64];
-	};
-
-	//----------------------------------------------------------------------------
-	// 量子化テーブル
-	//============================================================================
-	struct Quantize {
-		/** 量子化テーブル輝度用 */
-		static const int luminance[64];
-		/** 量子化テーブル色差用 */
-		static const int component[64];
-	};
-
-	//----------------------------------------------------------------------------
-	// ハフマン符号化用
-	//============================================================================
-	namespace HuffmanEncode {
-		namespace DC {
-			struct luminance {
-				/** 輝度DC成分用サイズテーブル */
-				static const int size[12];
-				/** 輝度DC成分用符号語テーブル */
-				static const int code[12];
-			};
-			struct component {
-				/** 色差DC成分用サイズテーブル */
-				static const int size[12];
-				/** 色差DC成分用符号語テーブル */
-				static const int code[12];
-			};
+		//----------------------------------------------------------------------------
+		// ジグザグシーケンス
+		//============================================================================
+		struct Zigzag {
+			/** ジグザグシーケンス用  */
+			static const int sequence[64];
 		};
 
-		namespace AC {
-			struct luminance {
-				/** 輝度AC成分用サイズテーブル */
-				static const int size[162];
-				/** 輝度AC成分用符号語テーブル */
-				static const int code[162];
-
-				static const int EOB =0;
-				static const int ZRL =151;
-			};
-			struct component {
-				/** 色差AC成分用サイズテーブル */
-				static const int size[162];
-				/** 色差AC成分用符号語テーブル */
-				static const int code[162];
-
-				static const int EOB =0;
-				static const int ZRL =151;
-			};
+		//----------------------------------------------------------------------------
+		// 量子化テーブル
+		//============================================================================
+		struct Quantize {
+			/** 量子化テーブル輝度用 */
+			static const int luminance[64];
+			/** 量子化テーブル色差用 */
+			static const int component[64];
 		};
-	};
 
-	//----------------------------------------------------------------------------
-	// ハフマン復号用
-	//============================================================================
-	namespace HuffmanDecode {
+		//----------------------------------------------------------------------------
+		// ハフマン符号化用
+		//============================================================================
+		namespace HuffmanEncode {
 			namespace DC {
 				struct luminance {
 					/** 輝度DC成分用サイズテーブル */
@@ -106,252 +66,92 @@ namespace encode_table{
 					static const int EOB =0;
 					static const int ZRL =151;
 				};
+			}
+		}
+
+		//----------------------------------------------------------------------------
+		// ハフマン復号用
+		//============================================================================
+		/**
+		 * ハフマンテーブルの提供
+		 *
+		 * @author yuumomma
+		 * @version 1.0
+		 */
+		namespace HuffmanDecode {
+			struct TableSet {
+				const int table_size;		//! テーブル要素数
+				const int* size_table;		//! ハフマンサイズテーブル
+				const int* code_table;		//! ハフマン符号語テーブル
+				const int* value_table;	//! ハフマンパラメータテーブル
+
+				static const TableSet luminanceDC;
+				static const TableSet componentDC;
+				static const TableSet luminanceAC;
+				static const TableSet componentAC;
+
+			private:
+				TableSet(int s, const int *st, const int *ct, const int *vt) :
+					table_size(s),
+					size_table(st),
+					code_table(ct),
+					value_table(vt) {
+				}
 			};
+
+			namespace DC {
+				struct luminance {
+					/** 輝度DC成分用サイズテーブル */
+					static const int size[12];
+					/** 輝度DC成分用符号語テーブル */
+					static const int code[12];
+					/** 輝度DC成分用パラメータ */
+					static const int param[12];
+				};
+				struct component {
+					/** 色差DC成分用サイズテーブル */
+					static const int size[12];
+					/** 色差DC成分用符号語テーブル */
+					static const int code[12];
+					/** 色差DC成分用パラメータ */
+					static const int param[12];
+				};
+			}
+
+			namespace AC {
+				struct luminance {
+					/** 輝度AC成分用サイズテーブル */
+					static const int size[162];
+					/** 輝度AC成分用符号語テーブル */
+					static const int code[162];
+					/** 輝度AC成分用パラメータ */
+					static const int param[162];
+
+					static const int EOB = 0;
+					static const int ZRL = 151;
+				};
+				struct component {
+					/** 色差AC成分用サイズテーブル */
+					static const int size[162];
+					/** 色差AC成分用符号語テーブル */
+					static const int code[162];
+					/** 色差AC成分用パラメータ */
+					static const int param[162];
+
+					static const int EOB = 0;
+					static const int ZRL = 151;
+				};
+			}
+		}
+
+		struct Sampling{
+			/**
+			* 輝度用間引きテーブル
+			*
+			* ファイル出力、内部処理兼用
+			*/
+			static const int luminance[256];
 		};
-/** 逆ハフマンコードテーブル */
-struct SHuffmanDecodeTable {
-	int numOfElement; 	//! テーブル要素数
-	int* SizeTP; 		//! ハフマンサイズテーブル
-	int* CodeTP; 		//! ハフマン符号語テーブル
-	int* ValueTP;
-};
-
-/** 輝度DC成分用サイズテーブル */
-static const int	kYDcSizeDT[] = {
-	0x0002, 0x0003, 0x0003, 0x0003,
-	0x0003, 0x0003, 0x0004, 0x0005,
-	0x0006, 0x0007, 0x0008, 0x0009
-};
-/** 輝度DC成分用符号語テーブル */
-static const int	kYDcCodeDT[] = {
-	0x0000, 0x0002, 0x0003, 0x0004,
-	0x0005, 0x0006, 0x000e, 0x001e,
-	0x003e, 0x007e, 0x00fe, 0x01fe
-};
-/** 輝度DC成分用パラメータ */
-static const int	kYDcValueDT[] = {
-	0x0000, 0x0001, 0x0002, 0x0003,
-	0x0004, 0x0005, 0x0006, 0x0007,
-	0x0008, 0x0009, 0x000a, 0x000b
-};
-/** 輝度DC成分用逆ハフマンコードテーブル */
-static const SHuffmanDecodeTable	kYDcHuffmanDT = {
-	12, 				//! テーブル要素数（符号語数）
-	(int*) kYDcSizeDT, 	//! サイズテーブル
-	(int*) kYDcCodeDT, 	//! 符号語テーブル
-	(int*) kYDcValueDT
-};
-
-/** 色差DC成分用サイズテーブル */
-static const int	kCDcSizeDT[] = {					//
-	0x0002, 0x0002, 0x0002, 0x0003,
-	0x0004, 0x0005, 0x0006, 0x0007,
-	0x0008, 0x0009, 0x000a, 0x000b };
-/** 色差DC成分用符号語テーブル */
-static const int	kCDcCodeDT[] = {					//
-	0x0000, 0x0001, 0x0002, 0x0006,
-	0x000e, 0x001e, 0x003e, 0x007e,
-	0x00fe, 0x01fe, 0x03fe, 0x07fe	};
-/** 色差DC成分用パラメータ */
-static const int	kCDcValueDT[] = {	//
-	0x0000, 0x0001, 0x0002, 0x0003,
-	0x0004, 0x0005, 0x0006, 0x0007,
-	0x0008, 0x0009, 0x000a, 0x000b
-};
-
-/** 色差DC成分用逆ハフマンコードテーブル */
-static const SHuffmanDecodeTable	kCDcHuffmanDT = {
-	12, 				//! テーブル要素数（符号語数）
-	(int*) kCDcSizeDT, 	//! サイズテーブル
-	(int*) kCDcCodeDT, 	//! 符号語テーブル
-	(int*) kCDcValueDT
-};
-
-/** 輝度AC成分用サイズテーブル */
-static const int	kYAcSizeDT[] = {
-	 2,  2,  3,  4,  4,  4,  5,  5,
-	 5,  6,  6,  7,  7,  7,  7,  8,
-	 8,  8,  9,  9,  9,  9,  9, 10,
-	10, 10, 10, 10, 11, 11, 11, 11,
-	12, 12, 12, 12, 15, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16};
-/** 輝度AC成分用符号語テーブル */
-static const int	kYAcCodeDT[] = {
-	0x0000, 0x0001, 0x0004, 0x000a, 0x000b, 0x000c, 0x001a, 0x001b,
-	0x001c, 0x003a, 0x003b, 0x0078, 0x0079, 0x007a, 0x007b, 0x00f8,
-	0x00f9, 0x00fa, 0x01f6, 0x01f7, 0x01f8, 0x01f9, 0x01fa, 0x03f6,
-	0x03f7, 0x03f8, 0x03f9, 0x03fa, 0x07f6, 0x07f7, 0x07f8, 0x07f9,
-	0x0ff4, 0x0ff5, 0x0ff6, 0x0ff7, 0x7fc0, 0xff82, 0xff83, 0xff84,
-	0xff85, 0xff86, 0xff87, 0xff88, 0xff89, 0xff8a, 0xff8b, 0xff8c,
-	0xff8d, 0xff8e, 0xff8f, 0xff90, 0xff91, 0xff92, 0xff93, 0xff94,
-	0xff95, 0xff96, 0xff97, 0xff98, 0xff99, 0xff9a, 0xff9b, 0xff9c,
-	0xff9d, 0xff9e, 0xff9f, 0xffa0, 0xffa1, 0xffa2, 0xffa3, 0xffa4,
-	0xffa5, 0xffa6, 0xffa7, 0xffa8, 0xffa9, 0xffaa, 0xffab, 0xffac,
-	0xffad, 0xffae, 0xffaf, 0xffb0, 0xffb1, 0xffb2, 0xffb3, 0xffb4,
-	0xffb5, 0xffb6, 0xffb7, 0xffb8, 0xffb9, 0xffba, 0xffbb, 0xffbc,
-	0xffbd, 0xffbe, 0xffbf, 0xffc0, 0xffc1, 0xffc2, 0xffc3, 0xffc4,
-	0xffc5, 0xffc6, 0xffc7, 0xffc8, 0xffc9, 0xffca, 0xffcb, 0xffcc,
-	0xffcd, 0xffce, 0xffcf, 0xffd0, 0xffd1, 0xffd2, 0xffd3, 0xffd4,
-	0xffd5, 0xffd6, 0xffd7, 0xffd8, 0xffd9, 0xffda, 0xffdb, 0xffdc,
-	0xffdd, 0xffde, 0xffdf, 0xffe0, 0xffe1, 0xffe2, 0xffe3, 0xffe4,
-	0xffe5, 0xffe6, 0xffe7, 0xffe8, 0xffe9, 0xffea, 0xffeb, 0xffec,
-	0xffed, 0xffee, 0xffef, 0xfff0, 0xfff1, 0xfff2, 0xfff3, 0xfff4,
-	0xfff5, 0xfff6, 0xfff7, 0xfff8, 0xfff9, 0xfffa, 0xfffb, 0xfffc,
-	0xfffd, 0xfffe,
-};
-/** 輝度AC成分用パラメータ */
-static const int kYAcValueDT[] = {
-	0x0001, 0x0002, 0x0003, 0x0000, 0x0004, 0x0011, 0x0005, 0x0012,
-	0x0021, 0x0031, 0x0041, 0x0006, 0x0013, 0x0051, 0x0061, 0x0007,
-	0x0022, 0x0071, 0x0014, 0x0032, 0x0081, 0x0091, 0x00a1, 0x0008,
-	0x0023, 0x0042, 0x00b1, 0x00c1, 0x0015, 0x0052, 0x00d1, 0x00f0,
-	0x0024, 0x0033, 0x0062, 0x0072, 0x0082, 0x0009, 0x000a, 0x0016,
-	0x0017, 0x0018, 0x0019, 0x001a, 0x0025, 0x0026, 0x0027, 0x0028,
-	0x0029, 0x002a, 0x0034, 0x0035, 0x0036, 0x0037, 0x0038, 0x0039,
-	0x003a, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 0x0048, 0x0049,
-	0x004a, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059,
-	0x005a, 0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069,
-	0x006a, 0x0073, 0x0074, 0x0075, 0x0076, 0x0077, 0x0078, 0x0079,
-	0x007a, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087, 0x0088, 0x0089,
-	0x008a, 0x0092, 0x0093, 0x0094, 0x0095, 0x0096, 0x0097, 0x0098,
-	0x0099, 0x009a, 0x00a2, 0x00a3, 0x00a4, 0x00a5, 0x00a6, 0x00a7,
-	0x00a8, 0x00a9, 0x00aa, 0x00b2, 0x00b3, 0x00b4, 0x00b5, 0x00b6,
-	0x00b7, 0x00b8, 0x00b9, 0x00ba, 0x00c2, 0x00c3, 0x00c4, 0x00c5,
-	0x00c6, 0x00c7, 0x00c8, 0x00c9, 0x00ca, 0x00d2, 0x00d3, 0x00d4,
-	0x00d5, 0x00d6, 0x00d7, 0x00d8, 0x00d9, 0x00da, 0x00e1, 0x00e2,
-	0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7, 0x00e8, 0x00e9, 0x00ea,
-	0x00f1, 0x00f2, 0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8,
-	0x00f9, 0x00fa
-};
-/** 輝度AC成分用逆ハフマンコードテーブル */
-static const SHuffmanDecodeTable	kYAcHuffmanDT = {
-	162, 				//! テーブル要素数（符号語数）
-	(int*) kYAcSizeDT, 	//! サイズテーブル
-	(int*) kYAcCodeDT, 	//! 符号語テーブル
-	(int*) kYAcValueDT
-};
-
-
-/** 色差AC成分用サイズテーブル */
-static const int	kCAcSizeDT[] = {
-	 2,  2,  3,  4,  4,  5,  5,  5,
-	 5,  6,  6,  6,  6,  7,  7,  7,
-	 8,  8,  8,  8,  9,  9,  9,  9,
-	 9,  9,  9, 10, 10, 10, 10, 10,
-	11, 11, 11, 11, 12, 12, 12, 12,
-	14, 15, 15, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16, 16, 16, 16, 16, 16, 16,
-	16, 16,
-};
-/** 色差AC成分用符号語テーブル */
-static const int	kCAcCodeDT[] = {
-	0x0000, 0x0001, 0x0004, 0x000a, 0x000b, 0x0018, 0x0019, 0x001a,
-	0x001b, 0x0038, 0x0039, 0x003a, 0x003b, 0x0078, 0x0079, 0x007a,
-	0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x01f4, 0x01f5, 0x01f6, 0x01f7,
-	0x01f8, 0x01f9, 0x01fa, 0x03f6, 0x03f7, 0x03f8, 0x03f9, 0x03fa,
-	0x07f6, 0x07f7, 0x07f8, 0x07f9, 0x0ff4, 0x0ff5, 0x0ff6, 0x0ff7,
-	0x3fe0, 0x7fc2, 0x7fc3, 0xff88, 0xff89, 0xff8a, 0xff8b, 0xff8c,
-	0xff8d, 0xff8e, 0xff8f, 0xff90, 0xff91, 0xff92, 0xff93, 0xff94,
-	0xff95, 0xff96, 0xff97, 0xff98, 0xff99, 0xff9a, 0xff9b, 0xff9c,
-	0xff9d, 0xff9e, 0xff9f, 0xffa0, 0xffa1, 0xffa2, 0xffa3, 0xffa4,
-	0xffa5, 0xffa6, 0xffa7, 0xffa8, 0xffa9, 0xffaa, 0xffab, 0xffac,
-	0xffad, 0xffae, 0xffaf, 0xffb0, 0xffb1, 0xffb2, 0xffb3, 0xffb4,
-	0xffb5, 0xffb6, 0xffb7, 0xffb8, 0xffb9, 0xffba, 0xffbb, 0xffbc,
-	0xffbd, 0xffbe, 0xffbf, 0xffc0, 0xffc1, 0xffc2, 0xffc3, 0xffc4,
-	0xffc5, 0xffc6, 0xffc7, 0xffc8, 0xffc9, 0xffca, 0xffcb, 0xffcc,
-	0xffcd, 0xffce, 0xffcf, 0xffd0, 0xffd1, 0xffd2, 0xffd3, 0xffd4,
-	0xffd5, 0xffd6, 0xffd7, 0xffd8, 0xffd9, 0xffda, 0xffdb, 0xffdc,
-	0xffdd, 0xffde, 0xffdf, 0xffe0, 0xffe1, 0xffe2, 0xffe3, 0xffe4,
-	0xffe5, 0xffe6, 0xffe7, 0xffe8, 0xffe9, 0xffea, 0xffeb, 0xffec,
-	0xffed, 0xffee, 0xffef, 0xfff0, 0xfff1, 0xfff2, 0xfff3, 0xfff4,
-	0xfff5, 0xfff6, 0xfff7, 0xfff8, 0xfff9, 0xfffa, 0xfffb, 0xfffc,
-	0xfffd, 0xfffe,
-};
-/** 色差AC成分用パラメータ */
-static const int kCAcValueDT[]={//
-	0x0000, 0x0001, 0x0002, 0x0003, 0x0011, 0x0004, 0x0005, 0x0021,
-	0x0031, 0x0006, 0x0012, 0x0041, 0x0051, 0x0007, 0x0061, 0x0071,
-	0x0013, 0x0022, 0x0032, 0x0081, 0x0008, 0x0014, 0x0042, 0x0091,
-	0x00a1, 0x00b1, 0x00c1, 0x0009, 0x0023, 0x0033, 0x0052, 0x00f0,
-	0x0015, 0x0062, 0x0072, 0x00d1, 0x000a, 0x0016, 0x0024, 0x0034,
-	0x00e1, 0x0025, 0x00f1, 0x0017, 0x0018, 0x0019, 0x001a, 0x0026,
-	0x0027, 0x0028, 0x0029, 0x002a, 0x0035, 0x0036, 0x0037, 0x0038,
-	0x0039, 0x003a, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 0x0048,
-	0x0049, 0x004a, 0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058,
-	0x0059, 0x005a, 0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068,
-	0x0069, 0x006a, 0x0073, 0x0074, 0x0075, 0x0076, 0x0077, 0x0078,
-	0x0079, 0x007a, 0x0082, 0x0083, 0x0084, 0x0085, 0x0086, 0x0087,
-	0x0088, 0x0089, 0x008a, 0x0092, 0x0093, 0x0094, 0x0095, 0x0096,
-	0x0097, 0x0098, 0x0099, 0x009a, 0x00a2, 0x00a3, 0x00a4, 0x00a5,
-	0x00a6, 0x00a7, 0x00a8, 0x00a9, 0x00aa, 0x00b2, 0x00b3, 0x00b4,
-	0x00b5, 0x00b6, 0x00b7, 0x00b8, 0x00b9, 0x00ba, 0x00c2, 0x00c3,
-	0x00c4, 0x00c5, 0x00c6, 0x00c7, 0x00c8, 0x00c9, 0x00ca, 0x00d2,
-	0x00d3, 0x00d4, 0x00d5, 0x00d6, 0x00d7, 0x00d8, 0x00d9, 0x00da,
-	0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7, 0x00e8, 0x00e9,
-	0x00ea, 0x00f2, 0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7, 0x00f8,
-	0x00f9, 0x00fa };
-/** 色差AC成分用逆ハフマンコードテーブル */
-static const SHuffmanDecodeTable	kCAcHuffmanDT = {
-	162, 				//! テーブル要素数（符号語数）
-	(int*) kCAcSizeDT, 	//! サイズテーブル
-	(int*) kCAcCodeDT, 	//! 符号語テーブル
-	(int*) kCAcValueDT
-};
-
-/**
-* 輝度用間引きテーブル
-*
-* ファイル出力、内部処理兼用
-*/
-static const int	ksamplingT[] = {
-	 0,  0,  1,  1,  2,  2,  3,  3,  8,  8,  9,  9, 10, 10, 11, 11,
-	 0,  0,  1,  1,  2,  2,  3,  3,  8,  8,  9,  9, 10, 10, 11, 11,
-	16, 16, 17, 17, 18, 18, 19, 19, 24, 24, 25, 25, 26, 26, 27, 27,
-	16, 16, 17, 17, 18, 18, 19, 19, 24, 24, 25, 25, 26, 26, 27, 27,
-
-	 4,  4,  5,  5,  6,  6,  7,  7, 12, 12, 13, 13, 14, 14, 15, 15,
-	 4,  4,  5,  5,  6,  6,  7,  7, 12, 12, 13, 13, 14, 14, 15, 15,
-	20, 20, 21, 21, 22, 22, 23, 23, 28, 28, 29, 29, 30, 30, 31, 31,
-	20, 20, 21, 21, 22, 22, 23, 23, 28, 28, 29, 29, 30, 30, 31, 31,
-
-	32, 32, 33, 33, 34, 34, 35, 35, 40, 40, 41, 41, 42, 42, 43, 43,
-	32, 32, 33, 33, 34, 34, 35, 35, 40, 40, 41, 41, 42, 42, 43, 43,
-	48, 48, 49, 49, 50, 50, 51, 51, 56, 56, 57, 57, 58, 58, 59, 59,
-	48, 48, 49, 49, 50, 50, 51, 51, 56, 56, 57, 57, 58, 58, 59, 59,
-
-	36, 36, 37, 37, 38, 38, 39, 39, 44, 44, 45, 45, 46, 46, 47, 47,
-	36, 36, 37, 37, 38, 38, 39, 39, 44, 44, 45, 45, 46, 46, 47, 47,
-	52, 52, 53, 53, 54, 54, 55, 55, 60, 60, 61, 61, 62, 62, 63, 63,
-	52, 52, 53, 53, 54, 54, 55, 55, 60, 60, 61, 61, 62, 62, 63, 63
-};
-
-}
+	}
+}  // namespace cpu
 #endif 
