@@ -12,7 +12,9 @@
 #include <cstdlib>
 
 /**
- * @brief CUDAメモリ簡易管理
+ * CUDAメモリ簡易管理
+ *
+ * デバイスに書き込むだけでホストから読み出す必要はないとき
  *
  * @author momma
  */
@@ -27,7 +29,7 @@ private:
 
 public:
 	/**
-	 * @brief コンストラクタ
+	 * コンストラクタ
 	 *
 	 * @param size [in] Tの個数
 	 */
@@ -38,11 +40,10 @@ public:
 	}
 
 	/**
-	 * @brief コンストラクタ
+	 * コンストラクタ
 	 *
 	 * @param size [in] Tの個数
 	 * @param data [in] 初期化データ
-	 * @param copy_to_device [in] デバイスにコピーするかどうか
 	 */
 	device_memory(const T* data, size_t size) :
 		_size(size) {
@@ -52,17 +53,23 @@ public:
 		cudaMemcpy(_device_mem, data, sizeof(T) * size, cudaMemcpyHostToDevice);
 	}
 
+	/**
+	 * デストラクタ
+	 */
 	virtual ~device_memory() {
 		if (_device_mem != NULL)
 			cudaFree(_device_mem);
 	}
 
+	/**
+	 * メモリをゼロクリア
+	 */
 	virtual void fill_zero() {
 		cudaMemset(_device_mem, 0, sizeof(T) * _size);
 	}
 
 	/**
-	 * @brief メモリサイズを返す
+	 * メモリサイズを返す
 	 *
 	 * Tの個数を取得する。バイト数はsizeof(T)*CudaMemory::size()。
 	 *
@@ -73,7 +80,7 @@ public:
 	}
 
 	/**
-	 * @brief デバイスメモリに書き込む
+	 * デバイスメモリに書き込む
 	 *
 	 * @param data [in] 書き込み元
 	 * @param size [in] 書き込みサイズ
@@ -83,17 +90,20 @@ public:
 	}
 
 	/**
-	 * @brief 生データへのポインタ取得
+	 * 生データへのポインタ取得
 	 */
 	T* device_data() {
 		return _device_mem;
 	}
+	/**
+	 * 生データへのポインタ取得
+	 */
 	const T* device_data() const {
 		return _device_mem;
 	}
 
 	/**
-	 * @brief ホストメモリにコピーする
+	 * ホストメモリにコピーする
 	 *
 	 * デバイスメモリのデータをホストメモリに転送する
 	 *
@@ -106,9 +116,7 @@ public:
 };
 
 /**
- * @brief CUDAメモリ簡易管理
- *
- * デバイスに書き込むだけでホストから読み出す必要はないとき
+ * CUDAメモリ簡易管理
  *
  * @author momma
  */
@@ -123,7 +131,7 @@ private:
 
 public:
 	/**
-	 * @brief コンストラクタ
+	 * コンストラクタ
 	 *
 	 * @param size [in] Tの個数
 	 */
@@ -134,7 +142,7 @@ public:
 	}
 
 	/**
-	 * @brief コンストラクタ
+	 * コンストラクタ
 	 *
 	 * @param size [in] Tの個数
 	 * @param data [in] 初期化データ
@@ -152,31 +160,45 @@ public:
 		}
 	}
 
+	/**
+	 * デストラクタ
+	 */
 	virtual ~cuda_memory() {
 		delete[] _host_mem;
 	}
-
+	/**
+	 * メモリをゼロクリア
+	 */
 	void fillZero() {
 		memset(_host_mem, 0, sizeof(T) * this->size());
 		base::fill_zero();
 	}
 
+	/**
+	 * ホストメモリに書き込む
+	 *
+	 * @param data [in] 書き込み元
+	 * @param size [in] 書き込みサイズ
+	 */
 	void write_host(const T* data, size_t size) {
 		memcpy(_host_mem, data, sizeof(T) * size);
 	}
 
 	/**
-	 * @brief 生データへのポインタ取得
+	 * 生データへのポインタ取得
 	 */
 	T* host_data() {
 		return _host_mem;
 	}
+	/**
+	 * 生データへのポインタ取得
+	 */
 	const T* host_data() const {
 		return _host_mem;
 	}
 
 	/**
-	 * @brief デバイスメモリの中身を同期させる
+	 * デバイスメモリの中身を同期させる
 	 *
 	 * ホストメモリのデータをデバイスメモリに転送する
 	 */
@@ -186,7 +208,7 @@ public:
 	}
 
 	/**
-	 * @brief ホストメモリの中身を同期させる
+	 * ホストメモリの中身を同期させる
 	 *
 	 * デバイスメモリのデータをホストメモリに転送する
 	 */
@@ -195,9 +217,21 @@ public:
 			cudaMemcpyDeviceToHost);
 	}
 
+	/**
+	 * インデクサ
+	 *
+	 * @param index
+	 * @return ホストメモリ
+	 */
 	T& operator[](size_t index) {
 		return _host_mem[index];
 	}
+	/**
+	 * インデクサ
+	 *
+	 * @param index
+	 * @return ホストメモリ
+	 */
 	const T& operator[](size_t index) const {
 		return _host_mem[index];
 	}

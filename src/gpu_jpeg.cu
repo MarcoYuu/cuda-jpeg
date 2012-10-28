@@ -11,9 +11,9 @@
 
 #include "cpu_jpeg.h"
 
-__device__ __constant__ double kSqrt2 = 1.41421356; // 2の平方根
-__device__ __constant__ double kDisSqrt2 = 1.0 / 1.41421356; // 2の平方根の逆数
-__device__ __constant__ double kPaiDiv16 = 3.14159265 / 16; // 円周率/16
+__device__ __constant__ float kSqrt2 = 1.41421356; // 2の平方根
+__device__ __constant__ float kDisSqrt2 = 1.0 / 1.41421356; // 2の平方根の逆数
+__device__ __constant__ float kPaiDiv16 = 3.14159265 / 16; // 円周率/16
 
 __device__ __constant__ float CosT[] = { 0.707107, 0.707107, 0.707107, 0.707107, 0.707107, 0.707107,
 	0.707107, 0.707107, 0.980785, 0.83147, 0.55557, 0.19509, -0.19509, -0.55557, -0.83147,

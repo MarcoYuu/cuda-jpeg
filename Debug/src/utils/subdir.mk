@@ -5,6 +5,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/utils/cuda_timer.cpp \
+../src/utils/encoder_table.cpp \
 ../src/utils/in_bit_stream.cpp \
 ../src/utils/out_bit_stream.cpp \
 ../src/utils/timer.cpp \
@@ -18,6 +19,7 @@ CU_DEPS += \
 
 OBJS += \
 ./src/utils/cuda_timer.o \
+./src/utils/encoder_table.o \
 ./src/utils/gpu_in_bit_stream.o \
 ./src/utils/in_bit_stream.o \
 ./src/utils/out_bit_stream.o \
@@ -26,6 +28,7 @@ OBJS += \
 
 CPP_DEPS += \
 ./src/utils/cuda_timer.d \
+./src/utils/encoder_table.d \
 ./src/utils/in_bit_stream.d \
 ./src/utils/out_bit_stream.d \
 ./src/utils/timer.d \

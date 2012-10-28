@@ -13,6 +13,8 @@
 #include "utils/out_bit_stream.h"
 #include "utils/in_bit_stream.h"
 
+using namespace encode_table;
+
 // -------------------------------------------------------------------------
 // 符号化に用いる定数
 // =========================================================================
@@ -56,7 +58,7 @@ void decode_huffman(InBitStream *ibit_stream, int *dst_qua, size_t sizeX, size_t
 // CPUエンコーダ
 // =========================================================================
 JpegEncoder::JpegEncoder() :
-_yuv_data(),
+	_yuv_data(),
 	_coefficient(),
 	_quantized(),
 	_out_bit(1),
@@ -66,10 +68,10 @@ _yuv_data(),
 }
 
 JpegEncoder::JpegEncoder(size_t width, size_t height) :
-_yuv_data((size_t)(width * height * 3 / 2)),
-	_coefficient((size_t)(width * height * 3 / 2)),
-	_quantized((size_t)(width * height * 3 / 2)),
-	_out_bit((size_t)(width * height * 3)),
+	_yuv_data((size_t) (width * height * 3 / 2)),
+	_coefficient((size_t) (width * height * 3 / 2)),
+	_quantized((size_t) (width * height * 3 / 2)),
+	_out_bit((size_t) (width * height * 3)),
 	_width(width),
 	_height(height) {
 
@@ -80,21 +82,22 @@ void JpegEncoder::reset() {
 }
 
 void JpegEncoder::setImageSize(size_t width, size_t height) {
-	_yuv_data.resize((size_t)(width * height * 3 / 2));
-	_coefficient.resize((size_t)(width * height * 3 / 2));
-	_quantized.resize((size_t)(width * height * 3 / 2));
+	_yuv_data.resize((size_t) (width * height * 3 / 2));
+	_coefficient.resize((size_t) (width * height * 3 / 2));
+	_quantized.resize((size_t) (width * height * 3 / 2));
 
-	_out_bit.resize((size_t)(width * height * 3));
+	_out_bit.resize((size_t) (width * height * 3));
 
 	_width = width;
 	_height = height;
 }
 
-size_t JpegEncoder::encode(const byte* rgb_data, size_t src_size, byte* result, size_t result_size) {
+size_t JpegEncoder::encode(const byte* rgb_data, size_t src_size, byte* result,
+	size_t result_size) {
 	assert(src_size == _width * _height * 3);
 	inner_encode(rgb_data);
 
-	size_t size =_out_bit.getStreamSize();
+	size_t size = _out_bit.getStreamSize();
 	assert(result_size >= size);
 
 	memcpy(result, _out_bit.getStreamAddress(), size);
@@ -103,22 +106,22 @@ size_t JpegEncoder::encode(const byte* rgb_data, size_t src_size, byte* result, 
 	return size;
 }
 
-size_t JpegEncoder::encode( const ByteBuffer &rgb_data, byte *result, size_t result_size){
+size_t JpegEncoder::encode(const ByteBuffer &rgb_data, byte *result, size_t result_size) {
 	inner_encode(rgb_data.data());
 
-	size_t size =_out_bit.getStreamSize();
+	size_t size = _out_bit.getStreamSize();
 	memcpy(result, _out_bit.getStreamAddress(), size);
 	reset();
 
 	return size;
 }
 
-size_t JpegEncoder::encode( const byte *rgb_data, size_t src_size, ByteBuffer &result ){
+size_t JpegEncoder::encode(const byte *rgb_data, size_t src_size, ByteBuffer &result) {
 	assert(src_size == _width * _height * 3);
 
 	inner_encode(rgb_data);
 
-	size_t size =_out_bit.getStreamSize();
+	size_t size = _out_bit.getStreamSize();
 	result.assign(_out_bit.getStreamAddress(), _out_bit.getStreamAddress() + size);
 	reset();
 
@@ -128,27 +131,25 @@ size_t JpegEncoder::encode( const byte *rgb_data, size_t src_size, ByteBuffer &r
 size_t JpegEncoder::encode(const ByteBuffer &rgb_data, ByteBuffer &result) {
 	inner_encode(rgb_data.data());
 
-	size_t size =_out_bit.getStreamSize();
+	size_t size = _out_bit.getStreamSize();
 	result.assign(_out_bit.getStreamAddress(), _out_bit.getStreamAddress() + size);
 	reset();
-	
+
 	return size;
 }
 
-void JpegEncoder::inner_encode( const byte* rgb_data )
-{
+void JpegEncoder::inner_encode(const byte* rgb_data) {
 	color_trans_rgb_to_yuv(rgb_data, _yuv_data.data(), _width, _height);
 	dct(_yuv_data.data(), _coefficient.data(), _width, _height);
 	zig_quantize(_coefficient.data(), _quantized.data(), _width, _height);
 	encode_huffman(_quantized.data(), &_out_bit, _width, _height);
 }
 
-
 // -------------------------------------------------------------------------
 // CPUデコーダ
 // =========================================================================
 JpegDecoder::JpegDecoder() :
-_yuv_data(),
+	_yuv_data(),
 	_coefficient(),
 	_quantized(),
 	_width(0),
@@ -157,7 +158,7 @@ _yuv_data(),
 }
 
 JpegDecoder::JpegDecoder(size_t width, size_t height) :
-_yuv_data(width * height * 3 / 2),
+	_yuv_data(width * height * 3 / 2),
 	_coefficient(width * height * 3 / 2),
 	_quantized(width * height * 3 / 2),
 	_width(width),
@@ -186,28 +187,26 @@ void JpegDecoder::decode(const ByteBuffer& src, ByteBuffer &result) {
 	inner_decode(&in_bit, result.data());
 }
 
-void JpegDecoder::decode( const byte *src, size_t src_size, ByteBuffer &result ){
+void JpegDecoder::decode(const byte *src, size_t src_size, ByteBuffer &result) {
 	result.resize(_width * _height * 3);
 	InBitStream in_bit(src, src_size);
 
 	inner_decode(&in_bit, result.data());
 }
 
-void JpegDecoder::decode( const ByteBuffer &src, byte *result, size_t result_size ){
+void JpegDecoder::decode(const ByteBuffer &src, byte *result, size_t result_size) {
 	assert(result_size>=_width * _height * 3);
 	InBitStream in_bit(src.data(), src.size());
 
 	inner_decode(&in_bit, result);
 }
 
-void JpegDecoder::inner_decode( InBitStream *in_bit, byte *result )
-{
+void JpegDecoder::inner_decode(InBitStream *in_bit, byte *result) {
 	decode_huffman(in_bit, _quantized.data(), _width, _height);
 	izig_quantize(_quantized.data(), _coefficient.data(), _width, _height);
 	idct(_coefficient.data(), _yuv_data.data(), _width, _height);
 	color_trans_yuv_to_rgb(_yuv_data.data(), result, _width, _height);
 }
-
 
 // -------------------------------------------------------------------------
 // 符号化関数
@@ -256,9 +255,8 @@ void color_trans_rgb_to_yuv(const byte* src_img, int* dst_img, size_t sizeX, siz
 
 						//Y: -128 levelshift
 						dst_img[dst_posi] = int(
-							0.1440 * src_img[src_posi + 0]
-						+ 0.5870 * src_img[src_posi + 1]
-						+ 0.2990 * src_img[src_posi + 2] - 128);
+							0.1440 * src_img[src_posi + 0] + 0.5870 * src_img[src_posi + 1]
+								+ 0.2990 * src_img[src_posi + 2] - 128);
 					}
 				}
 			}
@@ -271,18 +269,15 @@ void color_trans_rgb_to_yuv(const byte* src_img, int* dst_img, size_t sizeX, siz
 			for (l = 0; l < 16; l += 2) {
 				for (m = 0; m < 16; m += 2) {
 					src_posi = 3 * (16 * i + 16 * sizeX * j + l * sizeX + m);
-					dst_posi = (sizeX * sizeY) + 64 * (i + j * MCU_x)
-						+ 8 * (l / 2) + (m / 2);
+					dst_posi = (sizeX * sizeY) + 64 * (i + j * MCU_x) + 8 * (l / 2) + (m / 2);
 					//Cb
 					dst_img[dst_posi] = int(
-						0.5000 * src_img[src_posi + 0]
-					- 0.3313 * src_img[src_posi + 1]
-					- 0.1687 * src_img[src_posi + 2]);
+						0.5000 * src_img[src_posi + 0] - 0.3313 * src_img[src_posi + 1]
+							- 0.1687 * src_img[src_posi + 2]);
 					//Cr
 					dst_img[dst_posi + ((sizeX / 2) * (sizeY / 2))] = int(
-						-0.0813 * src_img[src_posi + 0]
-					- 0.4187 * src_img[src_posi + 1]
-					+ 0.5000 * src_img[src_posi + 2]);
+						-0.0813 * src_img[src_posi + 0] - 0.4187 * src_img[src_posi + 1]
+							+ 0.5000 * src_img[src_posi + 2]);
 				}
 			}
 		}
@@ -322,23 +317,19 @@ void color_trans_yuv_to_rgb(const int *src_img, byte *dst_img, size_t sizeX, siz
 				}
 				for (l = 0; l < 8; l++) { //tate
 					for (m = 0; m < 8; m++) { //yoko
-						src_posi = 256 * (i + j * MCU_x) + src_offset + 8 * l
-							+ m;
+						src_posi = 256 * (i + j * MCU_x) + src_offset + 8 * l + m;
 
-						Cb = Y_size + 64 * (i + j * MCU_x)
-							+ ksamplingT[src_offset + 8 * l + m];
+						Cb = Y_size + 64 * (i + j * MCU_x) + ksamplingT[src_offset + 8 * l + m];
 						Cr = Cb + C_size;
 
-						dst_posi = 3
-							* (16 * i + 16 * sizeX * j + dst_offset + sizeX * l
-							+ m);
+						dst_posi = 3 * (16 * i + 16 * sizeX * j + dst_offset + sizeX * l + m);
 
 						//BGR
 						dst_img[dst_posi] = revise_value(
 							src_img[src_posi] + 1.77200 * (src_img[Cb] - 128));
 						dst_img[dst_posi + 1] = revise_value(
 							src_img[src_posi] - 0.34414 * (src_img[Cb] - 128)
-							- 0.71414 * (src_img[Cr] - 128));
+								- 0.71414 * (src_img[Cr] - 128));
 						dst_img[dst_posi + 2] = revise_value(
 							src_img[src_posi] + 1.40200 * (src_img[Cr] - 128));
 
@@ -384,8 +375,7 @@ void idct(const int *src_coef, int *dst_ycc, size_t sizeX, size_t sizeY) {
 					cv = v == 0 ? kDisSqrt2 : 1.0;
 					for (u = 0; u < 8; u++) {
 						cu = u == 0 ? kDisSqrt2 : 1.0;
-						sum += cu * cv * src_coef[i + v * 8 + u]
-						* CosT[u][x][v][y];
+						sum += cu * cv * src_coef[i + v * 8 + u] * CosT[u][x][v][y];
 					}
 				}
 				dst_ycc[i + y * 8 + x] = int(sum / 4 + 128);
@@ -400,11 +390,13 @@ void zig_quantize(const int *src_coef, int *dst_qua, size_t sizeX, size_t sizeY)
 
 	//Y
 	for (size_t i = 0; i < Ysize; i++) {
-		dst_qua[64 * (i / 64) + kZigzagT[i % 64]] = src_coef[i]	/ kYQuantumT[i % 64];
+		dst_qua[64 * (i / 64) + Zigzag::sequence[i % 64]] = src_coef[i]
+			/ Quantize::luminance[i % 64];
 	}
 	//C(Cb,Cr)
 	for (size_t i = Ysize; i < Ysize + 2 * Csize; i++) {
-		dst_qua[64 * (i / 64) + kZigzagT[i % 64]] = src_coef[i]	/ kCQuantumT[i % 64];
+		dst_qua[64 * (i / 64) + Zigzag::sequence[i % 64]] = src_coef[i]
+			/ Quantize::component[i % 64];
 	}
 }
 
@@ -414,11 +406,13 @@ void izig_quantize(const int *src_qua, int *dst_coef, size_t sizeX, size_t sizeY
 
 	//Y
 	for (size_t i = 0; i < Ysize; i++) {
-		dst_coef[i] = src_qua[64 * (i / 64) + kZigzagT[i % 64]]	* kYQuantumT[i % 64];
+		dst_coef[i] = src_qua[64 * (i / 64) + Zigzag::sequence[i % 64]]
+			* Quantize::luminance[i % 64];
 	}
 	//C(Cb,Cr)
 	for (size_t i = Ysize; i < Ysize + 2 * Csize; i++) {
-		dst_coef[i] = src_qua[64 * (i / 64) + kZigzagT[i % 64]]	* kCQuantumT[i % 64];
+		dst_coef[i] = src_qua[64 * (i / 64) + Zigzag::sequence[i % 64]]
+			* Quantize::component[i % 64];
 	}
 }
 
@@ -434,6 +428,8 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 	for (int i = 0; i < Ysize; i++) {
 		//DC
 		if (i % 64 == 0) {
+			using HuffmanEncode::DC::luminance;
+
 			int diff = src_qua[i] - preDC;
 			preDC = src_qua[i];
 			int absC = abs(diff);
@@ -442,7 +438,7 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 				absC >>= 1;
 				dIdx++;
 			}
-			obit_stream->setBits((kYDcHuffmanT.CodeTP)[dIdx],(kYDcHuffmanT.SizeTP)[dIdx]);
+			obit_stream->setBits(luminance::code[dIdx], luminance::size[dIdx]);
 			if (dIdx) {
 				if (diff < 0)
 					diff--;
@@ -452,11 +448,12 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 		}
 		//AC
 		else {
+			using HuffmanEncode::AC::luminance;
 			int absC = abs(src_qua[i]);
 			if (absC) {
 				while (run > 15) {
-					obit_stream->setBits((kYAcHuffmanT.CodeTP)[kYZRLidx],
-						(kYAcHuffmanT.SizeTP)[kYZRLidx]);
+					obit_stream->setBits(luminance::code[luminance::ZRL],
+						luminance::size[luminance::ZRL]);
 					run -= 16;
 				}
 				int s = 0;
@@ -465,8 +462,7 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 					s++;
 				}
 				int aIdx = run * 10 + s + (run == 15);
-				obit_stream->setBits((kYAcHuffmanT.CodeTP)[aIdx],
-					(kYAcHuffmanT.SizeTP)[aIdx]);
+				obit_stream->setBits(luminance::code[aIdx], luminance::size[aIdx]);
 				int v = src_qua[i];
 				if (v < 0)
 					v--;
@@ -475,8 +471,8 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 				run = 0;
 			} else {
 				if (i % 64 == 63)
-					obit_stream->setBits((kYAcHuffmanT.CodeTP)[kYEOBidx],
-					(kYAcHuffmanT.SizeTP)[kYEOBidx]);
+					obit_stream->setBits(luminance::code[luminance::EOB],
+						luminance::size[luminance::EOB]);
 				else
 					run++;
 			}
@@ -489,6 +485,7 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 	for (size_t i = Ysize; i < Cbsize; i++) { //Cb,Cr
 		//DC
 		if (i % 64 == 0) {
+			using HuffmanEncode::DC::component;
 			int diff = src_qua[i] - preDC;
 			preDC = src_qua[i];
 			int absC = abs(diff);
@@ -497,8 +494,7 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 				absC >>= 1;
 				dIdx++;
 			}
-			obit_stream->setBits((kCDcHuffmanT.CodeTP)[dIdx],
-				(kCDcHuffmanT.SizeTP)[dIdx]);
+			obit_stream->setBits(component::code[dIdx], component::size[dIdx]);
 			if (dIdx) {
 				if (diff < 0)
 					diff--;
@@ -508,11 +504,12 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 		}
 		//AC
 		else {
+			using HuffmanEncode::AC::component;
 			int absC = abs(src_qua[i]);
 			if (absC) {
 				while (run > 15) {
-					obit_stream->setBits((kCAcHuffmanT.CodeTP)[kCZRLidx],
-						(kCAcHuffmanT.SizeTP)[kCZRLidx]);
+					obit_stream->setBits(component::code[component::ZRL],
+						component::size[component::ZRL]);
 					run -= 16;
 				}
 				int s = 0;
@@ -521,8 +518,7 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 					s++;
 				}
 				int aIdx = run * 10 + s + (run == 15);
-				obit_stream->setBits((kCAcHuffmanT.CodeTP)[aIdx],
-					(kCAcHuffmanT.SizeTP)[aIdx]);
+				obit_stream->setBits(component::code[aIdx], component::size[aIdx]);
 				int v = src_qua[i];
 				if (v < 0)
 					v--;
@@ -531,8 +527,8 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 				run = 0;
 			} else {
 				if (i % 64 == 63)
-					obit_stream->setBits((kCAcHuffmanT.CodeTP)[kCEOBidx],
-					(kCAcHuffmanT.SizeTP)[kCEOBidx]);
+					obit_stream->setBits(component::code[component::EOB],
+						component::size[component::EOB]);
 				else
 					run++;
 			}
@@ -544,6 +540,8 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 	for (size_t i = Cbsize; i < Crsize; i++) { //Cb,Cr
 		//DC
 		if (i % 64 == 0) {
+			using HuffmanEncode::DC::component;
+
 			int diff = src_qua[i] - preDC;
 			preDC = src_qua[i];
 			int absC = abs(diff);
@@ -552,8 +550,7 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 				absC >>= 1;
 				dIdx++;
 			}
-			obit_stream->setBits((kCDcHuffmanT.CodeTP)[dIdx],
-				(kCDcHuffmanT.SizeTP)[dIdx]);
+			obit_stream->setBits(component::code[dIdx], component::size[dIdx]);
 			if (dIdx) {
 				if (diff < 0)
 					diff--;
@@ -563,11 +560,13 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 		}
 		//AC
 		else {
+			using HuffmanEncode::AC::component;
+
 			int absC = abs(src_qua[i]);
 			if (absC) {
 				while (run > 15) {
-					obit_stream->setBits((kCAcHuffmanT.CodeTP)[kCZRLidx],
-						(kCAcHuffmanT.SizeTP)[kCZRLidx]);
+					obit_stream->setBits(component::code[component::ZRL],
+						component::size[component::ZRL]);
 					run -= 16;
 				}
 				int s = 0;
@@ -576,8 +575,7 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 					s++;
 				}
 				int aIdx = run * 10 + s + (run == 15);
-				obit_stream->setBits((kCAcHuffmanT.CodeTP)[aIdx],
-					(kCAcHuffmanT.SizeTP)[aIdx]);
+				obit_stream->setBits(component::code[aIdx], component::size[aIdx]);
 				int v = src_qua[i];
 				if (v < 0)
 					v--;
@@ -586,8 +584,8 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 				run = 0;
 			} else {
 				if (i % 64 == 63)
-					obit_stream->setBits((kCAcHuffmanT.CodeTP)[kCEOBidx],
-					(kCAcHuffmanT.SizeTP)[kCEOBidx]);
+					obit_stream->setBits(component::code[component::EOB],
+						component::size[component::EOB]);
 				else
 					run++;
 			}
@@ -599,9 +597,8 @@ void encode_huffman(const int *src_qua, OutBitStream *obit_stream, size_t sizeX,
 int decode_huffman_word(InBitStream *ibit_stream, int tc, int sc) { //sc:Y==0,C==1,tc:DC==0,AC==1
 	// ハフマンテーブル指定
 	const SHuffmanDecodeTable &theHT = (
-		sc == 0 ?
-		(tc == 0 ? kYDcHuffmanDT : kYAcHuffmanDT) :
-		(tc == 0 ? kCDcHuffmanDT : kCAcHuffmanDT)); // 使用するハフマンテーブル
+		sc == 0 ? (tc == 0 ? kYDcHuffmanDT : kYAcHuffmanDT) :
+					(tc == 0 ? kCDcHuffmanDT : kCAcHuffmanDT)); // 使用するハフマンテーブル
 
 	int code = 0; // ハフマン符号語の候補：最大値16ビット
 	int length = 0; // ハフマン符号語候補のビット数

@@ -7,12 +7,6 @@ The comments are written in Japanese (Shift-JIS).
 #ifndef ENCODER_TABLE_DEVICE_H_
 #define ENCODER_TABLE_DEVICE_H_
 
-#ifdef __CDT_PARSER__
-#define __global__
-#define __device__
-#define __constant__
-#endif
-
 /************************/
 /* ジグザグシーケンス用 */
 /************************/

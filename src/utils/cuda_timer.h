@@ -14,31 +14,72 @@
 //-----------------------------------------------------------------------------------------------
 // StopWatch :stopではラップは刻まれないlap->stopで。
 //-----------------------------------------------------------------------------------------------
+/**
+ * CUDAの同期関数を用いたGPU時間計測クラス
+ *
+ * -stopではラップは刻まれない。リセットせず特定区間の経過時間をgetElapseするには、lap->stopで。
+ *
+ * @author yuumomma
+ * @version 1.0
+ */
 class CudaStopWatch {
 public:
 	typedef std::vector<double> LapList;
-	enum Mode {
-		CPU_OPTIMUM, C_STD, OTHER
-	};
 
+	/**
+	 * コンストラクタ
+	 */
 	explicit CudaStopWatch();
+	/**
+	 * デストラクタ
+	 */
 	~CudaStopWatch();
 
+	/**
+	 * 計測開始
+	 */
 	void start();
+	/**
+	 * 一時停止
+	 */
 	void stop();
+	/**
+	 * ラップタイムを記録する
+	 */
 	void lap();
+	/**
+	 * リセット
+	 */
 	void clear();
 
+	/**
+	 * 記録されているラップカウント数を返す
+	 * @return ラップ数
+	 */
 	int getLapCount() const;
+	/**
+	 * 現在までの総経過時間を取得する
+	 * @return
+	 */
 	double getTotalTime() const;
+	/**
+	 * 直前の差分時間を返す
+	 * -stop()で止めた場合、直前のstart()またはlap()からの時間である
+	 * -lap()を使った場合、直前のstart()またはlap()からの時間である
+	 * -したがって、lap()しない場合返り値はgetTotalTime()と同じである
+	 * @return 差分時間
+	 */
 	double getLastElapsedTime() const;
+	/**
+	 * ラップタイムリストを返す
+	 * @return リスト
+	 */
 	const LapList& getLapList() const;
 
 private:
 	cudaEvent_t m_start, m_end;
 	float m_elapse_time;
 	LapList m_lap;
-	Mode m_mode;
 
 	CudaStopWatch(CudaStopWatch &rhs);
 	void operator=(CudaStopWatch);

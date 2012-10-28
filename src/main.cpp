@@ -23,9 +23,7 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-//----------------------------------------------------------------------------
 // コマンドライン引数解析
-//============================================================================
 void parse_arg(int argc, char *argv[], std::string &in_file, std::string &out_file) {
 	if (argc == 3) {
 		in_file = argv[1];
