@@ -11,17 +11,14 @@ CPP_SRCS += \
 ../src/utils/util_cv.cpp 
 
 CU_SRCS += \
-../src/utils/gpu_in_bit_stream.cu \
-../src/utils/gpu_out_bit_stream.cu 
+../src/utils/gpu_in_bit_stream.cu 
 
 CU_DEPS += \
-./src/utils/gpu_in_bit_stream.d \
-./src/utils/gpu_out_bit_stream.d 
+./src/utils/gpu_in_bit_stream.d 
 
 OBJS += \
 ./src/utils/cuda_timer.o \
 ./src/utils/gpu_in_bit_stream.o \
-./src/utils/gpu_out_bit_stream.o \
 ./src/utils/in_bit_stream.o \
 ./src/utils/out_bit_stream.o \
 ./src/utils/timer.o \

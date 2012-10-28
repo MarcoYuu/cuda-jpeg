@@ -17,13 +17,13 @@
  * @author momma
  */
 template<class T>
-class DeviceMemory {
+class device_memory {
 private:
 	T* _device_mem;
 	size_t _size;
 
-	DeviceMemory(const DeviceMemory<T>&);
-	DeviceMemory<T>& operator=(const DeviceMemory<T>&);
+	device_memory(const device_memory<T>&);
+	device_memory<T>& operator=(const device_memory<T>&);
 
 public:
 	/**
@@ -31,7 +31,7 @@ public:
 	 *
 	 * @param size [in] Tの個数
 	 */
-	DeviceMemory(size_t size) :
+	device_memory(size_t size) :
 		_size(size) {
 		// デバイスメモリの確保
 		cudaMalloc((void**) &_device_mem, sizeof(T) * size);
@@ -44,7 +44,7 @@ public:
 	 * @param data [in] 初期化データ
 	 * @param copy_to_device [in] デバイスにコピーするかどうか
 	 */
-	DeviceMemory(const T* data, size_t size) :
+	device_memory(const T* data, size_t size) :
 		_size(size) {
 
 		// デバイスメモリの確保とコピー
@@ -52,12 +52,12 @@ public:
 		cudaMemcpy(_device_mem, data, sizeof(T) * size, cudaMemcpyHostToDevice);
 	}
 
-	virtual ~DeviceMemory() {
+	virtual ~device_memory() {
 		if (_device_mem != NULL)
 			cudaFree(_device_mem);
 	}
 
-	virtual void fillZero() {
+	virtual void fill_zero() {
 		cudaMemset(_device_mem, 0, sizeof(T) * _size);
 	}
 
@@ -113,13 +113,13 @@ public:
  * @author momma
  */
 template<class T>
-class CudaMemory: public DeviceMemory<T> {
+class cuda_memory: public device_memory<T> {
 private:
-	typedef DeviceMemory<T> base;
+	typedef device_memory<T> base;
 	T* _host_mem;
 
-	CudaMemory(const CudaMemory<T>&);
-	CudaMemory<T>& operator=(const CudaMemory<T>&);
+	cuda_memory(const cuda_memory<T>&);
+	cuda_memory<T>& operator=(const cuda_memory<T>&);
 
 public:
 	/**
@@ -127,8 +127,8 @@ public:
 	 *
 	 * @param size [in] Tの個数
 	 */
-	CudaMemory(size_t size) :
-		DeviceMemory<T>(size) {
+	cuda_memory(size_t size) :
+		device_memory<T>(size) {
 		// ホストメモリの確保
 		_host_mem = new T[size];
 	}
@@ -140,8 +140,8 @@ public:
 	 * @param data [in] 初期化データ
 	 * @param copy_to_device [in] デバイスにコピーするかどうか
 	 */
-	CudaMemory(const T* data, size_t size, bool copy_to_device) :
-		DeviceMemory<T>(data, size) {
+	cuda_memory(const T* data, size_t size, bool copy_to_device) :
+		device_memory<T>(data, size) {
 		// ホストメモリの確保と初期化
 		_host_mem = new T[size];
 		memcpy(_host_mem, data, sizeof(T) * size);
@@ -152,13 +152,13 @@ public:
 		}
 	}
 
-	virtual ~CudaMemory() {
+	virtual ~cuda_memory() {
 		delete[] _host_mem;
 	}
 
 	void fillZero() {
 		memset(_host_mem, 0, sizeof(T) * this->size());
-		base::fillZero();
+		base::fill_zero();
 	}
 
 	void write_host(const T* data, size_t size) {
@@ -180,8 +180,8 @@ public:
 	 *
 	 * ホストメモリのデータをデバイスメモリに転送する
 	 */
-	void syncDeviceMemory() {
-		cudaMemcpy(this->device_data(), _host_mem, sizeof(T) * this->size(),
+	void sync_to_device() {
+		cudaMemcpy(base::device_data(), _host_mem, sizeof(T) * base::size(),
 			cudaMemcpyHostToDevice);
 	}
 
@@ -190,8 +190,8 @@ public:
 	 *
 	 * デバイスメモリのデータをホストメモリに転送する
 	 */
-	void syncHostMemory() {
-		cudaMemcpy(_host_mem, this->device_data(), sizeof(T) * this->size(),
+	void sync_to_host() {
+		cudaMemcpy(_host_mem, base::device_data(), sizeof(T) * base::size(),
 			cudaMemcpyDeviceToHost);
 	}
 

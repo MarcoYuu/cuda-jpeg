@@ -11,11 +11,61 @@
 #include "utils/gpu_out_bit_stream.cuh"
 #include "type_definitions.h"
 
-#ifdef __CDT_PARSER__
-#define __global__
-#define __device__
-#define __host__
-#endif
+//-------------------------------------------------------------------
+// Jpeg圧縮用の変数まとめクラス
+//===================================================================
+class GPUJpegOutBitStream {
+private:
+	GPUOutBitStreamBuffer _out_bit_stream_buffer;
+	cuda_memory<GPUOutBitStreamState> _out_bit_stream_status;
+
+public:
+	GPUJpegOutBitStream(size_t blocks, size_t block_size) :
+		_out_bit_stream_buffer(blocks * block_size),
+		_out_bit_stream_status(blocks) {
+		_out_bit_stream_status.sync_to_device();
+	}
+
+	cuda_memory<GPUOutBitStreamState>& status() {
+		return _out_bit_stream_status;
+	}
+
+	const cuda_memory<GPUOutBitStreamState>& status() const {
+		return _out_bit_stream_status;
+	}
+
+	byte* head() {
+		return _out_bit_stream_buffer.head();
+	}
+
+	byte* end() {
+		return _out_bit_stream_buffer.end();
+	}
+
+	byte* writable_head() {
+		return _out_bit_stream_buffer.writable_head();
+	}
+
+	const byte* head() const {
+		return _out_bit_stream_buffer.head();
+	}
+
+	const byte* end() const {
+		return _out_bit_stream_buffer.end();
+	}
+
+	const byte* writable_head() const {
+		return _out_bit_stream_buffer.writable_head();
+	}
+
+	size_t blocks() {
+		return _out_bit_stream_status.size();
+	}
+
+	size_t available_size() {
+		return status()[blocks() - 1]._byte_pos + (status()[blocks() - 1]._bit_pos == 7 ? 0 : 1);
+	}
+};
 
 //-------------------------------------------------------------------
 // テーブル作成
@@ -62,8 +112,8 @@ __global__ void gpu_izig_quantize_C(int *src_qua, int *dst_coef, int size);
 //-------------------------------------------------------------------
 // Huffman Coding
 //-------------------------------------------------------------------
-__global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStreamState *mOBSP, byte *mBufP, byte *mEndOfBufP,
-	int sizeX, int sizeY);
+__global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStreamState *mOBSP, byte *mBufP,
+	byte *mEndOfBufP, int sizeX, int sizeY);
 
 //完全逐次処理、CPUで行った方が圧倒的に速い
 void cpu_huffman_middle(GPUOutBitStreamState *ImOBSP, int sizeX, int sizeY, byte* dst_NumBits);

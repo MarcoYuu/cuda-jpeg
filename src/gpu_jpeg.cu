@@ -371,31 +371,31 @@ void cpu_huffman_middle(GPUOutBitStreamState *ImOBSP, int sizeX, int sizeY, byte
 	const int blsize = (sizeX * sizeY + sizeX * sizeY / 2) / 64; //2*(size/2)*(size/2)
 
 	//BitPosは7が上位で0が下位なので注意,更に位置なので注意。7なら要素は0,0なら要素は7
-	ImOBSP[0].mNumBits = ImOBSP[0].mBytePos * 8 + (7 - ImOBSP[0].mBitPos);
+	ImOBSP[0]._num_bits = ImOBSP[0]._byte_pos * 8 + (7 - ImOBSP[0]._bit_pos);
 
 	//出力用、構造体無駄な要素が入っちゃうので
-	num_bits[0] = ImOBSP[0].mNumBits;
+	num_bits[0] = ImOBSP[0]._num_bits;
 
-	ImOBSP[0].mBytePos = 0;
-	ImOBSP[0].mBitPos = 7;
+	ImOBSP[0]._byte_pos = 0;
+	ImOBSP[0]._bit_pos = 7;
 
 	for (i = 1; i < blsize; i++) {
 
-		ImOBSP[i].mNumBits = ImOBSP[i].mBytePos * 8 + (7 - ImOBSP[i].mBitPos);
+		ImOBSP[i]._num_bits = ImOBSP[i]._byte_pos * 8 + (7 - ImOBSP[i]._bit_pos);
 
 		//出力用、構造体無駄な要素が入っちゃうので
-		num_bits[i] = ImOBSP[i].mNumBits;
+		num_bits[i] = ImOBSP[i]._num_bits;
 
-		ImOBSP[i].mBitPos = ImOBSP[i - 1].mBitPos;
-		ImOBSP[i].mBytePos = ImOBSP[i - 1].mBytePos;
+		ImOBSP[i]._bit_pos = ImOBSP[i - 1]._bit_pos;
+		ImOBSP[i]._byte_pos = ImOBSP[i - 1]._byte_pos;
 
-		ImOBSP[i].mBitPos -= ImOBSP[i - 1].mNumBits % 8;
+		ImOBSP[i]._bit_pos -= ImOBSP[i - 1]._num_bits % 8;
 		//繰り上がり
-		if (ImOBSP[i].mBitPos < 0) {
-			ImOBSP[i].mBytePos++;
-			ImOBSP[i].mBitPos += 8;
+		if (ImOBSP[i]._bit_pos < 0) {
+			ImOBSP[i]._byte_pos++;
+			ImOBSP[i]._bit_pos += 8;
 		}
-		ImOBSP[i].mBytePos += ImOBSP[i - 1].mNumBits / 8;
+		ImOBSP[i]._byte_pos += ImOBSP[i - 1]._num_bits / 8;
 	}
 }
 

@@ -60,31 +60,28 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 
 	int result_size;
 	ByteBuffer num_bits(YCC_size / 64);
-	CudaMemory<byte> encode_result(sizeof(byte) * (Y_size * 3));
+	cuda_memory<byte> encode_result(sizeof(byte) * (Y_size * 3));
 	encode_result.fillZero();
 	{
 		//----------------------------------------------------------------------------
 		// 色変換テーブルの作成 Encode用定数転送
 		//============================================================================
-		CudaMemory<int> trans_table_Y(width * height);
-		CudaMemory<int> trans_table_C(width * height);
+		cuda_memory<int> trans_table_Y(Y_size);
+		cuda_memory<int> trans_table_C(Y_size);
 		make_trans_table(trans_table_Y.host_data(), trans_table_C.host_data(), width, height);
-		trans_table_C.syncDeviceMemory();
-		trans_table_Y.syncDeviceMemory();
+		trans_table_C.sync_to_device();
+		trans_table_Y.sync_to_device();
 
 		//----------------------------------------------------------------------------
 		// メモリ確保
 		//============================================================================
-		DeviceMemory<byte> src(width * height * 3);
-		DeviceMemory<int> yuv_buffer(width * height + 2 * (width / 2) * (height / 2));
-		DeviceMemory<int> quantized(width * height + 2 * (width / 2) * (height / 2));
+		device_memory<byte> src(Y_size * 3);
+		device_memory<int> yuv_buffer(YCC_size);
+		device_memory<int> quantized(YCC_size);
+		device_memory<int> dct_coeficient(YCC_size);
+		device_memory<float> dct_tmp_buffer(YCC_size);
 
-		DeviceMemory<int> dct_coeficient(width * height + 2 * (width / 2) * (height / 2));
-		DeviceMemory<float> dct_tmp_buffer(width * height + 2 * (width / 2) * (height / 2));
-
-		GPUOutBitStreamBuffer out_bit_stream_buffer((YCC_size / 64) * MBS);
-		CudaMemory<GPUOutBitStreamState> out_bit_stream_status(YCC_size / 64);
-		out_bit_stream_status.syncDeviceMemory();
+		GPUJpegOutBitStream out_bit_stream(YCC_size / 64, MBS);
 
 		std::cout << "	-----------------------------------------------" << std::endl;
 		std::cout << "	 Encode" << std::endl;
@@ -116,27 +113,28 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 			//----------------------------------------------------------------------------
 			// ハフマン符号化
 			//============================================================================
-			gpu_huffman_mcu<<<Dg3_0, Db3_0>>>(quantized.device_data(), out_bit_stream_status.device_data(),
-				out_bit_stream_buffer.getWriteBufAddress(), out_bit_stream_buffer.getEndOfBuf(), width, height);
+			gpu_huffman_mcu<<<Dg3_0, Db3_0>>>(quantized.device_data(), out_bit_stream.status().device_data(),
+				out_bit_stream.writable_head(), out_bit_stream.end(), width, height);
 
 			// 逐次処理のためCPUに戻す
-			out_bit_stream_status.syncHostMemory();
-			cpu_huffman_middle(out_bit_stream_status.host_data(), width, height, num_bits.data());
-			out_bit_stream_status.syncDeviceMemory();
+			out_bit_stream.status().sync_to_host();
+			cpu_huffman_middle(out_bit_stream.status().host_data(), width, height, num_bits.data());
+			out_bit_stream.status().sync_to_device();
 
-			gpu_huffman_write_devide0<<<Dg3_1, Db3_1>>>(out_bit_stream_status.device_data(),
-				out_bit_stream_buffer.getWriteBufAddress(), encode_result.device_data(), width, height);
-			gpu_huffman_write_devide1<<<Dg3_1, Db3_1>>>(out_bit_stream_status.device_data(),
-				out_bit_stream_buffer.getWriteBufAddress(), encode_result.device_data(), width, height);
-			gpu_huffman_write_devide2<<<Dg3_1, Db3_1>>>(out_bit_stream_status.device_data(),
-				out_bit_stream_buffer.getWriteBufAddress(), encode_result.device_data(), width, height);
+			gpu_huffman_write_devide0<<<Dg3_1, Db3_1>>>(out_bit_stream.status().device_data(),
+				out_bit_stream.writable_head(), encode_result.device_data(), width, height);
+			gpu_huffman_write_devide1<<<Dg3_1, Db3_1>>>(out_bit_stream.status().device_data(),
+				out_bit_stream.writable_head(), encode_result.device_data(), width, height);
+			gpu_huffman_write_devide2<<<Dg3_1, Db3_1>>>(out_bit_stream.status().device_data(),
+				out_bit_stream.writable_head(), encode_result.device_data(), width, height);
 
 			//----------------------------------------------------------------------------
 			// 結果メモリ転送 :出力は「dst_dataとdst_NumBits」の２つ
 			//============================================================================
-			result_size = out_bit_stream_status[YCC_size / 64 - 1].mBytePos
-				+ (out_bit_stream_status[YCC_size / 64 - 1].mBitPos == 7 ? 0 : 1);
-			encode_result.syncHostMemory();
+			//result_size = out_bit_stream.status()[YCC_size / 64 - 1]._byte_pos
+			//	+ (out_bit_stream.status()[YCC_size / 64 - 1]._bit_pos == 7 ? 0 : 1);
+			result_size = out_bit_stream.available_size();
+			encode_result.sync_to_host();
 		}
 		watch.lap();
 		watch.stop();
@@ -148,21 +146,20 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 		//----------------------------------------------------------------------------
 		// 色変換テーブルの作成 Decode用定数転送
 		//============================================================================
-		CudaMemory<int> itrans_table_Y(width * height);
-		CudaMemory<int> itrans_table_C(width * height);
+		cuda_memory<int> itrans_table_Y(Y_size);
+		cuda_memory<int> itrans_table_C(Y_size);
 		make_itrans_table(itrans_table_Y.host_data(), itrans_table_C.host_data(), width, height);
-		itrans_table_C.syncDeviceMemory();
-		itrans_table_Y.syncDeviceMemory();
+		itrans_table_C.sync_to_device();
+		itrans_table_Y.sync_to_device();
 
 		//----------------------------------------------------------------------------
 		// メモリ確保
 		//============================================================================
-		DeviceMemory<byte> src(width * height * 3);
-		DeviceMemory<int> yuv_buffer(width * height + 2 * (width / 2) * (height / 2));
-		DeviceMemory<int> quantized(width * height + 2 * (width / 2) * (height / 2));
-
-		DeviceMemory<int> dct_coeficient(width * height + 2 * (width / 2) * (height / 2));
-		DeviceMemory<float> dct_tmp_buffer(width * height + 2 * (width / 2) * (height / 2));
+		device_memory<byte> src(Y_size * 3);
+		device_memory<int> yuv_buffer(YCC_size);
+		cuda_memory<int> quantized(YCC_size);
+		device_memory<int> dct_coeficient(YCC_size);
+		device_memory<float> dct_tmp_buffer(YCC_size);
 
 		std::cout << "	-----------------------------------------------" << std::endl;
 		std::cout << "	 Decode" << std::endl;
@@ -173,17 +170,13 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 			// メモリ確保
 			//============================================================================
 			InBitStream mIBSP(encode_result.host_data(), result_size);
-			IntBuffer c_qua(width * height + 2 * (width / 2) * (height / 2));
 
 			//----------------------------------------------------------------------------
 			// ハフマン復号
 			//============================================================================
 			// CPU
-			decode_huffman(&mIBSP, c_qua.data(), width, height);
-			// GPU:GPUInstream.hにバグがある可能性もあるので留意
-			cudaMemcpy(quantized.device_data(), c_qua.data(),
-				sizeof(int) * (width * height + 2 * (width / 2) * (height / 2)),
-				cudaMemcpyHostToDevice);
+			decode_huffman(&mIBSP, quantized.host_data(), width, height);
+			quantized.sync_to_device();
 
 			//----------------------------------------------------------------------------
 			// 逆量子化
@@ -206,8 +199,7 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 			//----------------------------------------------------------------------------
 			// 結果転送
 			//============================================================================
-			cudaMemcpy((byte*) result.getRawData(), src.device_data(), src.size(),
-				cudaMemcpyDeviceToHost);
+			src.copy_host((byte*) result.getRawData(), src.size());
 		}
 		watch.lap();
 		watch.stop();
