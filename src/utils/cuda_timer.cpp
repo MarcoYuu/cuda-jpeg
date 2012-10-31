@@ -28,6 +28,9 @@ namespace util {
 			cudaEventSynchronize(m_end);
 			cudaEventElapsedTime(&m_elapse_time, m_start, m_end);
 			m_elapse_time /= 1000.0;
+
+			cudaEventDestroy(m_end);
+			cudaEventCreate(&m_end);
 		}
 
 		void CudaStopWatch::lap() {
@@ -37,12 +40,23 @@ namespace util {
 			m_elapse_time /= 1000.0;
 			m_lap.push_back(m_elapse_time);
 
+			cudaEventDestroy(m_start);
+			cudaEventDestroy(m_end);
+			cudaEventCreate(&m_start);
+			cudaEventCreate(&m_end);
+
 			cudaEventRecord(m_start, 0);
 		}
 
 		void CudaStopWatch::clear() {
 			m_elapse_time = 0;
 			m_lap.clear();
+
+			cudaEventDestroy(m_start);
+			cudaEventDestroy(m_end);
+
+			cudaEventCreate(&m_start);
+			cudaEventCreate(&m_end);
 		}
 
 		int CudaStopWatch::getLapCount() const {
