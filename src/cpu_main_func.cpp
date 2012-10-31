@@ -15,7 +15,6 @@ using namespace std;
 using namespace util;
 using namespace jpeg;
 
-
 //----------------------------------------------------------------------------
 // CPU Jpeg圧縮テストルーチン
 //============================================================================
@@ -44,7 +43,7 @@ void cpu_exec(const std::string &file_name, const std::string &out_file_name) {
 			encode_result);
 		watch.lap();
 		watch.stop();
-		std::cout << "	" << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
+		std::cout << "	" << watch.getLastElapsedTime() * 1000 << "[ms]\n" << std::endl;
 	}
 
 	BitmapCVUtil result(width, height, 8, source.getBytePerPixel());
@@ -60,7 +59,7 @@ void cpu_exec(const std::string &file_name, const std::string &out_file_name) {
 			width * height * 3);
 		watch.lap();
 		watch.stop();
-		std::cout << "	" << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
+		std::cout << "	" << watch.getLastElapsedTime() * 1000 << "[ms]\n" << std::endl;
 	}
 
 	result.saveToFile("cpu_decoder_" + out_file_name);

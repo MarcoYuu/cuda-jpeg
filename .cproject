@@ -175,13 +175,13 @@
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.cpp.637445117">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.c.411805777">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.cu.632062340">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.cu.870514610">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.cu.632062340">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.c.411805777">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.c.44154797">

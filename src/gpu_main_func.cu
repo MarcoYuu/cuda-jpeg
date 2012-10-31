@@ -31,9 +31,9 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 	BitmapCVUtil source(file_name, BitmapCVUtil::RGB_COLOR);
 	const int width = source.getWidth();
 	const int height = source.getHeight();
-	const int Y_size = width * height;
-	const int C_size = Y_size / 4;
-	const int YCC_size = Y_size + C_size * 2;
+	const int y_size = width * height;
+	const int c_size = y_size / 4;
+	const int ycc_size = y_size + c_size * 2;
 
 	std::cout << "===============================================" << std::endl;
 	std::cout << " Start GPU Encoding & Decoding" << std::endl;
@@ -49,100 +49,41 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 	const int HUF0_TH = 16;
 	const int HUF1_TH = 4; //divide使うなら最速
 
-	dim3 Dg0_0(Y_size / THREADS, 1, 1), Db0_0(THREADS, 1, 1);
-	dim3 Dg0_1(Y_size / THREADS / 2, 1, 1), Db0_1(height / 2, 1, 1);
-	dim3 Dg1((YCC_size) / 64 / DCT4_TH, 1, 1), Db1(DCT4_TH, 8, 8); //DCT4_THは16が最大
-	dim3 Dg2_0(Y_size / QUA0_TH, 1, 1), Db2_0(QUA0_TH, 1, 1);
-	dim3 Dg2_1((2 * C_size) / QUA1_TH, 1, 1), Db2_1(QUA1_TH, 1, 1);
-	dim3 Dg3_0(YCC_size / 64 / HUF0_TH, 1, 1), Db3_0(HUF0_TH, 1, 1); //YCC_size
-	dim3 Dg3_1(YCC_size / 64 / HUF1_TH, 1, 1), Db3_1(HUF1_TH, 1, 1); //YCC_size
+	dim3 grid_color(y_size / THREADS, 1, 1), block_color(THREADS, 1, 1);
+	dim3 grid_dct((ycc_size) / 64 / DCT4_TH, 1, 1), block_dct(DCT4_TH, 8, 8); //DCT4_THは16が最大
+	dim3 grid_quantize_y(y_size / QUA0_TH, 1, 1), block_quantize_y(QUA0_TH, 1, 1);
+	dim3 grid_quantize_c((2 * c_size) / QUA1_TH, 1, 1), block_quantize_c(QUA1_TH, 1, 1);
+	dim3 grid_mcu(ycc_size / 64 / HUF0_TH, 1, 1), block_mcu(HUF0_TH, 1, 1); //YCC_size
+	dim3 grid_huffman(ycc_size / 64 / HUF1_TH, 1, 1), block_huffman(HUF1_TH, 1, 1); //YCC_size
 
 	//----------------------------------------------------------------------------
 	// 処理開始
 	//============================================================================
-	CudaStopWatch watch;
-
 	int result_size;
-	ByteBuffer num_bits(YCC_size / 64);
-	cuda_memory<byte> encode_result(sizeof(byte) * (Y_size * 3));
-	encode_result.fillZero();
+	ByteBuffer num_bits(ycc_size / 64);
+	cuda_memory<byte> encode_result(sizeof(byte) * (y_size * 3));
+	encode_result.fill_zero();
 	{
-		//----------------------------------------------------------------------------
-		// 色変換テーブルの作成 Encode用定数転送
-		//============================================================================
-		cuda_memory<int> trans_table_Y(Y_size);
-		cuda_memory<int> trans_table_C(Y_size);
-		make_trans_table(trans_table_Y.host_data(), trans_table_C.host_data(), width, height);
-		trans_table_C.sync_to_device();
-		trans_table_Y.sync_to_device();
-
-		//----------------------------------------------------------------------------
-		// メモリ確保
-		//============================================================================
-		device_memory<byte> src(Y_size * 3);
-		device_memory<int> yuv_buffer(YCC_size);
-		device_memory<int> quantized(YCC_size);
-		device_memory<int> dct_coeficient(YCC_size);
-		device_memory<float> dct_tmp_buffer(YCC_size);
-
-		GPUJpegOutBitStream out_bit_stream(YCC_size / 64, MBS);
+		jpeg::cuda::JpegEncoder encoder(width, height);
 
 		std::cout << "	-----------------------------------------------" << std::endl;
 		std::cout << "	 Encode" << std::endl;
 		std::cout << "	-----------------------------------------------" << std::endl;
-		watch.start();
+		float elapsed_time_ms = 0.0f;
+		cudaEvent_t start, stop;
+		cudaEventCreate(&start);
+		cudaEventCreate(&stop);
+		cudaEventRecord(start, 0);
 		{
-			//----------------------------------------------------------------------------
-			// メモリ転送
-			//============================================================================
-			src.write_device((byte*) source.getRawData(), width * height * 3);
-
-			//----------------------------------------------------------------------------
-			// RGB->yuv
-			//============================================================================
-			gpu_color_trans_Y<<<Dg0_0, Db0_0>>>(src.device_data(), yuv_buffer.device_data(), trans_table_Y.device_data());
-			gpu_color_trans_C<<<Dg0_0, Db0_0>>>(src.device_data(), yuv_buffer.device_data(), trans_table_C.device_data(), height, C_size);
-
-			//----------------------------------------------------------------------------
-			// DCT
-			//============================================================================
-			gpu_dct_0<<<Dg1, Db1>>>(yuv_buffer.device_data(), dct_tmp_buffer.device_data());
-			gpu_dct_1<<<Dg1, Db1>>>(dct_tmp_buffer.device_data(), dct_coeficient.device_data());
-
-			//----------------------------------------------------------------------------
-			// 量子化
-			//============================================================================
-			gpu_zig_quantize_Y<<<Dg2_0, Db2_0>>>(dct_coeficient.device_data(), quantized.device_data());
-			gpu_zig_quantize_C<<<Dg2_1, Db2_1>>>(dct_coeficient.device_data(), quantized.device_data(), Y_size);
-			//----------------------------------------------------------------------------
-			// ハフマン符号化
-			//============================================================================
-			gpu_huffman_mcu<<<Dg3_0, Db3_0>>>(quantized.device_data(), out_bit_stream.status().device_data(),
-				out_bit_stream.writable_head(), out_bit_stream.end(), width, height);
-
-			// 逐次処理のためCPUに戻す
-			out_bit_stream.status().sync_to_host();
-			cpu_huffman_middle(out_bit_stream.status().host_data(), width, height, num_bits.data());
-			out_bit_stream.status().sync_to_device();
-
-			gpu_huffman_write_devide0<<<Dg3_1, Db3_1>>>(out_bit_stream.status().device_data(),
-				out_bit_stream.writable_head(), encode_result.device_data(), width, height);
-			gpu_huffman_write_devide1<<<Dg3_1, Db3_1>>>(out_bit_stream.status().device_data(),
-				out_bit_stream.writable_head(), encode_result.device_data(), width, height);
-			gpu_huffman_write_devide2<<<Dg3_1, Db3_1>>>(out_bit_stream.status().device_data(),
-				out_bit_stream.writable_head(), encode_result.device_data(), width, height);
-
-			//----------------------------------------------------------------------------
-			// 結果メモリ転送 :出力は「dst_dataとdst_NumBits」の２つ
-			//============================================================================
-			//result_size = out_bit_stream.status()[YCC_size / 64 - 1]._byte_pos
-			//	+ (out_bit_stream.status()[YCC_size / 64 - 1]._bit_pos == 7 ? 0 : 1);
-			result_size = out_bit_stream.available_size();
+			result_size = encoder.encode((byte*) source.getRawData(), encode_result);
 			encode_result.sync_to_host();
 		}
-		watch.lap();
-		watch.stop();
-		std::cout << "	" << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
+		cudaEventRecord(stop, 0);
+		cudaEventSynchronize(stop);
+		cudaEventElapsedTime(&elapsed_time_ms, start, stop);
+		std::cout << "	" << elapsed_time_ms << "[ms]\n" << std::endl;
+		cudaEventDestroy(start);
+		cudaEventDestroy(stop);
 	}
 
 	BitmapCVUtil result(width, height, 8, source.getBytePerPixel());
@@ -150,8 +91,8 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 		//----------------------------------------------------------------------------
 		// 色変換テーブルの作成 Decode用定数転送
 		//============================================================================
-		cuda_memory<int> itrans_table_Y(Y_size);
-		cuda_memory<int> itrans_table_C(Y_size);
+		cuda_memory<int> itrans_table_Y(y_size);
+		cuda_memory<int> itrans_table_C(y_size);
 		make_itrans_table(itrans_table_Y.host_data(), itrans_table_C.host_data(), width, height);
 		itrans_table_C.sync_to_device();
 		itrans_table_Y.sync_to_device();
@@ -159,16 +100,20 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 		//----------------------------------------------------------------------------
 		// メモリ確保
 		//============================================================================
-		device_memory<byte> src(Y_size * 3);
-		device_memory<int> yuv_buffer(YCC_size);
-		cuda_memory<int> quantized(YCC_size);
-		device_memory<int> dct_coeficient(YCC_size);
-		device_memory<float> dct_tmp_buffer(YCC_size);
+		device_memory<byte> src(y_size * 3);
+		device_memory<int> yuv_buffer(ycc_size);
+		cuda_memory<int> quantized(ycc_size);
+		device_memory<int> dct_coeficient(ycc_size);
+		device_memory<float> dct_tmp_buffer(ycc_size);
 
 		std::cout << "	-----------------------------------------------" << std::endl;
 		std::cout << "	 Decode" << std::endl;
 		std::cout << "	-----------------------------------------------" << std::endl;
-		watch.start();
+		float elapsed_time_ms = 0.0f;
+		cudaEvent_t start, stop;
+		cudaEventCreate(&start);
+		cudaEventCreate(&stop);
+		cudaEventRecord(start, 0);
 		{
 			//----------------------------------------------------------------------------
 			// メモリ確保
@@ -185,29 +130,32 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 			//----------------------------------------------------------------------------
 			// 逆量子化
 			//============================================================================
-			gpu_izig_quantize_Y<<<Dg2_0, Db2_0>>>(quantized.device_data(), dct_coeficient.device_data());
-			gpu_izig_quantize_C<<<Dg2_1, Db2_1>>>(quantized.device_data(), dct_coeficient.device_data(), Y_size);
+			gpu_izig_quantize_Y<<<grid_quantize_y, block_quantize_y>>>(quantized.device_data(), dct_coeficient.device_data());
+			gpu_izig_quantize_C<<<grid_quantize_c, block_quantize_c>>>(quantized.device_data(), dct_coeficient.device_data(), y_size);
 
 			//----------------------------------------------------------------------------
 			// 逆DCT
 			//============================================================================
-			gpu_idct_0<<<Dg1, Db1>>>(dct_coeficient.device_data(), dct_tmp_buffer.device_data());
-			gpu_idct_1<<<Dg1, Db1>>>(dct_tmp_buffer.device_data(), yuv_buffer.device_data());
+			gpu_idct_0<<<grid_dct, block_dct>>>(dct_coeficient.device_data(), dct_tmp_buffer.device_data());
+			gpu_idct_1<<<grid_dct, block_dct>>>(dct_tmp_buffer.device_data(), yuv_buffer.device_data());
 
 			//----------------------------------------------------------------------------
 			// yuv->RGB
 			//============================================================================
-			gpu_color_itrans<<<Dg0_0, Db0_0>>>(yuv_buffer.device_data(), src.device_data(),
-				itrans_table_Y.device_data(), itrans_table_C.device_data(), C_size);
+			gpu_color_itrans<<<grid_color, block_color>>>(yuv_buffer.device_data(), src.device_data(),
+				itrans_table_Y.device_data(), itrans_table_C.device_data(), c_size);
 
 			//----------------------------------------------------------------------------
 			// 結果転送
 			//============================================================================
 			src.copy_host((byte*) result.getRawData(), src.size());
 		}
-		watch.lap();
-		watch.stop();
-		std::cout << "	" << watch.getLastElapsedTime() << "[ms]\n" << std::endl;
+		cudaEventRecord(stop, 0);
+		cudaEventSynchronize(stop);
+		cudaEventElapsedTime(&elapsed_time_ms, start, stop);
+		std::cout << "	" << elapsed_time_ms << "[ms]\n" << std::endl;
+		cudaEventDestroy(start);
+		cudaEventDestroy(stop);
 	}
 	result.saveToFile("gpu_" + out_file_name);
 

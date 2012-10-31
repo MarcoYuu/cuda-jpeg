@@ -17,9 +17,13 @@ namespace jpeg {
 		// Jpeg圧縮用の変数まとめクラス
 		//===================================================================
 		class GPUJpegOutBitStream {
+		public:
+			typedef util::cuda::cuda_memory<jpeg::cuda::GPUOutBitStreamState> StreamState;
+			typedef jpeg::cuda::GPUOutBitStreamBuffer StreamBuffer;
+
 		private:
-			jpeg::cuda::GPUOutBitStreamBuffer _out_bit_stream_buffer;
-			util::cuda::cuda_memory<jpeg::cuda::GPUOutBitStreamState> _out_bit_stream_status;
+			StreamBuffer _out_bit_stream_buffer;
+			StreamState _out_bit_stream_status;
 
 		public:
 			GPUJpegOutBitStream(size_t blocks, size_t block_size) :
@@ -28,11 +32,17 @@ namespace jpeg {
 				_out_bit_stream_status.sync_to_device();
 			}
 
-			util::cuda::cuda_memory<jpeg::cuda::GPUOutBitStreamState>& status() {
+			void resize(size_t blocks, size_t block_size, bool force = false) {
+				_out_bit_stream_buffer.resize(blocks * block_size, force);
+				_out_bit_stream_status.resize(blocks, force);
+				_out_bit_stream_status.sync_to_device();
+			}
+
+			StreamState& status() {
 				return _out_bit_stream_status;
 			}
 
-			const util::cuda::cuda_memory<jpeg::cuda::GPUOutBitStreamState>& status() const {
+			const StreamState& status() const {
 				return _out_bit_stream_status;
 			}
 
@@ -128,8 +138,305 @@ namespace jpeg {
 			int sizeX, int sizeY);
 		__global__ void gpu_huffman_write_devide2(jpeg::cuda::GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
 			int sizeX, int sizeY);
-	}  // namespace cuda
-}  // namespace jpeg
+
+		// -------------------------------------------------------------------------
+		// GPUエンコーダ
+		// =========================================================================
+		/**
+		 * エンコーダ
+		 *
+		 * @author yuumomma
+		 * @version 1.0
+		 */
+		class JpegEncoder {
+		public:
+			/**
+			 * コンストラクタ
+			 *
+			 * 利用可能な状態にするためには幅と高さをセットする必要がある
+			 */
+			JpegEncoder() :
+				_width(0),
+				_height(0),
+				_y_size(0),
+				_c_size(0),
+				_ycc_size(0),
+				_num_bits(0),
+				_out_bit_stream(_ycc_size / 64, MBS),
+				_trans_table_Y(0),
+				_trans_table_C(0),
+				_src(0),
+				_yuv_buffer(0),
+				_quantized(0),
+				_dct_coeficient(0),
+				_dct_tmp_buffer(0),
+				_grid_color(0, 0, 0),
+				_block_color(0, 0, 0),
+				_grid_dct(0, 0, 0),
+				_block_dct(0, 0, 0),
+				_grid_quantize_y(0, 0, 0),
+				_block_quantize_y(0, 0, 0),
+				_grid_quantize_c(0, 0, 0),
+				_block_quantize_c(0, 0, 0),
+				_grid_mcu(0, 0, 0),
+				_block_mcu(0, 0, 0),
+				_grid_huffman(0, 0, 0),
+				_block_huffman(0, 0, 0) {
+
+			}
+
+			/**
+			 * コンストラクタ
+			 * @param width 幅
+			 * @param height 高さ
+			 */
+			JpegEncoder(size_t width, size_t height) :
+				_width(width),
+				_height(height),
+				_y_size(width * height),
+				_c_size(_y_size / 4),
+				_ycc_size(_y_size + _c_size * 2),
+				_num_bits(_ycc_size / 64),
+				_out_bit_stream(_ycc_size / 64, BYTES_PER_MCU),
+				_trans_table_Y(_y_size),
+				_trans_table_C(_y_size),
+				_src(_y_size * 3),
+				_yuv_buffer(_ycc_size),
+				_quantized(_ycc_size),
+				_dct_coeficient(_ycc_size),
+				_dct_tmp_buffer(_ycc_size),
+				_grid_color(_y_size / THREADS, 1, 1),
+				_block_color(THREADS, 1, 1),
+				_grid_dct((_ycc_size) / 64 / DCT4_TH, 1, 1),
+				_block_dct(DCT4_TH, 8, 8),
+				_grid_quantize_y(_y_size / QUA0_TH, 1, 1),
+				_block_quantize_y(QUA0_TH, 1, 1),
+				_grid_quantize_c((2 * _c_size) / QUA1_TH, 1, 1),
+				_block_quantize_c(QUA1_TH, 1, 1),
+				_grid_mcu(_ycc_size / 64 / HUF0_TH, 1, 1),
+				_block_mcu(HUF0_TH, 1, 1),
+				_grid_huffman(_ycc_size / 64 / HUF1_TH, 1, 1),
+				_block_huffman(HUF1_TH, 1, 1) {
+
+				make_trans_table(_trans_table_Y.host_data(), _trans_table_C.host_data(), width, height);
+				_trans_table_C.sync_to_device();
+				_trans_table_Y.sync_to_device();
+			}
+
+			/**
+			 * エンコードするイメージのサイズを指定する
+			 * @param width 幅
+			 * @param height 高さ
+			 */
+			void setImageSize(size_t width, size_t height) {
+				_width = width;
+				_height = height;
+				_y_size = width * height;
+				_c_size = _y_size / 4;
+				_ycc_size = _y_size + _c_size * 2;
+
+				_num_bits.resize(_ycc_size / 64);
+				_out_bit_stream.resize(_ycc_size / 64, BYTES_PER_MCU);
+
+				_trans_table_Y.resize(_y_size);
+				_trans_table_C.resize(_y_size);
+				_src.resize(_y_size * 3);
+				_yuv_buffer.resize(_ycc_size);
+				_quantized.resize(_ycc_size);
+				_dct_coeficient.resize(_ycc_size);
+				_dct_tmp_buffer.resize(_ycc_size);
+
+				_grid_color = dim3(_y_size / THREADS, 1, 1);
+				_block_color = dim3(THREADS, 1, 1);
+				_grid_dct = dim3((_ycc_size) / 64 / DCT4_TH, 1, 1);
+				_block_dct = dim3(DCT4_TH, 8, 8);
+				_grid_quantize_y = dim3(_y_size / QUA0_TH, 1, 1);
+				_block_quantize_y = dim3(QUA0_TH, 1, 1);
+				_grid_quantize_c = dim3((2 * _c_size) / QUA1_TH, 1, 1);
+				_block_quantize_c = dim3(QUA1_TH, 1, 1);
+				_grid_mcu = dim3(_ycc_size / 64 / HUF0_TH, 1, 1);
+				_block_mcu = dim3(HUF0_TH, 1, 1);
+				_grid_huffman = dim3(_ycc_size / 64 / HUF1_TH, 1, 1);
+				_block_huffman = dim3(HUF1_TH, 1, 1);
+			}
+
+			/**
+			 * エンコードする
+			 * @param rgb_data BGRBGR…なデータ
+			 * @param result 結果を格納するバッファ
+			 * @param num_bits 結果バッファの各bits
+			 * @return エンコードされたサイズ
+			 */
+			size_t encode(const byte *rgb_data, util::cuda::device_memory<byte> &result) {
+
+				inner_encode(rgb_data);
+
+				// 逐次処理のためCPUに戻す
+				_out_bit_stream.status().sync_to_host();
+				cpu_huffman_middle(_out_bit_stream.status().host_data(), _width, _height, _num_bits.data());
+				_out_bit_stream.status().sync_to_device();
+
+				gpu_huffman_write_devide0<<<_grid_huffman, _block_huffman>>>(
+					_out_bit_stream.status().device_data(),
+					_out_bit_stream.writable_head(), result.device_data(), _width, _height);
+				gpu_huffman_write_devide1<<<_grid_huffman, _block_huffman>>>(
+					_out_bit_stream.status().device_data(),
+					_out_bit_stream.writable_head(), result.device_data(), _width, _height);
+				gpu_huffman_write_devide2<<<_grid_huffman, _block_huffman>>>(
+					_out_bit_stream.status().device_data(),
+					_out_bit_stream.writable_head(), result.device_data(), _width, _height);
+
+				return _out_bit_stream.available_size();
+			}
+
+			/**
+			 * エンコードする
+			 * @param rgb_data BGRBGR…なデータ
+			 * @param out_bit_stream ハフマン符号化されたビット列
+			 * @param num_bits 各MCUのビット数
+			 * @return
+			 */
+			size_t encode(const byte *rgb_data, GPUJpegOutBitStream &out_bit_stream, ByteBuffer &num_bits) {
+				inner_encode(rgb_data);
+
+				// 逐次処理のためCPUに戻す
+				out_bit_stream.status().sync_to_host();
+				cpu_huffman_middle(out_bit_stream.status().host_data(), _width, _height, num_bits.data());
+				out_bit_stream.status().sync_to_device();
+
+				return out_bit_stream.available_size();
+			}
+
+		private:
+			size_t _width;
+			size_t _height;
+			size_t _y_size;
+			size_t _c_size;
+			size_t _ycc_size;
+
+			ByteBuffer _num_bits;
+			GPUJpegOutBitStream _out_bit_stream;
+
+			util::cuda::cuda_memory<int> _trans_table_Y;
+			util::cuda::cuda_memory<int> _trans_table_C;
+			util::cuda::device_memory<byte> _src;
+			util::cuda::device_memory<int> _yuv_buffer;
+			util::cuda::device_memory<int> _quantized;
+			util::cuda::device_memory<int> _dct_coeficient;
+			util::cuda::device_memory<float> _dct_tmp_buffer;
+
+			dim3 _grid_color, _block_color;
+			dim3 _grid_dct, _block_dct;
+			dim3 _grid_quantize_y, _block_quantize_y;
+			dim3 _grid_quantize_c, _block_quantize_c;
+			dim3 _grid_mcu, _block_mcu;
+			dim3 _grid_huffman, _block_huffman;
+
+			static const int THREADS = 256;
+			static const int DCT4_TH = 1;
+			static const int QUA0_TH = 64;
+			static const int QUA1_TH = 64;
+			static const int HUF0_TH = 16;
+			static const int HUF1_TH = 4;
+
+			static const int BYTES_PER_MCU = 128;
+
+		private:
+			void reset();
+			void inner_encode(const byte* rgb_data) {
+				_src.write_device(rgb_data, _width * _height * 3);
+
+				gpu_color_trans_Y<<<_grid_color, _block_color>>>(
+					_src.device_data(), _yuv_buffer.device_data(), _trans_table_Y.device_data());
+				gpu_color_trans_C<<<_grid_color, _block_color>>>(
+					_src.device_data(), _yuv_buffer.device_data(), _trans_table_C.device_data(),
+					_height, _c_size);
+
+				gpu_dct_0<<<_grid_dct, _block_dct>>>(
+					_yuv_buffer.device_data(), _dct_tmp_buffer.device_data());
+				gpu_dct_1<<<_grid_dct, _block_dct>>>(
+					_dct_tmp_buffer.device_data(), _dct_coeficient.device_data());
+
+				gpu_zig_quantize_Y<<<_grid_quantize_y, _block_quantize_y>>>(
+					_dct_coeficient.device_data(), _quantized.device_data());
+				gpu_zig_quantize_C<<<_grid_quantize_c, _block_quantize_c>>>(
+					_dct_coeficient.device_data(), _quantized.device_data(), _y_size);
+
+				gpu_huffman_mcu<<<_grid_mcu, _block_mcu>>>(
+					_quantized.device_data(), _out_bit_stream.status().device_data(),
+					_out_bit_stream.writable_head(), _out_bit_stream.end(), _width, _height);
+			}
+		};
+
+		// -------------------------------------------------------------------------
+		// GPUデコーダ
+		// =========================================================================
+		/**
+		 * Jpegデコーダ
+		 *
+		 * @author yuumomma
+		 * @version 1.0
+		 */
+		class JpegDecoder {
+		public:
+			/**
+			 * コンストラクタ
+			 *
+			 * 利用可能な状態にするためには幅と高さをセットする必要がある
+			 */
+			JpegDecoder();
+			/**
+			 * コンストラクタ
+			 * @param width 幅
+			 * @param height 高さ
+			 */
+			JpegDecoder(size_t width, size_t height);
+
+			/**
+			 * エンコードするイメージのサイズを指定する
+			 * @param width 幅
+			 * @param height 高さ
+			 */
+			void setImageSize(size_t width, size_t height);
+
+			/**
+			 * デコードする
+			 * @param src JpegEncoderにより生成されたソースデータ
+			 * @param src_size ソースサイズ
+			 * @param result 結果を格納するバッファ
+			 * @param result_size 結果バッファの有効なバイト数
+			 */
+			void decode(const byte *src, size_t src_size, byte *result, size_t result_size);
+			/**
+			 * デコードする
+			 * @param src JpegEncoderにより生成されたソースデータ
+			 * @param src_size ソースサイズ
+			 * @param result 結果を格納するバッファ
+			 */
+			void decode(const byte *src, size_t src_size, ByteBuffer &result);
+			/**
+			 * デコードする
+			 * @param src JpegEncoderにより生成されたソースデータ
+			 * @param result 結果を格納するバッファ
+			 * @param result_size 結果バッファの有効なバイト数
+			 */
+			void decode(const ByteBuffer &src, byte *result, size_t result_size);
+			/**
+			 * デコードする
+			 * @param src JpegEncoderにより生成されたソースデータ
+			 * @param result 結果を格納するバッファ
+			 */
+			void decode(const ByteBuffer &src, ByteBuffer &result);
+
+		private:
+			IntBuffer _yuv_data;
+			IntBuffer _coefficient;
+			IntBuffer _quantized;
+
+			void inner_decode(util::InBitStream *in_bit, byte * result);
+		};
+	} // namespace cuda
+} // namespace jpeg
 
 #endif /* GPU_JPEG_H_ */
 

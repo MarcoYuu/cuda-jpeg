@@ -71,6 +71,21 @@ namespace util {
 			}
 
 			/**
+			 * リサイズする
+			 * @param size 変更サイズ
+			 * @param force より小さくする際に、現在のバッファを完全に破棄するかどうか
+			 */
+			virtual void resize(size_t size, bool force = false) {
+				if (force || _size < size) {
+					if (_device_mem != NULL) {
+						cudaFree(_device_mem);
+					}
+					cudaMalloc((void**) &_device_mem, sizeof(T) * size);
+				}
+				_size = size;
+			}
+
+			/**
 			 * メモリサイズを返す
 			 *
 			 * Tの個数を取得する。バイト数はsizeof(T)*CudaMemory::size()。
@@ -171,9 +186,22 @@ namespace util {
 			/**
 			 * メモリをゼロクリア
 			 */
-			void fillZero() {
+			void fill_zero() {
 				memset(_host_mem, 0, sizeof(T) * this->size());
 				base::fill_zero();
+			}
+
+			/**
+			 * リサイズする
+			 * @param size 変更サイズ
+			 * @param force より小さくする際に、現在のバッファを完全に破棄するかどうか
+			 */
+			void resize(size_t size, bool force = false) {
+				if (force || base::size() < size) {
+					delete[] _host_mem;
+					_host_mem = new T[size];
+				}
+				base::resize(size, force);
 			}
 
 			/**

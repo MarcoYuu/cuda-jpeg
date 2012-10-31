@@ -17,11 +17,11 @@ namespace jpeg {
 		//------------------------------------------------------------
 		// 余ったビットに1を詰めるためのマスク
 		//------------------------------------------------------------
-		__device__    __constant__
-			static const byte GPUkBitFullMaskT[8] = {
+		__device__      __constant__
+			  static const byte GPUkBitFullMaskT[8] = {
 			0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff };
-		__device__    __constant__
-			static const byte GPUkBitFullMaskLowT[8] = {
+		__device__      __constant__
+			  static const byte GPUkBitFullMaskLowT[8] = {
 			0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff };
 
 		class GPUOutBitStreamState {
@@ -50,6 +50,20 @@ namespace jpeg {
 			GPUOutBitStreamBuffer(size_t buff_size) :
 				_buff_size(buff_size),
 				_head_of_buff(buff_size) {
+
+				_head_of_buff.fill_zero();
+				_write_buff_address = _head_of_buff.device_data();
+				_end_of_buff = _head_of_buff.device_data() + _buff_size; // バッファの最終アドレス
+			}
+
+			/**
+			 * リサイズする
+			 * @param size 変更サイズ
+			 * @param force より小さくする際に、現在のバッファを完全に破棄するかどうか
+			 */
+			void resize(size_t size, bool force = false) {
+				_buff_size = size;
+				_head_of_buff.resize(size, force);
 
 				_head_of_buff.fill_zero();
 				_write_buff_address = _head_of_buff.device_data();
@@ -243,6 +257,6 @@ namespace jpeg {
 
 			Set8Bits_w(Od, OmBufP, *(ImBufP + bytepos), Od->_num_bits); // 端数バイト書き込み
 		}
-	}  // namespace cuda
-}  // namespace jpeg
+	} // namespace cuda
+} // namespace jpeg
 #endif
