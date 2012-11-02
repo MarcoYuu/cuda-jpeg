@@ -42,8 +42,6 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 	std::cout << "	-----------------------------------------------" << std::endl;
 	int result_size;
 	cuda_memory<byte> encode_result(sizeof(byte) * (width * height * 3));
-	//ByteBuffer num_bits(width * height / 64);
-	//JpegOutBitStream out_bit_stream(width * height / 64, 128);
 	encode_result.fill_zero();
 	{
 		jpeg::cuda::JpegEncoder encoder(width, height);
@@ -51,7 +49,6 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 		watch.start();
 		{
 			result_size = encoder.encode((byte*) source.getRawData(), encode_result);
-			//result_size = encoder.encode((byte*) source.getRawData(), out_bit_stream, num_bits);
 			encode_result.sync_to_host();
 		}
 		watch.stop();
@@ -70,7 +67,7 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 		watch.start();
 		{
 			decoder.decode(encode_result.host_data(), result_size, decode_result);
-			decode_result.copy_host((byte*) result.getRawData(), decode_result.size());
+			decode_result.copy_to_host((byte*) result.getRawData(), decode_result.size());
 		}
 		watch.stop();
 		std::cout << "	" << watch.getLastElapsedTime() * 1000 << "[ms]\n" << std::endl;
