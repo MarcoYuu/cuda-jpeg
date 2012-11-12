@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "cuda_jpeg.cuh"
 
 namespace jpeg {
@@ -5,7 +6,8 @@ namespace jpeg {
 
 		using namespace util;
 
-		__global__ void ConvertRGBToYUV(const byte* rgb, int* yuv_result, size_t width, size_t height, size_t block_width,
+		__global__ void ConvertRGBToYUV(const byte* rgb, int* yuv_result, size_t width, size_t height,
+			size_t block_width,
 			size_t block_height) {
 
 			// ------------------- 各CUDAブロックに対して
@@ -50,6 +52,11 @@ namespace jpeg {
 			const int local_dst_index = x % 8 + (y % 8) * 8; // 0-63
 			const int dst_id = dst_block_start_y_index + mcu_offset + local_dst_index;
 
+			printf("Y, %d, %d\n", src_id, dst_id);
+
+			printf("thread_id, %d\n", threadIdx.x + threadIdx.y * blockDim.x +
+				(blockIdx.x + blockIdx.y * gridDim.x + blockIdx.z * gridDim.x * gridDim.y) * 256);
+
 			// 色変換
 			yuv_result[dst_id] = int(
 				0.1440f * rgb[src_id] + 0.5870f * rgb[src_id + 1] + 0.2990f * rgb[src_id + 2] - 128);
@@ -62,6 +69,8 @@ namespace jpeg {
 					0.5000f * rgb[src_id] - 0.3313f * rgb[src_id + 1] - 0.1687f * rgb[src_id + 2]);
 				yuv_result[dst_v_id] = int(
 					-0.0813f * rgb[src_id] - 0.4187f * rgb[src_id + 1] + 0.5000f * rgb[src_id + 2]);
+				printf("U, %d, %d\n", src_id, dst_u_id);
+				printf("V, %d, %d\n", src_id, dst_v_id);
 			}
 		}
 	}
