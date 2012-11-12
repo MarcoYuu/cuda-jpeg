@@ -9,16 +9,22 @@ CPP_SRCS += \
 ../src/main.cpp 
 
 CU_SRCS += \
+../src/cuda_jpeg.cu \
+../src/cuda_main.cu \
 ../src/gpu_jpeg.cu \
 ../src/gpu_main_func.cu 
 
 CU_DEPS += \
+./src/cuda_jpeg.d \
+./src/cuda_main.d \
 ./src/gpu_jpeg.d \
 ./src/gpu_main_func.d 
 
 OBJS += \
 ./src/cpu_jpeg.o \
 ./src/cpu_main_func.o \
+./src/cuda_jpeg.o \
+./src/cuda_main.o \
 ./src/gpu_jpeg.o \
 ./src/gpu_main_func.o \
 ./src/main.o 

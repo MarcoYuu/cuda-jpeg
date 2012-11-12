@@ -102,8 +102,8 @@ namespace util {
 			 * @param data [in] 書き込み元
 			 * @param size [in] 書き込みサイズ
 			 */
-			void write_device(const T* data, size_t size) {
-				cudaMemcpy(_device_mem, data, sizeof(T) * size, cudaMemcpyHostToDevice);
+			void write_device(const T* data, size_t size, size_t offset = 0) {
+				cudaMemcpy(_device_mem + offset, data, sizeof(T) * size, cudaMemcpyHostToDevice);
 			}
 
 			/**
@@ -210,8 +210,8 @@ namespace util {
 			 * @param data [in] 書き込み元
 			 * @param size [in] 書き込みサイズ
 			 */
-			void write_host(const T* data, size_t size) {
-				memcpy(_host_mem, data, sizeof(T) * size);
+			void write_host(const T* data, size_t size, size_t offset = 0) {
+				memcpy(_host_mem + offset, data, sizeof(T) * size);
 			}
 
 			/**

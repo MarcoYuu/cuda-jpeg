@@ -12,13 +12,15 @@
 void parse_arg(int argc, char *argv[], std::string &in_file, std::string &out_file);
 void cpu_exec(const std::string &file_name, const std::string &out_file_name);
 void gpu_exec(const std::string &file_name, const std::string &out_file_name);
+void cuda_exec(const std::string &file_name, const std::string &out_file_name);
 
 int main(int argc, char *argv[]) {
 	std::string file_name, out_file_name;
 	parse_arg(argc, argv, file_name, out_file_name);
 
-	cpu_exec(file_name, out_file_name);
-	gpu_exec(file_name, out_file_name);
+	//cpu_exec(file_name, out_file_name);
+	//gpu_exec(file_name, out_file_name);
+	cuda_exec(file_name, out_file_name);
 
 	return 0;
 }
