@@ -14,6 +14,8 @@
 namespace jpeg {
 	namespace cuda {
 
+		using namespace util;
+
 		/**
 		 * RGBをYUVに変換
 		 *
@@ -29,7 +31,7 @@ namespace jpeg {
 		 * @param block_width ブロックの幅
 		 * @param block_heght ブロックの高さ
 		 *
-		 */__global__ void ConvertRGBToYUV(const byte* rgb, int* yuv_result, size_t width, size_t height,
+		 */__global__ void ConvertRGBToYUV(const byte* rgb, byte* yuv_result, size_t width, size_t height,
 			size_t block_width, size_t block_height);
 	}
 }

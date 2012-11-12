@@ -32,8 +32,8 @@ CPP_DEPS += \
 src/utils/%.o: ../src/utils/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: nvcc compiler'
-	nvcc -I../ -I../~/Library/boost -I../~/Library/ -I../~/NVIDIA_GPU_Computing_SDK/shared/inc -G -g -O0 -gencode arch=compute_20,code=sm_21 -odir "src/utils" -M -o "$(@:%.o=%.d)" "$<"
-	nvcc -I../ -I../~/Library/boost -I../~/Library/ -I../~/NVIDIA_GPU_Computing_SDK/shared/inc -G -g -O0 --compile  -x c++ -o  "$@" "$<"
+	nvcc -I/usr/local/include/opencv -I../ -I../~/Library/boost -I../~/Library/ -I../~/NVIDIA_GPU_Computing_SDK/shared/inc -G -g -O0 -gencode arch=compute_20,code=sm_21 -odir "src/utils" -M -o "$(@:%.o=%.d)" "$<"
+	nvcc -I/usr/local/include/opencv -I../ -I../~/Library/boost -I../~/Library/ -I../~/NVIDIA_GPU_Computing_SDK/shared/inc -G -g -O0 --compile  -x c++ -o  "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
