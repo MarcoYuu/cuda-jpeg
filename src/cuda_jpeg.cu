@@ -1,4 +1,5 @@
 #include "stdio.h"
+#include "stdlib.h"
 #include "cuda_jpeg.cuh"
 
 namespace jpeg {
@@ -6,9 +7,23 @@ namespace jpeg {
 
 		using namespace util;
 
-		__global__ void ConvertRGBToYUV(byte* rgb, byte* yuv_result, size_t width, size_t height, size_t block_width,
+#ifdef DEBUG
+		__global__ void ConvertRGBToYUV(
+			const byte* rgb,
+			byte* yuv_result,
+			size_t width,
+			size_t height,
+			size_t block_width,
+			size_t block_height, int *result) {
+#else
+		__global__ void ConvertRGBToYUV(
+			const byte* rgb,
+			byte* yuv_result,
+			size_t width,
+			size_t height,
+			size_t block_width,
 			size_t block_height) {
-
+#endif
 			// ------------------- 各CUDAブロックに対して
 			const int grid_row_num = height / block_height;
 			const int grid_col_num = width / block_width;
@@ -46,22 +61,63 @@ namespace jpeg {
 
 			// 書き込み先インデックス
 			const int local_dst_index = x % 8 + (y % 8) * 8; // 0-63
-			const int dst_id = dst_block_start_y_index + local_dst_index;
-			const int u_offset = block_width * block_height / 4;
-			const int v_offset = block_width * block_height / 2;
+			const int dst_id = dst_block_start_y_index + mcu_offset + local_dst_index;
+
+#ifdef DEBUG
+			result[dst_id] = src_id;
+#endif
 
 			// 色変換
-			yuv_result[dst_id] = int(
-				0.1440f * rgb[src_id] + 0.5870f * rgb[src_id + 1] + 0.2990f * rgb[src_id + 2] - 128);
+			//Y [0,255]
+			yuv_result[dst_id] = byte(
+				0.1440 * rgb[src_id] + 0.5870 * rgb[src_id + 1] + 0.29990 * rgb[src_id + 2]);
 
+			printf("%d, %d\n", src_id, rgb[src_id + 2]);
+
+			//U,V [-128,127] -> [0,255]
 			if (x % 2 == 0 && y % 2 == 0) {
 				const int local_dst_c_index = x / 2 + y / 8 * 8; // 0-63
-				const int dst_c_id = dst_block_start_y_index + local_dst_c_index;
-				yuv_result[dst_c_id + u_offset] = int(
-					0.5000f * rgb[src_id] - 0.3313f * rgb[src_id + 1] - 0.1687f * rgb[src_id + 2]); //-128
-				yuv_result[dst_c_id + v_offset] = int(
-					-0.0813f * rgb[src_id] - 0.4187f * rgb[src_id + 1] + 0.5000f * rgb[src_id + 2]); //-128
+				const int dst_u_id = dst_block_start_u_index + local_dst_c_index;
+				const int dst_v_id = dst_block_start_v_index + local_dst_c_index;
+				yuv_result[dst_u_id] = byte(
+					0.5000 * rgb[src_id] - 0.3313 * rgb[src_id + 1] - 0.1687 * rgb[src_id + 2] + 128);
+				yuv_result[dst_v_id] = byte(
+					-0.0813 * rgb[src_id] - 0.4187 * rgb[src_id + 1] + 0.5000 * rgb[src_id + 2] + 128);
 			}
+		}
+
+		__global__ void ConvertYUVToRGB(const byte* yuv, byte* rgb_result, size_t width, size_t height,
+			size_t block_width, size_t block_height) {
+
+			// ------------------- 各CUDAブロックに対して
+			const int grid_col_num = width / block_width;
+			const int grid_x = blockIdx.z / grid_col_num;
+			const int grid_y = blockIdx.z % grid_col_num;
+
+			const int block_byte_size = block_width * block_height * 3 / 2;
+
+			// 元画像の各画像ブロックに対する左上インデックス
+			const int src_start_index = grid_x * block_byte_size + grid_y * block_byte_size * grid_col_num;
+
+			// ------------------- CUDAブロック内の任意画像ブロック分割に対して
+			// 画像ブロック内の16x16ブロックの左上アドレス
+			const int src_block_start_y_index = src_start_index + blockIdx.x * 256 + blockIdx.y * blockDim.x * 256;
+			const int src_block_start_u_index = src_block_start_y_index + block_width * block_height / 4
+				+ blockIdx.x * 64
+				+ blockIdx.y * blockDim.x * 64;
+			const int src_block_start_v_index = src_block_start_y_index + block_width * block_height / 2
+				+ blockIdx.x * 64
+				+ blockIdx.y * blockDim.x * 64;
+
+			// ------------------- 16x16 block に関して
+			const int x = threadIdx.x;
+			const int y = threadIdx.y;
+			const int mcu_id_x = x / 8; // 0,1
+			const int mcu_id_y = y / 8; // 0,1
+			const int mcu_id = mcu_id_x + mcu_id_y * 2; // 0-4
+			const int mcu_offset = mcu_id * 64; // 0, 64, 128, 192
+			const int local_src_index = x % 8 + (y % 8) * 8; // 0-63
+			const int src_id = src_block_start_y_index + local_src_index;
 		}
 	}
 }

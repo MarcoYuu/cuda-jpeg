@@ -16,6 +16,13 @@ namespace jpeg {
 
 		using namespace util;
 
+#ifdef DEBUG
+		__global__ void ConvertRGBToYUV(const byte* rgb, byte* yuv_result, size_t width, size_t height,
+			size_t block_width, size_t block_height, int *result);
+
+		__global__ void ConvertYUVToRGB(const byte* yuv, byte* rgb_result, size_t width, size_t height,
+			size_t block_width, size_t block_height);
+#else
 		/**
 		 * RGBをYUVに変換
 		 *
@@ -33,6 +40,24 @@ namespace jpeg {
 		 *
 		 */__global__ void ConvertRGBToYUV(const byte* rgb, byte* yuv_result, size_t width, size_t height,
 			size_t block_width, size_t block_height);
+
+		/**
+		 * YUVをRGBに変換
+		 *
+		 * 各ブロックごとに独立したバッファに代入
+		 *
+		 * - grid(block_width/16, block_height/16, width/block_width * height/block_height)
+		 * - block(16, 16, 1)
+		 *
+		 * @param yuv
+		 * @param rgb_result
+		 * @param width
+		 * @param height
+		 * @param block_width
+		 * @param block_height
+		 */__global__ void ConvertYUVToRGB(const byte* yuv, byte* rgb_result, size_t width, size_t height,
+			size_t block_width, size_t block_height);
+#endif
 	}
 }
 

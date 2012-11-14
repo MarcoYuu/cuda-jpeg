@@ -10,6 +10,7 @@
 
 #include <cuda_runtime.h>
 #include <cstdlib>
+#include <cassert>
 
 namespace util {
 	namespace cuda {
@@ -103,6 +104,7 @@ namespace util {
 			 * @param size [in] 書き込みサイズ
 			 */
 			void write_device(const T* data, size_t size, size_t offset = 0) {
+				assert(size + offset <= _size);
 				cudaMemcpy(_device_mem + offset, data, sizeof(T) * size, cudaMemcpyHostToDevice);
 			}
 
@@ -128,6 +130,7 @@ namespace util {
 			 * @param size [in] 書き込みサイズ
 			 */
 			void copy_to_host(T* host_mem, size_t size) {
+				assert(size <= _size);
 				cudaMemcpy(host_mem, _device_mem, sizeof(T) * size, cudaMemcpyDeviceToHost);
 			}
 		};
@@ -211,6 +214,7 @@ namespace util {
 			 * @param size [in] 書き込みサイズ
 			 */
 			void write_host(const T* data, size_t size, size_t offset = 0) {
+				assert(size <= base::size());
 				memcpy(_host_mem + offset, data, sizeof(T) * size);
 			}
 
@@ -254,6 +258,7 @@ namespace util {
 			 * @return ホストメモリ
 			 */
 			T& operator[](size_t index) {
+				assert(index < base::size());
 				return _host_mem[index];
 			}
 			/**
@@ -263,6 +268,7 @@ namespace util {
 			 * @return ホストメモリ
 			 */
 			const T& operator[](size_t index) const {
+				assert(index < base::size());
 				return _host_mem[index];
 			}
 		};
