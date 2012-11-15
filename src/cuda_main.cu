@@ -48,23 +48,21 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 	{
 		// 色変換
 		cuda_memory<byte> result(width * height * 3 / 2);
-		cuda_memory<int> table_result(width * height);
+		cuda_memory<int> table_result(width * height * 3 / 2);
+
+		ConvertRGBToYUV(src, result, width, height, BLOCK_SIZE, BLOCK_SIZE, table_result);
+		result.sync_to_host();
+		table_result.sync_to_host();
+
 		dim3 grid(BLOCK_SIZE / 16, BLOCK_SIZE / 16, width / BLOCK_SIZE * height / BLOCK_SIZE);
 		dim3 block(16, 16, 1);
 
-		result.fill_zero();
-		table_result.fill_zero();
-		cout << grid.x << "," << grid.y << "," << grid.z << ";," << block.x << "," << block.y << "," << block.z << endl;
-		ConvertRGBToYUV<<<grid,block>>>(src.device_data(), result.device_data(), width, height, BLOCK_SIZE, BLOCK_SIZE, table_result.device_data());
-
 		// 結果の出力
-		result.sync_to_host();
-		table_result.sync_to_host();
 		{
 			std::ofstream ofs("table.txt");
 			ofs << "dst, src" << endl;
 			for (int i = 0; i < table_result.size(); ++i) {
-				ofs << i << "," << table_result[i] / 3 << endl;
+				ofs << i << "," << table_result[i] << endl;
 			}
 			ofs.close();
 

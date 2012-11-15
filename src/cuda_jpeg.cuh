@@ -15,14 +15,20 @@ namespace jpeg {
 	namespace cuda {
 
 		using namespace util;
+		using namespace util::cuda;
 
-#ifdef DEBUG
-		__global__ void ConvertRGBToYUV(const byte* rgb, byte* yuv_result, size_t width, size_t height,
-			size_t block_width, size_t block_height, int *result);
+		/**
+		 * 色変換テーブルを作成する
+		 *
+		 * @param width もと画像の幅
+		 * @param height 元画像の高さ
+		 * @param block_width ブロックの幅
+		 * @param block_heght ブロックの高さ
+		 * @param table テーブル出力
+		 */
+		void CreateConvertTable(size_t width, size_t height, size_t block_width,
+			size_t block_height, device_memory<int> &table);
 
-		__global__ void ConvertYUVToRGB(const byte* yuv, byte* rgb_result, size_t width, size_t height,
-			size_t block_width, size_t block_height);
-#else
 		/**
 		 * RGBをYUVに変換
 		 *
@@ -38,8 +44,10 @@ namespace jpeg {
 		 * @param block_width ブロックの幅
 		 * @param block_heght ブロックの高さ
 		 *
-		 */__global__ void ConvertRGBToYUV(const byte* rgb, byte* yuv_result, size_t width, size_t height,
-			size_t block_width, size_t block_height);
+		 */
+		void ConvertRGBToYUV(const device_memory<byte> &rgb, device_memory<byte> &yuv_result,
+			size_t width, size_t height, size_t block_width, size_t block_height,
+			device_memory<int> &table);
 
 		/**
 		 * YUVをRGBに変換
@@ -55,9 +63,10 @@ namespace jpeg {
 		 * @param height
 		 * @param block_width
 		 * @param block_height
-		 */__global__ void ConvertYUVToRGB(const byte* yuv, byte* rgb_result, size_t width, size_t height,
-			size_t block_width, size_t block_height);
-#endif
+		 */
+		void ConvertYUVToRGB(const device_memory<byte> &yuv, device_memory<byte> &rgb_result,
+			size_t width, size_t height, size_t block_width, size_t block_height,
+			device_memory<int> &table);
 	}
 }
 

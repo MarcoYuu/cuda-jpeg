@@ -36,6 +36,9 @@
 									<listOptionValue builtIn="false" value="../~/Library/"/>
 									<listOptionValue builtIn="false" value="../~/NVIDIA_GPU_Computing_SDK/shared/inc"/>
 								</option>
+								<option id="nvcc.compiler.def.symbols.1120942316" name="定義済みのシンボル (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="DEBUG"/>
+								</option>
 								<inputType id="nvcc.compiler.input.cu.632062340" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.220799909" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.44154797" superClass="nvcc.compiler.input.c"/>
