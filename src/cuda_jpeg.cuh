@@ -20,6 +20,9 @@ namespace jpeg {
 		/**
 		 * 色変換テーブルを作成する
 		 *
+		 * - grid(block_width/16, block_height/16, width/block_width * height/block_height)
+		 * - block(16, 16, 1)
+		 *
 		 * @param width もと画像の幅
 		 * @param height 元画像の高さ
 		 * @param block_width ブロックの幅
@@ -33,6 +36,7 @@ namespace jpeg {
 		 * RGBをYUVに変換
 		 *
 		 * 各ブロックごとに独立したバッファに代入
+		 * カーネル起動は各ピクセルごと。
 		 *
 		 * - grid(block_width/16, block_height/16, width/block_width * height/block_height)
 		 * - block(16, 16, 1)
@@ -43,26 +47,24 @@ namespace jpeg {
 		 * @param height 元画像の高さ
 		 * @param block_width ブロックの幅
 		 * @param block_heght ブロックの高さ
-		 *
+		 * @param table 変換テーブル
 		 */
 		void ConvertRGBToYUV(const device_memory<byte> &rgb, device_memory<byte> &yuv_result,
 			size_t width, size_t height, size_t block_width, size_t block_height,
-			device_memory<int> &table);
+			const device_memory<int> &table);
 
 		/**
 		 * YUVをRGBに変換
 		 *
 		 * 各ブロックごとに独立したバッファに代入
 		 *
-		 * - grid(block_width/16, block_height/16, width/block_width * height/block_height)
-		 * - block(16, 16, 1)
-		 *
-		 * @param yuv
-		 * @param rgb_result
-		 * @param width
-		 * @param height
-		 * @param block_width
-		 * @param block_height
+		 * @param yuv YUV411で保存されたソースデータ
+		 * @param rgb_result rgbに変換された結果
+		 * @param width もと画像の幅
+		 * @param height 元画像の高さ
+		 * @param block_width ブロックの幅
+		 * @param block_heght ブロックの高さ
+		 * @param table 変換テーブル
 		 */
 		void ConvertYUVToRGB(const device_memory<byte> &yuv, device_memory<byte> &rgb_result,
 			size_t width, size_t height, size_t block_width, size_t block_height,

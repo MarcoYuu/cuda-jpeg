@@ -42,40 +42,84 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 	device_memory<byte> src(width * height * 3);
 	src.write_device((byte*) source.getRawData(), width * height * 3);
 
-	// ブロックサイズ
-	const int BLOCK_SIZE = 64;
-
 	{
-		// 色変換
-		cuda_memory<byte> result(width * height * 3 / 2);
-		cuda_memory<int> table_result(width * height * 3 / 2);
+		ofstream ofs("source.txt");
+		for (int i = 0; i < width * height * 3; ++i) {
+			ofs << "B," << (int) ((byte*) source.getRawData())[i];
+			ofs << ",G," << (int) ((byte*) source.getRawData())[i + 1];
+			ofs << ",R," << (int) ((byte*) source.getRawData())[i + 2] << endl;
+		}
+	}
 
-		ConvertRGBToYUV(src, result, width, height, BLOCK_SIZE, BLOCK_SIZE, table_result);
-		result.sync_to_host();
-		table_result.sync_to_host();
+	// ブロックサイズ
+	const int BLOCK_WIDTH = width;
+	const int BLOCK_HEIGHT = height;
 
-		dim3 grid(BLOCK_SIZE / 16, BLOCK_SIZE / 16, width / BLOCK_SIZE * height / BLOCK_SIZE);
-		dim3 block(16, 16, 1);
+	std::cout << "===============================================" << std::endl;
+	std::cout << " Start CUDA Encoding & Decoding" << std::endl;
+	std::cout << "-----------------------------------------------\n" << std::endl;
 
-		// 結果の出力
+	cuda_memory<byte> encode_result(width * height * 3 / 2);
+	encode_result.fill_zero();
+	{
+		std::cout << "	-----------------------------------------------" << std::endl;
+		std::cout << "	 Encode" << std::endl;
+		std::cout << "	-----------------------------------------------\n" << std::endl;
+
+		std::cout << "	 	CreateConvertTable" << std::endl;
+		cuda_memory<int> table(width * height);
+		CreateConvertTable(width, height, BLOCK_WIDTH, BLOCK_HEIGHT, table);
+
+		std::cout << "	 	ConvertRGBToYUV" << std::endl;
+		ConvertRGBToYUV(src, encode_result, width, height, BLOCK_WIDTH, BLOCK_HEIGHT, table);
+
 		{
-			std::ofstream ofs("table.txt");
-			ofs << "dst, src" << endl;
-			for (int i = 0; i < table_result.size(); ++i) {
-				ofs << i << "," << table_result[i] << endl;
+			encode_result.sync_to_host();
+			ofstream ofs("encode_result.txt");
+			for (int i = 0; i < encode_result.size(); ++i) {
+				if (i < width * height) {
+					ofs << "Y," << i << "," << (int) encode_result[i] << endl;
+				} else if (i < width * height * 5 / 4) {
+					ofs << "U," << i - width * height << "," << (int) encode_result[i] << endl;
+				} else {
+					ofs << "V," << i - width * height * 5 / 4 << "," << (int) encode_result[i]
+						<< endl;
+				}
 			}
-			ofs.close();
+		}
+	}
 
-			ofs.open("yuv.txt");
-			for (int i = 0; i < result.size(); ++i) {
-				ofs << static_cast<int>(result[i]) << endl;
+	cuda_memory<byte> decode_result(width * height * 3);
+	decode_result.fill_zero();
+	{
+		std::cout << "	-----------------------------------------------" << std::endl;
+		std::cout << "	 Decode" << std::endl;
+		std::cout << "	-----------------------------------------------\n" << std::endl;
+
+		std::cout << "	 	CreateConvertTable" << std::endl;
+		cuda_memory<int> table(width * height);
+		CreateConvertTable(width, height, BLOCK_WIDTH, BLOCK_HEIGHT, table);
+
+		std::cout << "	 	ConvertYUVToRGB" << std::endl;
+		ConvertYUVToRGB(encode_result, decode_result, width, height, BLOCK_WIDTH, BLOCK_HEIGHT,
+			table);
+
+		BitmapCVUtil bmp(width, height, 8, source.getBytePerPixel());
+		decode_result.copy_to_host((byte*) bmp.getRawData(), decode_result.size());
+		bmp.saveToFile("cuda_" + out_file_name);
+
+		{
+			ofstream ofs("decode_result.txt");
+			for (int i = 0; i < width * height * 3; ++i) {
+				ofs << "B," << (int) ((byte*) bmp.getRawData())[i];
+				ofs << ",G," << (int) ((byte*) bmp.getRawData())[i + 1];
+				ofs << ",R," << (int) ((byte*) bmp.getRawData())[i + 2] << endl;
 			}
-			ofs.close();
 		}
 	}
 
 	std::cout << "-----------------------------------------------" << std::endl;
-	std::cout << " Finish GPU Encoding & Decoding" << std::endl;
+	std::cout << " Finish CUDA Encoding & Decoding" << std::endl;
 	std::cout << "===============================================\n\n" << std::endl;
 }
 
