@@ -10,11 +10,14 @@
 
 #include <vector>
 
-#include "utils/out_bit_stream.h"
-#include "utils/in_bit_stream.h"
-#include "type_definitions.h"
+#include "../../utils/out_bit_stream.h"
+#include "../../utils/in_bit_stream.h"
+#include "../../utils/type_definitions.h"
 
 namespace jpeg {
+
+	using namespace util;
+
 	// -------------------------------------------------------------------------
 	// CPUエンコーダ
 	// =========================================================================

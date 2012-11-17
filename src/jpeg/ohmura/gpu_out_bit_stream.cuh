@@ -5,23 +5,25 @@
  ******************************************************/
 #ifndef GPU_OUT_BIT_STREAM_H_
 #define GPU_OUT_BIT_STREAM_H_
-#include "../type_definitions.h"
-#include "cuda_memory.hpp"
+#include "../../utils/type_definitions.h"
+#include "../../utils/cuda/cuda_memory.hpp"
 #include <stdio.h>
 //------------------------------------------------------------
 //Max_Block_size:ハフマンエンコードの時のマクロブロック毎のバッファのサイズ,コンスタントのがいいかも
 //------------------------------------------------------------
 #define MBS 128 //#define MBS 256
 namespace jpeg {
-	namespace cuda {
+	namespace ohmura {
+
+		using namespace util;
 		//------------------------------------------------------------
 		// 余ったビットに1を詰めるためのマスク
 		//------------------------------------------------------------
-		__device__      __constant__
-			  static const byte GPUkBitFullMaskT[8] = {
+		__device__        __constant__
+			    static const byte GPUkBitFullMaskT[8] = {
 			0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff };
-		__device__      __constant__
-			  static const byte GPUkBitFullMaskLowT[8] = {
+		__device__        __constant__
+			    static const byte GPUkBitFullMaskLowT[8] = {
 			0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff };
 
 		class GPUOutBitStreamState {
@@ -102,7 +104,8 @@ namespace jpeg {
 			int numBits);
 		__device__ void Set8Bits(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP, byte v,
 			int numBits);
-		__device__ void SetBits(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP, int v, int numBits);
+		__device__ void SetBits(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP, int v,
+			int numBits);
 		__device__ void IncBuf_w(GPUOutBitStreamState *d);
 		__device__ void SetFewBits_w(GPUOutBitStreamState *d, byte *mBufP, byte v, int numBits);
 		__device__ void SetBits2Byte_w(GPUOutBitStreamState *d, byte *mBufP, byte v, int numBits);
@@ -119,7 +122,8 @@ namespace jpeg {
 		//------------------------------------------------------------
 		// 8ビット以下のデータを１つのアドレスに書き込む
 		//------------------------------------------------------------
-		inline __device__ void SetFewBits(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP, byte v, // 書き込む値
+		inline __device__ void SetFewBits(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP,
+			byte v, // 書き込む値
 			int numBits) // 書き込みビット数
 			{
 			// 上位ビットをクリア
@@ -134,7 +138,8 @@ namespace jpeg {
 		//------------------------------------------------------------
 		// 8ビット以下のデータを2つのアドレスに分けて書き込む
 		//------------------------------------------------------------
-		inline __device__ void SetBits2Byte(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP, byte v, // 書き込む値
+		inline __device__ void SetBits2Byte(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP,
+			byte v, // 書き込む値
 			int numBits) // 書き込みビット数
 			{
 			v &= GPUkBitFullMaskT[numBits - 1]; // 上位ビットをクリア
@@ -149,7 +154,8 @@ namespace jpeg {
 		//------------------------------------------------------------
 		// 8ビット以下のデータを書き込む
 		//------------------------------------------------------------
-		inline __device__ void Set8Bits(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP, byte v, // 書き込む値
+		inline __device__ void Set8Bits(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP,
+			byte v, // 書き込む値
 			int numBits) // 書き込みビット数
 			{
 			if (d->_bit_pos + 1 >= numBits) // 現在のバイトに全部入るとき
@@ -172,8 +178,8 @@ namespace jpeg {
 		//
 		// ビット単位で書き込む（最大16ビット）
 		//------------------------------------------------------------
-		inline __device__ void SetBits(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP, int v,
-			int numBits) {
+		inline __device__ void SetBits(GPUOutBitStreamState *d, byte *mBufP, byte *mEndOfBufP,
+			int v, int numBits) {
 			if (numBits == 0)
 				return;
 
@@ -257,6 +263,6 @@ namespace jpeg {
 
 			Set8Bits_w(Od, OmBufP, *(ImBufP + bytepos), Od->_num_bits); // 端数バイト書き込み
 		}
-	} // namespace cuda
+	} // namespace gpu
 } // namespace jpeg
 #endif

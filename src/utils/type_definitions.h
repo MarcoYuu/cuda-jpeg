@@ -10,10 +10,12 @@
 
 #include <vector>
 
-typedef unsigned char byte;
-typedef unsigned int u_int;
+namespace util {
+	typedef unsigned char byte;
+	typedef unsigned int u_int;
 
-typedef std::vector<byte> ByteBuffer;
-typedef std::vector<int> IntBuffer;
+	typedef std::vector<byte> ByteBuffer;
+	typedef std::vector<int> IntBuffer;
+}  // namespace util
 
 #endif /* CUDA_JPEG_TYPES_H_ */

@@ -5,11 +5,10 @@
 #include <fstream>
 #include <iostream>
 
-#include "cpu_jpeg.h"
+#include "jpeg/cpu/cpu_jpeg.h"
 
 #include "utils/timer.h"
 #include "utils/util_cv.h"
-#include "utils/encoder_tables.h"
 
 using namespace std;
 using namespace util;

@@ -8,8 +8,8 @@
 #ifndef CUDA_JPEG_H_
 #define CUDA_JPEG_H_
 
-#include "type_definitions.h"
-#include "utils/cuda_memory.hpp"
+#include "../../utils/type_definitions.h"
+#include "../../utils/cuda/cuda_memory.hpp"
 
 namespace jpeg {
 	namespace cuda {

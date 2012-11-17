@@ -7,7 +7,7 @@
 #ifndef IN_BIT_STREAM_H_
 #define IN_BIT_STREAM_H_
 
-#include "../type_definitions.h"
+#include "type_definitions.h"
 
 namespace util {
 	/**

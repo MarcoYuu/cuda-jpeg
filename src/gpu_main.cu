@@ -6,23 +6,19 @@
 #include <fstream>
 #include <iostream>
 
-#include "cpu_jpeg.h"
-#include "gpu_jpeg.cuh"
+#include "jpeg/ohmura/gpu_jpeg.cuh"
 
 #include "utils/util_cv.h"
 #include "utils/timer.h"
-#include "utils/cuda_timer.h"
-#include "utils/cuda_memory.hpp"
-#include "utils/util_cv.h"
-#include "utils/encoder_tables.h"
-#include "utils/in_bit_stream.h"
+#include "utils/cuda/cuda_timer.h"
+#include "utils/cuda/cuda_memory.hpp"
 
 void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 	using namespace std;
 	using namespace util;
 	using namespace util::cuda;
 	using namespace jpeg;
-	using namespace jpeg::cuda;
+	using namespace jpeg::ohmura;
 
 	CudaStopWatch watch;
 
@@ -44,7 +40,7 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 	cuda_memory<byte> encode_result(sizeof(byte) * (width * height * 3));
 	encode_result.fill_zero();
 	{
-		jpeg::cuda::JpegEncoder encoder(width, height);
+		jpeg::ohmura::JpegEncoder encoder(width, height);
 
 		watch.start();
 		{
@@ -62,7 +58,7 @@ void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
 	BitmapCVUtil result(width, height, 8, source.getBytePerPixel());
 	{
 		device_memory<byte> decode_result(width * height * 3);
-		jpeg::cuda::JpegDecoder decoder(width, height);
+		jpeg::ohmura::JpegDecoder decoder(width, height);
 
 		watch.start();
 		{

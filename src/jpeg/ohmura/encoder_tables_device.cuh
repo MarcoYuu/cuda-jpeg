@@ -8,7 +8,7 @@ The comments are written in Japanese (Shift-JIS).
 #define ENCODER_TABLE_DEVICE_H_
 
 namespace jpeg {
-	namespace cuda {
+	namespace ohmura {
 		namespace encode_table {
 			//----------------------------------------------------------------------------
 			// ジグザグシーケンス
@@ -276,7 +276,7 @@ namespace jpeg {
 				};
 			}  // namespace Sampling
 		}  // namespace encode_table
-	}  // namespace cuda
+	}  // namespace ohmura
 }  // namespace jpeg
 
 #endif

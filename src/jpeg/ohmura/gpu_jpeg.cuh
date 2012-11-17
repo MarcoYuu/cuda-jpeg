@@ -8,19 +8,22 @@
 #ifndef GPU_JPEG_H_
 #define GPU_JPEG_H_
 
-#include "utils/gpu_out_bit_stream.cuh"
-#include "utils/in_bit_stream.h"
-#include "type_definitions.h"
+#include "gpu_out_bit_stream.cuh"
+#include "../../utils/in_bit_stream.h"
+#include "../../utils/type_definitions.h"
 
 namespace jpeg {
-	namespace cuda {
+	namespace ohmura {
+
+		using namespace util;
+
 		//-------------------------------------------------------------------
 		// Jpeg圧縮用の変数まとめクラス
 		//===================================================================
 		class JpegOutBitStream {
 		public:
-			typedef util::cuda::cuda_memory<jpeg::cuda::GPUOutBitStreamState> StreamState;
-			typedef jpeg::cuda::GPUOutBitStreamBuffer StreamBuffer;
+			typedef util::cuda::cuda_memory<jpeg::ohmura::GPUOutBitStreamState> StreamState;
+			typedef jpeg::ohmura::GPUOutBitStreamBuffer StreamBuffer;
 
 		private:
 			StreamBuffer _out_bit_stream_buffer;
@@ -76,7 +79,8 @@ namespace jpeg {
 			}
 
 			size_t available_size() {
-				return status()[blocks() - 1]._byte_pos + (status()[blocks() - 1]._bit_pos == 7 ? 0 : 1);
+				return status()[blocks() - 1]._byte_pos
+					+ (status()[blocks() - 1]._bit_pos == 7 ? 0 : 1);
 			}
 		};
 
@@ -127,7 +131,8 @@ namespace jpeg {
 			 * @param num_bits 各MCUのビット数
 			 * @return
 			 */
-			size_t encode(const byte *rgb_data, JpegOutBitStream &out_bit_stream, ByteBuffer &num_bits);
+			size_t encode(const byte *rgb_data, JpegOutBitStream &out_bit_stream,
+				ByteBuffer &num_bits);
 
 		private:
 			size_t _width;
@@ -280,21 +285,22 @@ namespace jpeg {
 		//-------------------------------------------------------------------
 		// Huffman Coding
 		//-------------------------------------------------------------------
-		__global__ void gpu_huffman_mcu(int *src_qua, jpeg::cuda::GPUOutBitStreamState *mOBSP, byte *mBufP,
-			byte *mEndOfBufP, int sizeX, int sizeY);
+		__global__ void gpu_huffman_mcu(int *src_qua, jpeg::ohmura::GPUOutBitStreamState *mOBSP,
+			byte *mBufP, byte *mEndOfBufP, int sizeX, int sizeY);
 
 		//完全逐次処理、CPUで行った方が圧倒的に速い
-		void cpu_huffman_middle(jpeg::cuda::GPUOutBitStreamState *ImOBSP, int sizeX, int sizeY, byte* dst_NumBits);
+		void cpu_huffman_middle(jpeg::ohmura::GPUOutBitStreamState *ImOBSP, int sizeX, int sizeY,
+			byte* dst_NumBits);
 
 		//排他処理のため3つに分ける
 		//1MCUは最小4bit(EOBのみ)なので1Byteのバッファに最大3MCUが競合する。だから3つに分ける。
-		__global__ void gpu_huffman_write_devide0(jpeg::cuda::GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
-			int sizeX, int sizeY);
-		__global__ void gpu_huffman_write_devide1(jpeg::cuda::GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
-			int sizeX, int sizeY);
-		__global__ void gpu_huffman_write_devide2(jpeg::cuda::GPUOutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP,
-			int sizeX, int sizeY);
-	} // namespace cuda
+		__global__ void gpu_huffman_write_devide0(jpeg::ohmura::GPUOutBitStreamState *mOBSP,
+			byte *mBufP, byte *OmBufP, int sizeX, int sizeY);
+		__global__ void gpu_huffman_write_devide1(jpeg::ohmura::GPUOutBitStreamState *mOBSP,
+			byte *mBufP, byte *OmBufP, int sizeX, int sizeY);
+		__global__ void gpu_huffman_write_devide2(jpeg::ohmura::GPUOutBitStreamState *mOBSP,
+			byte *mBufP, byte *OmBufP, int sizeX, int sizeY);
+	} // namespace gpu
 } // namespace jpeg
 
 #endif /* GPU_JPEG_H_ */

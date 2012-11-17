@@ -7,13 +7,14 @@
 #include <string>
 
 #include "cpu_jpeg.h"
-#include "utils/util_cv.h"
-#include "utils/encoder_tables.h"
-#include "utils/out_bit_stream.h"
-#include "utils/in_bit_stream.h"
+#include "encoder_tables.h"
+
+#include "../../utils/util_cv.h"
+#include "../../utils/out_bit_stream.h"
+#include "../../utils/in_bit_stream.h"
 
 using namespace util;
-using namespace jpeg::encode_table;
+using namespace jpeg::cpu::encode_table;
 
 namespace jpeg {
 	// -------------------------------------------------------------------------
