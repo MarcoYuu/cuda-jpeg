@@ -9,6 +9,8 @@
 #include <string>
 #include <iostream>
 
+#include "jpeg/cuda/cuda_jpeg.cuh"
+
 void parse_arg(int argc, char *argv[], std::string &in_file, std::string &out_file);
 void cpu_exec(const std::string &file_name, const std::string &out_file_name);
 void gpu_exec(const std::string &file_name, const std::string &out_file_name);

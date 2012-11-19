@@ -14,13 +14,13 @@
 
 namespace util {
 	class StdTimeCounter;
-	#if defined(_WIN32) | defined(_WIN64)
+#if defined(_WIN32) | defined(_WIN64)
 	class MultiMediaCounterp;
 	class ClockFreqCounter;
-	#elif defined(__linux__)
+#elif defined(__linux__)
 	class UnixTimeCounter;
 	class ResourceTimeCounter;
-	#endif
+#endif
 
 	//-----------------------------------------------------------------------------------------------
 	//clock()関数を用いた時間計測クラス
@@ -32,7 +32,7 @@ namespace util {
 		}
 	};
 
-	#if defined(_WIN32) | defined(_WIN64)
+#if defined(_WIN32) | defined(_WIN64)
 
 	//-----------------------------------------------------------------------------------------------
 	//マルチメディタイマを用いた時間計測クラス
@@ -79,7 +79,7 @@ namespace util {
 		}
 	};
 
-	#elif defined(__linux__)
+#elif defined(__linux__)
 
 	//-----------------------------------------------------------------------------------------------
 	//gettimeofday()関数を用いた時間計測クラス
@@ -105,7 +105,7 @@ namespace util {
 		}
 	};
 
-	#endif
+#endif
 
 	//-----------------------------------------------------------------------------------------------
 	// StopWatch
@@ -113,67 +113,84 @@ namespace util {
 	ICountTime* CreateCounter(StopWatch::Mode mode) {
 		switch (mode) {
 		case StopWatch::CPU_OPTIMUM:
-	#if defined(_WIN32) | defined(_WIN64)
+			#if defined(_WIN32) | defined(_WIN64)
 			if(ClockFreqCounter::isAvailable())
 			return new ClockFreqCounter();
 			else
 			return new MultiMediaCounter();
-	#elif defined(__linux__)
+#elif defined(__linux__)
 			return new UnixTimeCounter();
 			//return new ResourceTimeCounter();
-	#endif
+#endif
 		case StopWatch::C_STD:
-		default:
+			default:
 			return new StdTimeCounter();
 		}
 		return NULL;
 	}
 
+	struct StopWatch::impl {
+		ICountTime *m_counter;
+		double m_prev_time;
+		double m_elapse_time;
+		LapList m_lap;
+		Mode m_mode;
+
+		impl(Mode mode) :
+			m_counter(CreateCounter(mode)),
+			m_prev_time(0.0),
+			m_elapse_time(0.0),
+			m_lap(),
+			m_mode(mode) {
+
+		}
+
+		~impl() {
+			delete m_counter;
+		}
+	};
+
 	StopWatch::StopWatch(Mode mode) :
-		m_counter(CreateCounter(mode)),
-		m_prev_time(0.0),
-		m_elapse_time(0.0),
-		m_lap(),
-		m_mode(mode) {
+		m_impl(new impl(mode)) {
 	}
 	StopWatch::~StopWatch() {
-		delete m_counter;
+		delete m_impl;
 	}
 
 	void StopWatch::start() {
-		m_prev_time = m_counter->getTimeInSeconds();
+		m_impl->m_prev_time = m_impl->m_counter->getTimeInSeconds();
 	}
 	void StopWatch::stop() {
-		m_elapse_time += m_counter->getTimeInSeconds() - m_prev_time;
+		m_impl->m_elapse_time += m_impl->m_counter->getTimeInSeconds() - m_impl->m_prev_time;
 	}
 	void StopWatch::lap() {
-		double t = m_counter->getTimeInSeconds();
-		m_elapse_time = t - m_prev_time;
-		m_prev_time = t;
-		m_lap.push_back(m_elapse_time);
+		double t = m_impl->m_counter->getTimeInSeconds();
+		m_impl->m_elapse_time = t - m_impl->m_prev_time;
+		m_impl->m_prev_time = t;
+		m_impl->m_lap.push_back(m_impl->m_elapse_time);
 	}
 	void StopWatch::clear() {
-		m_prev_time = 0;
-		m_elapse_time = 0;
-		m_lap.clear();
+		m_impl->m_prev_time = 0;
+		m_impl->m_elapse_time = 0;
+		m_impl->m_lap.clear();
 	}
 
 	double StopWatch::getLastElapsedTime() const {
-		return m_elapse_time;
+		return m_impl->m_elapse_time;
 	}
 
 	double StopWatch::getTotalTime() const {
 		double r = 0;
-		for (int i = 0; i < m_lap.size(); ++i)
-			r += m_lap[i];
+		for (int i = 0; i < m_impl->m_lap.size(); ++i)
+			r += m_impl->m_lap[i];
 		return r;
 	}
 
 	size_t StopWatch::getLapCount() const {
-		return m_lap.size();
+		return m_impl->m_lap.size();
 	}
 
 	const StopWatch::LapList& StopWatch::getLapList() const {
-		return m_lap;
+		return m_impl->m_lap;
 	}
-}  // namespace util
+} // namespace util

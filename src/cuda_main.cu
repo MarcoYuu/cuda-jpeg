@@ -51,8 +51,8 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 	}
 
 	// ブロックサイズ
-	const int BLOCK_WIDTH = 32;
-	const int BLOCK_HEIGHT = 32;
+	const int BLOCK_WIDTH = 16;
+	const int BLOCK_HEIGHT = 16;
 
 	std::cout << "===============================================" << std::endl;
 	std::cout << " Start CUDA Encoding & Decoding" << std::endl;
@@ -68,13 +68,13 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 		std::cout << "	 	CreateConvertTable" << std::endl;
 		cuda_memory<int> table(width * height);
 		table.fill_zero();
-		CreateConvertTable(width, height, BLOCK_WIDTH, BLOCK_HEIGHT, table);
+		CreateConversionTable(width, height, BLOCK_WIDTH, BLOCK_HEIGHT, table);
 
 		{
 			table.sync_to_host();
 			ofstream ofs("table.txt");
 			for (int i = 0; i < table.size(); ++i) {
-				ofs << i << "," << table[i] / 3 << endl;
+				ofs << i << "," << table[i] << endl;
 			}
 		}
 
@@ -108,13 +108,13 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 
 		std::cout << "	 	CreateConvertTable" << std::endl;
 		cuda_memory<int> table(BLOCK_WIDTH * BLOCK_HEIGHT);
-		CreateConvertTable(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT, table);
+		CreateConversionTable(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT, table);
 
 		{
 			table.sync_to_host();
 			ofstream ofs("table_decode.txt");
 			for (int i = 0; i < table.size(); ++i) {
-				ofs << i << "," << table[i] / 3 << endl;
+				ofs << i << "," << table[i] << endl;
 			}
 		}
 
@@ -150,15 +150,6 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 				}
 			}
 		}
-
-//		{
-//			ofstream ofs("decode_result.txt");
-//			for (int i = 0; i < BLOCK_WIDTH * BLOCK_HEIGHT * 3; ++i) {
-//				ofs << "B," << (int) ((byte*) bmp.getRawData())[i];
-//				ofs << ",G," << (int) ((byte*) bmp.getRawData())[i + 1];
-//				ofs << ",R," << (int) ((byte*) bmp.getRawData())[i + 2] << endl;
-//			}
-//		}
 	}
 
 	std::cout << "-----------------------------------------------" << std::endl;

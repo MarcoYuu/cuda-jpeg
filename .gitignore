@@ -6,3 +6,5 @@ Debug/
 *.map
 doc/latex
 doc/html
+img/
+img/*

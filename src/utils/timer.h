@@ -97,11 +97,8 @@ namespace util {
 		const LapList& getLapList() const;
 
 	private:
-		ICountTime *m_counter;
-		double m_prev_time;
-		double m_elapse_time;
-		LapList m_lap;
-		Mode m_mode;
+		struct impl;
+		impl *m_impl;
 
 		StopWatch(StopWatch &rhs);
 		void operator=(StopWatch);

@@ -29,8 +29,10 @@ namespace jpeg {
 		 * @param block_height ブロックの高さ
 		 * @param table テーブル出力
 		 */
-		void CreateConvertTable(size_t width, size_t height, size_t block_width,
+		void CreateConversionTable(size_t width, size_t height, size_t block_width,
 			size_t block_height, device_memory<int> &table);
+		void CreateConversionTable(size_t width, size_t height, size_t block_width,
+			size_t block_height, int *table);
 
 		/**
 		 * RGBをYUVに変換
