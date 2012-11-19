@@ -12,6 +12,7 @@
 #include <cuda_runtime.h>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include "jpeg/cpu/cpu_jpeg.h"
 #include "jpeg/ohmura/gpu_jpeg.cuh"
@@ -83,6 +84,7 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 		{
 			encode_result.sync_to_host();
 			ofstream ofs("encode_result.txt");
+			ofs << encode_result.size() << endl;
 			for (int i = 0; i < encode_result.size(); ++i) {
 				if (i < width * height) {
 					ofs << "Y," << i << "," << (int) encode_result[i] << endl;
@@ -96,6 +98,7 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 		}
 	}
 
+	cuda_memory<byte> decode_src(BLOCK_WIDTH * BLOCK_HEIGHT * 3 / 2);
 	cuda_memory<byte> decode_result(BLOCK_WIDTH * BLOCK_HEIGHT * 3);
 	decode_result.fill_zero();
 	{
@@ -115,22 +118,47 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 			}
 		}
 
-		std::cout << "	 	ConvertYUVToRGB" << std::endl;
-		ConvertYUVToRGB(encode_result, decode_result, BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH,
-			BLOCK_HEIGHT, table);
+		for (int i = 0; i < width / BLOCK_WIDTH * height / BLOCK_HEIGHT; ++i) {
+			decode_src.write_device(encode_result.host_data() + i * decode_src.size(),
+				decode_src.size());
+			{
+				decode_src.sync_to_host();
+				stringstream s;
+				s << "decode_src_" << i << ".txt";
+				ofstream ofs(s.str().c_str());
+				for (int i = 0; i < decode_src.size(); ++i) {
+					ofs << i << "," << (int) decode_src[i] << endl;
+				}
+			}
 
-		BitmapCVUtil bmp(BLOCK_WIDTH, BLOCK_HEIGHT, 8, source.getBytePerPixel());
-		decode_result.copy_to_host((byte*) bmp.getRawData(), decode_result.size());
-		bmp.saveToFile("cuda_" + out_file_name);
+			std::cout << "	 	ConvertYUVToRGB" << std::endl;
+			ConvertYUVToRGB(decode_src, decode_result, BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH,
+				BLOCK_HEIGHT, table);
 
-		{
-			ofstream ofs("decode_result.txt");
-			for (int i = 0; i < BLOCK_WIDTH * BLOCK_HEIGHT * 3; ++i) {
-				ofs << "B," << (int) ((byte*) bmp.getRawData())[i];
-				ofs << ",G," << (int) ((byte*) bmp.getRawData())[i + 1];
-				ofs << ",R," << (int) ((byte*) bmp.getRawData())[i + 2] << endl;
+			BitmapCVUtil bmp(BLOCK_WIDTH, BLOCK_HEIGHT, 8, source.getBytePerPixel());
+			decode_result.copy_to_host((byte*) bmp.getRawData(), decode_result.size());
+			stringstream s;
+			s << "cuda_" << i << "_" << out_file_name;
+			bmp.saveToFile(s.str());
+
+			{
+				ofstream ofs("source_decode.txt");
+				for (int i = 0; i < width * height * 3; ++i) {
+					ofs << "B," << (int) ((byte*) bmp.getRawData())[i];
+					ofs << ",G," << (int) ((byte*) bmp.getRawData())[i + 1];
+					ofs << ",R," << (int) ((byte*) bmp.getRawData())[i + 2] << endl;
+				}
 			}
 		}
+
+//		{
+//			ofstream ofs("decode_result.txt");
+//			for (int i = 0; i < BLOCK_WIDTH * BLOCK_HEIGHT * 3; ++i) {
+//				ofs << "B," << (int) ((byte*) bmp.getRawData())[i];
+//				ofs << ",G," << (int) ((byte*) bmp.getRawData())[i + 1];
+//				ofs << ",R," << (int) ((byte*) bmp.getRawData())[i + 2] << endl;
+//			}
+//		}
 	}
 
 	std::cout << "-----------------------------------------------" << std::endl;

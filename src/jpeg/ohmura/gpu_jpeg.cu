@@ -221,7 +221,7 @@ namespace jpeg {
 
 		}
 
-		__global__ void gpu_huffman_mcu(int *src_qua, GPUOutBitStreamState *dst, byte *mBufP,
+		__global__ void gpu_huffman_mcu(int *src_qua, OutBitStreamState *dst, byte *mBufP,
 			byte *mEndOfBufP, int sizeX, int sizeY) { //,
 			int id = blockIdx.x * blockDim.x + threadIdx.x; //マクロブロック番号
 			int mid = 64 * (blockIdx.x * blockDim.x + threadIdx.x);
@@ -403,58 +403,57 @@ namespace jpeg {
 		}
 
 		//完全逐次処理、CPUで行った方が圧倒的に速い
-		void cpu_huffman_middle(GPUOutBitStreamState *ImOBSP, int sizeX, int sizeY,
-			byte* num_bits) { //,
+		void cpu_huffman_middle(OutBitStreamState *ImOBSP, int sizeX, int sizeY, byte* num_bits) { //,
 			int i;
 			const int blsize = (sizeX * sizeY + sizeX * sizeY / 2) / 64; //2*(size/2)*(size/2)
 
 			//BitPosは7が上位で0が下位なので注意,更に位置なので注意。7なら要素は0,0なら要素は7
-			ImOBSP[0]._num_bits = ImOBSP[0]._byte_pos * 8 + (7 - ImOBSP[0]._bit_pos);
+			ImOBSP[0].num_bits_ = ImOBSP[0].byte_pos_ * 8 + (7 - ImOBSP[0].bit_pos_);
 
 			//出力用、構造体無駄な要素が入っちゃうので
-			num_bits[0] = ImOBSP[0]._num_bits;
+			num_bits[0] = ImOBSP[0].num_bits_;
 
-			ImOBSP[0]._byte_pos = 0;
-			ImOBSP[0]._bit_pos = 7;
+			ImOBSP[0].byte_pos_ = 0;
+			ImOBSP[0].bit_pos_ = 7;
 
 			for (i = 1; i < blsize; i++) {
 
-				ImOBSP[i]._num_bits = ImOBSP[i]._byte_pos * 8 + (7 - ImOBSP[i]._bit_pos);
+				ImOBSP[i].num_bits_ = ImOBSP[i].byte_pos_ * 8 + (7 - ImOBSP[i].bit_pos_);
 
 				//出力用、構造体無駄な要素が入っちゃうので
-				num_bits[i] = ImOBSP[i]._num_bits;
+				num_bits[i] = ImOBSP[i].num_bits_;
 
-				ImOBSP[i]._bit_pos = ImOBSP[i - 1]._bit_pos;
-				ImOBSP[i]._byte_pos = ImOBSP[i - 1]._byte_pos;
+				ImOBSP[i].bit_pos_ = ImOBSP[i - 1].bit_pos_;
+				ImOBSP[i].byte_pos_ = ImOBSP[i - 1].byte_pos_;
 
-				ImOBSP[i]._bit_pos -= ImOBSP[i - 1]._num_bits % 8;
+				ImOBSP[i].bit_pos_ -= ImOBSP[i - 1].num_bits_ % 8;
 				//繰り上がり
-				if (ImOBSP[i]._bit_pos < 0) {
-					ImOBSP[i]._byte_pos++;
-					ImOBSP[i]._bit_pos += 8;
+				if (ImOBSP[i].bit_pos_ < 0) {
+					ImOBSP[i].byte_pos_++;
+					ImOBSP[i].bit_pos_ += 8;
 				}
-				ImOBSP[i]._byte_pos += ImOBSP[i - 1]._num_bits / 8;
+				ImOBSP[i].byte_pos_ += ImOBSP[i - 1].num_bits_ / 8;
 			}
 		}
 
 		//排他処理のため3つに分ける
 		//1MCUは最小4bit(EOBのみ)なので1Byteのバッファに最大3MCUが競合する。だから3つに分ける。
-		__global__ void gpu_huffman_write_devide0(GPUOutBitStreamState *mOBSP, byte *mBufP,
-			byte *OmBufP, int sizeX, int sizeY) { //,
+		__global__ void gpu_huffman_write_devide0(OutBitStreamState *mOBSP, byte *mBufP,
+			byte *OmBufP) { //,
 			int id = (blockIdx.x * blockDim.x + threadIdx.x); //マクロブロック番号
 			if (id % 3 == 0) {
 				WriteBits(&mOBSP[id], OmBufP, &mBufP[id * MBS], id);
 			}
 		}
-		__global__ void gpu_huffman_write_devide1(GPUOutBitStreamState *mOBSP, byte *mBufP,
-			byte *OmBufP, int sizeX, int sizeY) { //,
+		__global__ void gpu_huffman_write_devide1(OutBitStreamState *mOBSP, byte *mBufP,
+			byte *OmBufP) { //,
 			int id = (blockIdx.x * blockDim.x + threadIdx.x); //マクロブロック番号
 			if (id % 3 == 1) {
 				WriteBits(&mOBSP[id], OmBufP, &mBufP[id * MBS], id);
 			}
 		}
-		__global__ void gpu_huffman_write_devide2(GPUOutBitStreamState *mOBSP, byte *mBufP,
-			byte *OmBufP, int sizeX, int sizeY) { //,
+		__global__ void gpu_huffman_write_devide2(OutBitStreamState *mOBSP, byte *mBufP,
+			byte *OmBufP) { //,
 			int id = (blockIdx.x * blockDim.x + threadIdx.x); //マクロブロック番号
 			if (id % 3 == 2) {
 				WriteBits(&mOBSP[id], OmBufP, &mBufP[id * MBS], id);
@@ -462,158 +461,156 @@ namespace jpeg {
 		}
 
 		JpegEncoder::JpegEncoder() :
-			_width(0),
-			_height(0),
-			_y_size(0),
-			_c_size(0),
-			_ycc_size(0),
-			_num_bits(0),
-			_out_bit_stream(_ycc_size / 64, MBS),
-			_trans_table_Y(0),
-			_trans_table_C(0),
-			_src(0),
-			_yuv_buffer(0),
-			_quantized(0),
-			_dct_coeficient(0),
-			_dct_tmp_buffer(0),
-			_grid_color(0, 0, 0),
-			_block_color(0, 0, 0),
-			_grid_dct(0, 0, 0),
-			_block_dct(0, 0, 0),
-			_grid_quantize_y(0, 0, 0),
-			_block_quantize_y(0, 0, 0),
-			_grid_quantize_c(0, 0, 0),
-			_block_quantize_c(0, 0, 0),
-			_grid_mcu(0, 0, 0),
-			_block_mcu(0, 0, 0),
-			_grid_huffman(0, 0, 0),
-			_block_huffman(0, 0, 0) {
+			width_(0),
+			height_(0),
+			y_size_(0),
+			c_size_(0),
+			ycc_size_(0),
+			num_bits_(0),
+			out_bit_stream_(ycc_size_ / 64, MBS),
+			trans_table_Y_(0),
+			trans_table_C_(0),
+			src_(0),
+			yuv_buffer_(0),
+			quantized_(0),
+			dct_coeficient_(0),
+			dct_tmp_buffer_(0),
+			grid_color_(0, 0, 0),
+			block_color_(0, 0, 0),
+			grid_dct_(0, 0, 0),
+			block_dct_(0, 0, 0),
+			grid_quantize_y_(0, 0, 0),
+			block_quantize_y_(0, 0, 0),
+			grid_quantize_c_(0, 0, 0),
+			block_quantize_c_(0, 0, 0),
+			grid_mcu_(0, 0, 0),
+			block_mcu_(0, 0, 0),
+			grid_huffman_(0, 0, 0),
+			block_huffman_(0, 0, 0) {
 
 		}
 
 		JpegEncoder::JpegEncoder(size_t width, size_t height) :
-			_width(width),
-			_height(height),
-			_y_size(width * height),
-			_c_size(_y_size / 4),
-			_ycc_size(_y_size + _c_size * 2),
-			_num_bits(_ycc_size / 64),
-			_out_bit_stream(_ycc_size / 64, BYTES_PER_MCU),
-			_trans_table_Y(_y_size),
-			_trans_table_C(_y_size),
-			_src(_y_size * 3),
-			_yuv_buffer(_ycc_size),
-			_quantized(_ycc_size),
-			_dct_coeficient(_ycc_size),
-			_dct_tmp_buffer(_ycc_size),
-			_grid_color(_y_size / THREADS, 1, 1),
-			_block_color(THREADS, 1, 1),
-			_grid_dct((_ycc_size) / 64 / DCT4_TH, 1, 1),
-			_block_dct(DCT4_TH, 8, 8),
-			_grid_quantize_y(_y_size / QUA0_TH, 1, 1),
-			_block_quantize_y(QUA0_TH, 1, 1),
-			_grid_quantize_c((2 * _c_size) / QUA1_TH, 1, 1),
-			_block_quantize_c(QUA1_TH, 1, 1),
-			_grid_mcu(_ycc_size / 64 / HUF0_TH, 1, 1),
-			_block_mcu(HUF0_TH, 1, 1),
-			_grid_huffman(_ycc_size / 64 / HUF1_TH, 1, 1),
-			_block_huffman(HUF1_TH, 1, 1) {
+			width_(width),
+			height_(height),
+			y_size_(width * height),
+			c_size_(y_size_ / 4),
+			ycc_size_(y_size_ + c_size_ * 2),
+			num_bits_(ycc_size_ / 64),
+			out_bit_stream_(ycc_size_ / 64, BYTES_PER_MCU),
+			trans_table_Y_(y_size_),
+			trans_table_C_(y_size_),
+			src_(y_size_ * 3),
+			yuv_buffer_(ycc_size_),
+			quantized_(ycc_size_),
+			dct_coeficient_(ycc_size_),
+			dct_tmp_buffer_(ycc_size_),
+			grid_color_(y_size_ / THREADS, 1, 1),
+			block_color_(THREADS, 1, 1),
+			grid_dct_((ycc_size_) / 64 / DCT4_TH, 1, 1),
+			block_dct_(DCT4_TH, 8, 8),
+			grid_quantize_y_(y_size_ / QUA0_TH, 1, 1),
+			block_quantize_y_(QUA0_TH, 1, 1),
+			grid_quantize_c_((2 * c_size_) / QUA1_TH, 1, 1),
+			block_quantize_c_(QUA1_TH, 1, 1),
+			grid_mcu_(ycc_size_ / 64 / HUF0_TH, 1, 1),
+			block_mcu_(HUF0_TH, 1, 1),
+			grid_huffman_(ycc_size_ / 64 / HUF1_TH, 1, 1),
+			block_huffman_(HUF1_TH, 1, 1) {
 
-			make_trans_table(_trans_table_Y.host_data(), _trans_table_C.host_data(), width, height);
-			_trans_table_C.sync_to_device();
-			_trans_table_Y.sync_to_device();
+			make_trans_table(trans_table_Y_.host_data(), trans_table_C_.host_data(), width, height);
+			trans_table_C_.sync_to_device();
+			trans_table_Y_.sync_to_device();
 		}
 
 		void JpegEncoder::setImageSize(size_t width, size_t height) {
-			_width = width;
-			_height = height;
-			_y_size = width * height;
-			_c_size = _y_size / 4;
-			_ycc_size = _y_size + _c_size * 2;
+			width_ = width;
+			height_ = height;
+			y_size_ = width * height;
+			c_size_ = y_size_ / 4;
+			ycc_size_ = y_size_ + c_size_ * 2;
 
-			_num_bits.resize(_ycc_size / 64);
-			_out_bit_stream.resize(_ycc_size / 64, BYTES_PER_MCU);
+			num_bits_.resize(ycc_size_ / 64);
+			out_bit_stream_.resize(ycc_size_ / 64, BYTES_PER_MCU);
 
-			_trans_table_Y.resize(_y_size);
-			_trans_table_C.resize(_y_size);
-			_src.resize(_y_size * 3);
-			_yuv_buffer.resize(_ycc_size);
-			_quantized.resize(_ycc_size);
-			_dct_coeficient.resize(_ycc_size);
-			_dct_tmp_buffer.resize(_ycc_size);
+			trans_table_Y_.resize(y_size_);
+			trans_table_C_.resize(y_size_);
+			src_.resize(y_size_ * 3);
+			yuv_buffer_.resize(ycc_size_);
+			quantized_.resize(ycc_size_);
+			dct_coeficient_.resize(ycc_size_);
+			dct_tmp_buffer_.resize(ycc_size_);
 
-			_grid_color = dim3(_y_size / THREADS, 1, 1);
-			_block_color = dim3(THREADS, 1, 1);
-			_grid_dct = dim3((_ycc_size) / 64 / DCT4_TH, 1, 1);
-			_block_dct = dim3(DCT4_TH, 8, 8);
-			_grid_quantize_y = dim3(_y_size / QUA0_TH, 1, 1);
-			_block_quantize_y = dim3(QUA0_TH, 1, 1);
-			_grid_quantize_c = dim3((2 * _c_size) / QUA1_TH, 1, 1);
-			_block_quantize_c = dim3(QUA1_TH, 1, 1);
-			_grid_mcu = dim3(_ycc_size / 64 / HUF0_TH, 1, 1);
-			_block_mcu = dim3(HUF0_TH, 1, 1);
-			_grid_huffman = dim3(_ycc_size / 64 / HUF1_TH, 1, 1);
-			_block_huffman = dim3(HUF1_TH, 1, 1);
+			grid_color_ = dim3(y_size_ / THREADS, 1, 1);
+			block_color_ = dim3(THREADS, 1, 1);
+			grid_dct_ = dim3((ycc_size_) / 64 / DCT4_TH, 1, 1);
+			block_dct_ = dim3(DCT4_TH, 8, 8);
+			grid_quantize_y_ = dim3(y_size_ / QUA0_TH, 1, 1);
+			block_quantize_y_ = dim3(QUA0_TH, 1, 1);
+			grid_quantize_c_ = dim3((2 * c_size_) / QUA1_TH, 1, 1);
+			block_quantize_c_ = dim3(QUA1_TH, 1, 1);
+			grid_mcu_ = dim3(ycc_size_ / 64 / HUF0_TH, 1, 1);
+			block_mcu_ = dim3(HUF0_TH, 1, 1);
+			grid_huffman_ = dim3(ycc_size_ / 64 / HUF1_TH, 1, 1);
+			block_huffman_ = dim3(HUF1_TH, 1, 1);
 		}
 
 		size_t JpegEncoder::encode(const byte *rgb_data, util::cuda::device_memory<byte> &result) {
 
 			inner_encode(rgb_data);
 
+			gpu_huffman_mcu<<<grid_mcu_, block_mcu_>>>(
+				quantized_.device_data(), out_bit_stream_.status().device_data(),
+				out_bit_stream_.head_device(), out_bit_stream_.end_device(), width_, height_);
+
 			// 逐次処理のためCPUに戻す
-			_out_bit_stream.status().sync_to_host();
-			cpu_huffman_middle(_out_bit_stream.status().host_data(), _width, _height,
-				_num_bits.data());
-			_out_bit_stream.status().sync_to_device();
+			out_bit_stream_.status().sync_to_host();
+			cpu_huffman_middle(out_bit_stream_.status().host_data(), width_, height_,
+				num_bits_.data());
+			out_bit_stream_.status().sync_to_device();
 
-			gpu_huffman_write_devide0<<<_grid_huffman, _block_huffman>>>(
-				_out_bit_stream.status().device_data(),
-				_out_bit_stream.writable_head(), result.device_data(), _width, _height);
-			gpu_huffman_write_devide1<<<_grid_huffman, _block_huffman>>>(
-				_out_bit_stream.status().device_data(),
-				_out_bit_stream.writable_head(), result.device_data(), _width, _height);
-			gpu_huffman_write_devide2<<<_grid_huffman, _block_huffman>>>(
-				_out_bit_stream.status().device_data(),
-				_out_bit_stream.writable_head(), result.device_data(), _width, _height);
+			gpu_huffman_write_devide0<<<grid_huffman_, block_huffman_>>>(
+				out_bit_stream_.status().device_data(),
+				out_bit_stream_.head_device(), result.device_data());
+			gpu_huffman_write_devide1<<<grid_huffman_, block_huffman_>>>(
+				out_bit_stream_.status().device_data(),
+				out_bit_stream_.head_device(), result.device_data());
+			gpu_huffman_write_devide2<<<grid_huffman_, block_huffman_>>>(
+				out_bit_stream_.status().device_data(),
+				out_bit_stream_.head_device(), result.device_data());
 
-			return _out_bit_stream.available_size();
+			return out_bit_stream_.available_size();
 		}
+
 		size_t JpegEncoder::encode(const byte *rgb_data, JpegOutBitStream &out_bit_stream,
 			ByteBuffer &num_bits) {
 			inner_encode(rgb_data);
 
-			// 逐次処理のためCPUに戻す
-			out_bit_stream.status().sync_to_host();
-			cpu_huffman_middle(out_bit_stream.status().host_data(), _width, _height,
-				num_bits.data());
-			out_bit_stream.status().sync_to_device();
+			gpu_huffman_mcu<<<grid_mcu_, block_mcu_>>>(
+				quantized_.device_data(), out_bit_stream_.status().device_data(),
+				out_bit_stream_.head_device(), out_bit_stream_.end_device(), width_, height_);
 
-			return out_bit_stream.available_size();
+			return 0;
 		}
 
 		void JpegEncoder::inner_encode(const byte* rgb_data) {
-			_src.write_device(rgb_data, _width * _height * 3);
+			src_.write_device(rgb_data, width_ * height_ * 3);
 
-			gpu_color_trans_Y<<<_grid_color, _block_color>>>(
-				_src.device_data(), _yuv_buffer.device_data(), _trans_table_Y.device_data());
-			gpu_color_trans_C<<<_grid_color, _block_color>>>(
-				_src.device_data(), _yuv_buffer.device_data(), _trans_table_C.device_data(),
-				_height, _c_size);
+			gpu_color_trans_Y<<<grid_color_, block_color_>>>(
+				src_.device_data(), yuv_buffer_.device_data(), trans_table_Y_.device_data());
+			gpu_color_trans_C<<<grid_color_, block_color_>>>(
+				src_.device_data(), yuv_buffer_.device_data(), trans_table_C_.device_data(),
+				height_, c_size_);
 
-			gpu_dct_0<<<_grid_dct, _block_dct>>>(
-				_yuv_buffer.device_data(), _dct_tmp_buffer.device_data());
-			gpu_dct_1<<<_grid_dct, _block_dct>>>(
-				_dct_tmp_buffer.device_data(), _dct_coeficient.device_data());
+			gpu_dct_0<<<grid_dct_, block_dct_>>>(
+				yuv_buffer_.device_data(), dct_tmp_buffer_.device_data());
+			gpu_dct_1<<<grid_dct_, block_dct_>>>(
+				dct_tmp_buffer_.device_data(), dct_coeficient_.device_data());
 
-			gpu_zig_quantize_Y<<<_grid_quantize_y, _block_quantize_y>>>(
-				_dct_coeficient.device_data(), _quantized.device_data());
-			gpu_zig_quantize_C<<<_grid_quantize_c, _block_quantize_c>>>(
-				_dct_coeficient.device_data(), _quantized.device_data(), _y_size);
-
-			gpu_huffman_mcu<<<_grid_mcu, _block_mcu>>>(
-				_quantized.device_data(), _out_bit_stream.status().device_data(),
-				_out_bit_stream.writable_head(), _out_bit_stream.end(), _width, _height);
-
+			gpu_zig_quantize_Y<<<grid_quantize_y_, block_quantize_y_>>>(
+				dct_coeficient_.device_data(), quantized_.device_data());
+			gpu_zig_quantize_C<<<grid_quantize_c_, block_quantize_c_>>>(
+				dct_coeficient_.device_data(), quantized_.device_data(), y_size_);
 		}
 
 		/**
@@ -622,25 +619,25 @@ namespace jpeg {
 		 * 利用可能な状態にするためには幅と高さをセットする必要がある
 		 */
 		JpegDecoder::JpegDecoder() :
-			_width(0),
-			_height(0),
-			_y_size(0),
-			_c_size(0),
-			_ycc_size(0),
-			_itrans_table_Y(0),
-			_itrans_table_C(0),
-			_yuv_buffer(0),
-			_quantized(0),
-			_dct_coeficient(0),
-			_dct_tmp_buffer(0),
-			_grid_color(0, 0, 0),
-			_block_color(0, 0, 0),
-			_grid_dct(0, 0, 0),
-			_block_dct(0, 0, 0),
-			_grid_quantize_y(0, 0, 0),
-			_block_quantize_y(0, 0, 0),
-			_grid_quantize_c(0, 0, 0),
-			_block_quantize_c(0, 0, 0) {
+			width_(0),
+			height_(0),
+			y_size_(0),
+			c_size_(0),
+			ycc_size_(0),
+			itrans_table_Y_(0),
+			itrans_table_C_(0),
+			yuv_buffer_(0),
+			quantized_(0),
+			dct_coeficient_(0),
+			dct_tmp_buffer_(0),
+			grid_color_(0, 0, 0),
+			block_color_(0, 0, 0),
+			grid_dct_(0, 0, 0),
+			block_dct_(0, 0, 0),
+			grid_quantize_y_(0, 0, 0),
+			block_quantize_y_(0, 0, 0),
+			grid_quantize_c_(0, 0, 0),
+			block_quantize_c_(0, 0, 0) {
 
 		}
 		/**
@@ -649,30 +646,30 @@ namespace jpeg {
 		 * @param height 高さ
 		 */
 		JpegDecoder::JpegDecoder(size_t width, size_t height) :
-			_width(width),
-			_height(height),
-			_y_size(width * height),
-			_c_size(_y_size / 4),
-			_ycc_size(_y_size + _c_size * 2),
-			_itrans_table_Y(_y_size),
-			_itrans_table_C(_y_size),
-			_yuv_buffer(_ycc_size),
-			_quantized(_ycc_size),
-			_dct_coeficient(_ycc_size),
-			_dct_tmp_buffer(_ycc_size),
-			_grid_color(_y_size / THREADS, 1, 1),
-			_block_color(THREADS, 1, 1),
-			_grid_dct((_ycc_size) / 64 / DCT4_TH, 1, 1),
-			_block_dct(DCT4_TH, 8, 8),
-			_grid_quantize_y(_y_size / QUA0_TH, 1, 1),
-			_block_quantize_y(QUA0_TH, 1, 1),
-			_grid_quantize_c((2 * _c_size) / QUA1_TH, 1, 1),
-			_block_quantize_c(QUA1_TH, 1, 1) {
+			width_(width),
+			height_(height),
+			y_size_(width * height),
+			c_size_(y_size_ / 4),
+			ycc_size_(y_size_ + c_size_ * 2),
+			itrans_table_Y_(y_size_),
+			itrans_table_C_(y_size_),
+			yuv_buffer_(ycc_size_),
+			quantized_(ycc_size_),
+			dct_coeficient_(ycc_size_),
+			dct_tmp_buffer_(ycc_size_),
+			grid_color_(y_size_ / THREADS, 1, 1),
+			block_color_(THREADS, 1, 1),
+			grid_dct_((ycc_size_) / 64 / DCT4_TH, 1, 1),
+			block_dct_(DCT4_TH, 8, 8),
+			grid_quantize_y_(y_size_ / QUA0_TH, 1, 1),
+			block_quantize_y_(QUA0_TH, 1, 1),
+			grid_quantize_c_((2 * c_size_) / QUA1_TH, 1, 1),
+			block_quantize_c_(QUA1_TH, 1, 1) {
 
-			make_itrans_table(_itrans_table_Y.host_data(), _itrans_table_C.host_data(), width,
+			make_itrans_table(itrans_table_Y_.host_data(), itrans_table_C_.host_data(), width,
 				height);
-			_itrans_table_C.sync_to_device();
-			_itrans_table_Y.sync_to_device();
+			itrans_table_C_.sync_to_device();
+			itrans_table_Y_.sync_to_device();
 		}
 		/**
 		 * デコードするイメージのサイズを指定する
@@ -680,32 +677,32 @@ namespace jpeg {
 		 * @param height 高さ
 		 */
 		void JpegDecoder::setImageSize(size_t width, size_t height) {
-			_width = width;
-			_height = height;
-			_y_size = width * height;
-			_c_size = _y_size / 4;
-			_ycc_size = _y_size + _c_size * 2;
+			width_ = width;
+			height_ = height;
+			y_size_ = width * height;
+			c_size_ = y_size_ / 4;
+			ycc_size_ = y_size_ + c_size_ * 2;
 
-			_itrans_table_Y.resize(_y_size);
-			_itrans_table_C.resize(_y_size);
-			_yuv_buffer.resize(_ycc_size);
-			_quantized.resize(_ycc_size);
-			_dct_coeficient.resize(_ycc_size);
-			_dct_tmp_buffer.resize(_ycc_size);
+			itrans_table_Y_.resize(y_size_);
+			itrans_table_C_.resize(y_size_);
+			yuv_buffer_.resize(ycc_size_);
+			quantized_.resize(ycc_size_);
+			dct_coeficient_.resize(ycc_size_);
+			dct_tmp_buffer_.resize(ycc_size_);
 
-			_grid_color = dim3(_y_size / THREADS, 1, 1);
-			_block_color = dim3(THREADS, 1, 1);
-			_grid_dct = dim3((_ycc_size) / 64 / DCT4_TH, 1, 1);
-			_block_dct = dim3(DCT4_TH, 8, 8);
-			_grid_quantize_y = dim3(_y_size / QUA0_TH, 1, 1);
-			_block_quantize_y = dim3(QUA0_TH, 1, 1);
-			_grid_quantize_c = dim3((2 * _c_size) / QUA1_TH, 1, 1);
-			_block_quantize_c = dim3(QUA1_TH, 1, 1);
+			grid_color_ = dim3(y_size_ / THREADS, 1, 1);
+			block_color_ = dim3(THREADS, 1, 1);
+			grid_dct_ = dim3((ycc_size_) / 64 / DCT4_TH, 1, 1);
+			block_dct_ = dim3(DCT4_TH, 8, 8);
+			grid_quantize_y_ = dim3(y_size_ / QUA0_TH, 1, 1);
+			block_quantize_y_ = dim3(QUA0_TH, 1, 1);
+			grid_quantize_c_ = dim3((2 * c_size_) / QUA1_TH, 1, 1);
+			block_quantize_c_ = dim3(QUA1_TH, 1, 1);
 
-			make_itrans_table(_itrans_table_Y.host_data(), _itrans_table_C.host_data(), width,
+			make_itrans_table(itrans_table_Y_.host_data(), itrans_table_C_.host_data(), width,
 				height);
-			_itrans_table_C.sync_to_device();
-			_itrans_table_Y.sync_to_device();
+			itrans_table_C_.sync_to_device();
+			itrans_table_Y_.sync_to_device();
 		}
 
 		/**
@@ -713,28 +710,27 @@ namespace jpeg {
 		 * @param src JpegEncoderにより生成されたソースデータ
 		 * @param src_size ソースサイズ
 		 * @param result 結果を格納するバッファ
-		 * @param result_size 結果バッファの有効なバイト数
 		 */
 		void JpegDecoder::decode(const byte *src, size_t src_size,
 			util::cuda::device_memory<byte> &result) {
 			util::InBitStream mIBSP(src, src_size);
 
-			decode_huffman(&mIBSP, _quantized.host_data(), _width, _height);
-			_quantized.sync_to_device();
+			decode_huffman(&mIBSP, quantized_.host_data(), width_, height_);
+			quantized_.sync_to_device();
 
-			gpu_izig_quantize_Y<<<_grid_quantize_y, _block_quantize_y>>>(
-				_quantized.device_data(), _dct_coeficient.device_data());
-			gpu_izig_quantize_C<<<_grid_quantize_c, _block_quantize_c>>>(
-				_quantized.device_data(), _dct_coeficient.device_data(), _y_size);
+			gpu_izig_quantize_Y<<<grid_quantize_y_, block_quantize_y_>>>(
+				quantized_.device_data(), dct_coeficient_.device_data());
+			gpu_izig_quantize_C<<<grid_quantize_c_, block_quantize_c_>>>(
+				quantized_.device_data(), dct_coeficient_.device_data(), y_size_);
 
-			gpu_idct_0<<<_grid_dct, _block_dct>>>(
-				_dct_coeficient.device_data(), _dct_tmp_buffer.device_data());
-			gpu_idct_1<<<_grid_dct, _block_dct>>>(
-				_dct_tmp_buffer.device_data(), _yuv_buffer.device_data());
+			gpu_idct_0<<<grid_dct_, block_dct_>>>(
+				dct_coeficient_.device_data(), dct_tmp_buffer_.device_data());
+			gpu_idct_1<<<grid_dct_, block_dct_>>>(
+				dct_tmp_buffer_.device_data(), yuv_buffer_.device_data());
 
-			gpu_color_itrans<<<_grid_color, _block_color>>>(
-				_yuv_buffer.device_data(), result.device_data(),
-				_itrans_table_Y.device_data(), _itrans_table_C.device_data(), _c_size);
+			gpu_color_itrans<<<grid_color_, block_color_>>>(
+				yuv_buffer_.device_data(), result.device_data(),
+				itrans_table_Y_.device_data(), itrans_table_C_.device_data(), c_size_);
 		}
 
 	} // namespace gpu

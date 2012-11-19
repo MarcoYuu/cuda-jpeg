@@ -26,7 +26,7 @@ namespace jpeg {
 		 * @param width もと画像の幅
 		 * @param height 元画像の高さ
 		 * @param block_width ブロックの幅
-		 * @param block_heght ブロックの高さ
+		 * @param block_height ブロックの高さ
 		 * @param table テーブル出力
 		 */
 		void CreateConvertTable(size_t width, size_t height, size_t block_width,
@@ -46,7 +46,7 @@ namespace jpeg {
 		 * @param width もと画像の幅
 		 * @param height 元画像の高さ
 		 * @param block_width ブロックの幅
-		 * @param block_heght ブロックの高さ
+		 * @param block_height ブロックの高さ
 		 * @param table 変換テーブル
 		 */
 		void ConvertRGBToYUV(const device_memory<byte> &rgb, device_memory<byte> &yuv_result,
@@ -63,7 +63,7 @@ namespace jpeg {
 		 * @param width もと画像の幅
 		 * @param height 元画像の高さ
 		 * @param block_width ブロックの幅
-		 * @param block_heght ブロックの高さ
+		 * @param block_height ブロックの高さ
 		 * @param table 変換テーブル
 		 */
 		void ConvertYUVToRGB(const device_memory<byte> &yuv, device_memory<byte> &rgb_result,

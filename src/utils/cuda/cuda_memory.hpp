@@ -24,8 +24,8 @@ namespace util {
 		template<class T>
 		class device_memory {
 		private:
-			T* _device_mem;
-			size_t _size;
+			T* device_mem_;
+			size_t size_;
 
 			device_memory(const device_memory<T>&);
 			device_memory<T>& operator=(const device_memory<T>&);
@@ -37,9 +37,9 @@ namespace util {
 			 * @param size [in] Tの個数
 			 */
 			device_memory(size_t size) :
-				_size(size) {
+				size_(size) {
 				// デバイスメモリの確保
-				cudaMalloc((void**) &_device_mem, sizeof(T) * size);
+				cudaMalloc((void**) &device_mem_, sizeof(T) * size);
 			}
 
 			/**
@@ -49,26 +49,26 @@ namespace util {
 			 * @param data [in] 初期化データ
 			 */
 			device_memory(const T* data, size_t size) :
-				_size(size) {
+				size_(size) {
 
 				// デバイスメモリの確保とコピー
-				cudaMalloc((void**) &_device_mem, sizeof(T) * size);
-				cudaMemcpy(_device_mem, data, sizeof(T) * size, cudaMemcpyHostToDevice);
+				cudaMalloc((void**) &device_mem_, sizeof(T) * size);
+				cudaMemcpy(device_mem_, data, sizeof(T) * size, cudaMemcpyHostToDevice);
 			}
 
 			/**
 			 * デストラクタ
 			 */
 			virtual ~device_memory() {
-				if (_device_mem != NULL)
-					cudaFree(_device_mem);
+				if (device_mem_ != NULL)
+					cudaFree(device_mem_);
 			}
 
 			/**
 			 * メモリをゼロクリア
 			 */
 			virtual void fill_zero() {
-				cudaMemset(_device_mem, 0, sizeof(T) * _size);
+				cudaMemset(device_mem_, 0, sizeof(T) * size_);
 			}
 
 			/**
@@ -77,13 +77,13 @@ namespace util {
 			 * @param force より小さくする際に、現在のバッファを完全に破棄するかどうか
 			 */
 			virtual void resize(size_t size, bool force = false) {
-				if (force || _size < size) {
-					if (_device_mem != NULL) {
-						cudaFree(_device_mem);
+				if (force || size_ < size) {
+					if (device_mem_ != NULL) {
+						cudaFree(device_mem_);
 					}
-					cudaMalloc((void**) &_device_mem, sizeof(T) * size);
+					cudaMalloc((void**) &device_mem_, sizeof(T) * size);
 				}
-				_size = size;
+				size_ = size;
 			}
 
 			/**
@@ -94,7 +94,7 @@ namespace util {
 			 * @return Tの個数
 			 */
 			size_t size() const {
-				return _size;
+				return size_;
 			}
 
 			/**
@@ -102,23 +102,24 @@ namespace util {
 			 *
 			 * @param data [in] 書き込み元
 			 * @param size [in] 書き込みサイズ
+			 * @param offset [in] 書き込み先の先頭までのオフセット
 			 */
 			void write_device(const T* data, size_t size, size_t offset = 0) {
-				assert(size + offset <= _size);
-				cudaMemcpy(_device_mem + offset, data, sizeof(T) * size, cudaMemcpyHostToDevice);
+				assert(size + offset <= size_);
+				cudaMemcpy(device_mem_ + offset, data, sizeof(T) * size, cudaMemcpyHostToDevice);
 			}
 
 			/**
 			 * 生データへのポインタ取得
 			 */
 			T* device_data() {
-				return _device_mem;
+				return device_mem_;
 			}
 			/**
 			 * 生データへのポインタ取得
 			 */
 			const T* device_data() const {
-				return _device_mem;
+				return device_mem_;
 			}
 
 			/**
@@ -130,8 +131,8 @@ namespace util {
 			 * @param size [in] 書き込みサイズ
 			 */
 			void copy_to_host(T* host_mem, size_t size) {
-				assert(size <= _size);
-				cudaMemcpy(host_mem, _device_mem, sizeof(T) * size, cudaMemcpyDeviceToHost);
+				assert(size <= size_);
+				cudaMemcpy(host_mem, device_mem_, sizeof(T) * size, cudaMemcpyDeviceToHost);
 			}
 		};
 
@@ -144,7 +145,7 @@ namespace util {
 		class cuda_memory: public device_memory<T> {
 		private:
 			typedef device_memory<T> base;
-			T* _host_mem;
+			T* host_mem_;
 
 			cuda_memory(const cuda_memory<T>&);
 			cuda_memory<T>& operator=(const cuda_memory<T>&);
@@ -158,7 +159,7 @@ namespace util {
 			cuda_memory(size_t size) :
 				device_memory<T>(size) {
 				// ホストメモリの確保
-				_host_mem = new T[size];
+				host_mem_ = new T[size];
 			}
 
 			/**
@@ -171,8 +172,8 @@ namespace util {
 			cuda_memory(const T* data, size_t size, bool copy_to_device) :
 				device_memory<T>(data, size) {
 				// ホストメモリの確保と初期化
-				_host_mem = new T[size];
-				memcpy(_host_mem, data, sizeof(T) * size);
+				host_mem_ = new T[size];
+				memcpy(host_mem_, data, sizeof(T) * size);
 
 				// デバイスメモリのコピー
 				if (copy_to_device) {
@@ -184,13 +185,13 @@ namespace util {
 			 * デストラクタ
 			 */
 			virtual ~cuda_memory() {
-				delete[] _host_mem;
+				delete[] host_mem_;
 			}
 			/**
 			 * メモリをゼロクリア
 			 */
 			void fill_zero() {
-				memset(_host_mem, 0, sizeof(T) * this->size());
+				memset(host_mem_, 0, sizeof(T) * this->size());
 				base::fill_zero();
 			}
 
@@ -201,8 +202,8 @@ namespace util {
 			 */
 			void resize(size_t size, bool force = false) {
 				if (force || base::size() < size) {
-					delete[] _host_mem;
-					_host_mem = new T[size];
+					delete[] host_mem_;
+					host_mem_ = new T[size];
 				}
 				base::resize(size, force);
 			}
@@ -212,23 +213,24 @@ namespace util {
 			 *
 			 * @param data [in] 書き込み元
 			 * @param size [in] 書き込みサイズ
+			 * @param offset [in] 書き込み先の先頭までのオフセット
 			 */
 			void write_host(const T* data, size_t size, size_t offset = 0) {
 				assert(size <= base::size());
-				memcpy(_host_mem + offset, data, sizeof(T) * size);
+				memcpy(host_mem_ + offset, data, sizeof(T) * size);
 			}
 
 			/**
 			 * 生データへのポインタ取得
 			 */
 			T* host_data() {
-				return _host_mem;
+				return host_mem_;
 			}
 			/**
 			 * 生データへのポインタ取得
 			 */
 			const T* host_data() const {
-				return _host_mem;
+				return host_mem_;
 			}
 
 			/**
@@ -237,7 +239,7 @@ namespace util {
 			 * ホストメモリのデータをデバイスメモリに転送する
 			 */
 			void sync_to_device() {
-				cudaMemcpy(base::device_data(), _host_mem, sizeof(T) * base::size(),
+				cudaMemcpy(base::device_data(), host_mem_, sizeof(T) * base::size(),
 					cudaMemcpyHostToDevice);
 			}
 
@@ -247,7 +249,7 @@ namespace util {
 			 * デバイスメモリのデータをホストメモリに転送する
 			 */
 			void sync_to_host() {
-				cudaMemcpy(_host_mem, base::device_data(), sizeof(T) * base::size(),
+				cudaMemcpy(host_mem_, base::device_data(), sizeof(T) * base::size(),
 					cudaMemcpyDeviceToHost);
 			}
 
@@ -259,7 +261,7 @@ namespace util {
 			 */
 			T& operator[](size_t index) {
 				assert(index < base::size());
-				return _host_mem[index];
+				return host_mem_[index];
 			}
 			/**
 			 * インデクサ
@@ -269,7 +271,7 @@ namespace util {
 			 */
 			const T& operator[](size_t index) const {
 				assert(index < base::size());
-				return _host_mem[index];
+				return host_mem_[index];
 			}
 		};
 	} // namespace cuda

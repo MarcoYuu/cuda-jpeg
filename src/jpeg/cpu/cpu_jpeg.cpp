@@ -45,49 +45,49 @@ namespace jpeg {
 	// CPUエンコーダ
 	// =========================================================================
 	JpegEncoder::JpegEncoder() :
-		_yuv_data(),
-		_coefficient(),
-		_quantized(),
-		_out_bit(1),
-		_width(0),
-		_height(0) {
+		yuv_data_(),
+		coefficient_(),
+		quantized_(),
+		out_bit_(1),
+		width_(0),
+		height_(0) {
 
 	}
 
 	JpegEncoder::JpegEncoder(size_t width, size_t height) :
-		_yuv_data((size_t) (width * height * 3 / 2)),
-		_coefficient((size_t) (width * height * 3 / 2)),
-		_quantized((size_t) (width * height * 3 / 2)),
-		_out_bit((size_t) (width * height * 3)),
-		_width(width),
-		_height(height) {
+		yuv_data_((size_t) (width * height * 3 / 2)),
+		coefficient_((size_t) (width * height * 3 / 2)),
+		quantized_((size_t) (width * height * 3 / 2)),
+		out_bit_((size_t) (width * height * 3)),
+		width_(width),
+		height_(height) {
 
 	}
 
 	void JpegEncoder::reset() {
-		_out_bit.reset();
+		out_bit_.reset();
 	}
 
 	void JpegEncoder::setImageSize(size_t width, size_t height) {
-		_yuv_data.resize((size_t) (width * height * 3 / 2));
-		_coefficient.resize((size_t) (width * height * 3 / 2));
-		_quantized.resize((size_t) (width * height * 3 / 2));
+		yuv_data_.resize((size_t) (width * height * 3 / 2));
+		coefficient_.resize((size_t) (width * height * 3 / 2));
+		quantized_.resize((size_t) (width * height * 3 / 2));
 
-		_out_bit.resize((size_t) (width * height * 3));
+		out_bit_.resize((size_t) (width * height * 3));
 
-		_width = width;
-		_height = height;
+		width_ = width;
+		height_ = height;
 	}
 
 	size_t JpegEncoder::encode(const byte* rgb_data, size_t src_size, byte* result,
 		size_t result_size) {
-		assert(src_size == _width * _height * 3);
+		assert(src_size == width_ * height_ * 3);
 		inner_encode(rgb_data);
 
-		size_t size = _out_bit.getStreamSize();
+		size_t size = out_bit_.getStreamSize();
 		assert(result_size >= size);
 
-		memcpy(result, _out_bit.getStreamAddress(), size);
+		memcpy(result, out_bit_.getStreamAddress(), size);
 		reset();
 
 		return size;
@@ -96,20 +96,20 @@ namespace jpeg {
 	size_t JpegEncoder::encode(const ByteBuffer &rgb_data, byte *result, size_t result_size) {
 		inner_encode(rgb_data.data());
 
-		size_t size = _out_bit.getStreamSize();
-		memcpy(result, _out_bit.getStreamAddress(), size);
+		size_t size = out_bit_.getStreamSize();
+		memcpy(result, out_bit_.getStreamAddress(), size);
 		reset();
 
 		return size;
 	}
 
 	size_t JpegEncoder::encode(const byte *rgb_data, size_t src_size, ByteBuffer &result) {
-		assert(src_size == _width * _height * 3);
+		assert(src_size == width_ * height_ * 3);
 
 		inner_encode(rgb_data);
 
-		size_t size = _out_bit.getStreamSize();
-		result.assign(_out_bit.getStreamAddress(), _out_bit.getStreamAddress() + size);
+		size_t size = out_bit_.getStreamSize();
+		result.assign(out_bit_.getStreamAddress(), out_bit_.getStreamAddress() + size);
 		reset();
 
 		return size;
@@ -118,81 +118,81 @@ namespace jpeg {
 	size_t JpegEncoder::encode(const ByteBuffer &rgb_data, ByteBuffer &result) {
 		inner_encode(rgb_data.data());
 
-		size_t size = _out_bit.getStreamSize();
-		result.assign(_out_bit.getStreamAddress(), _out_bit.getStreamAddress() + size);
+		size_t size = out_bit_.getStreamSize();
+		result.assign(out_bit_.getStreamAddress(), out_bit_.getStreamAddress() + size);
 		reset();
 
 		return size;
 	}
 
 	void JpegEncoder::inner_encode(const byte* rgb_data) {
-		color_trans_rgb_to_yuv(rgb_data, _yuv_data.data(), _width, _height);
-		dct(_yuv_data.data(), _coefficient.data(), _width, _height);
-		zig_quantize(_coefficient.data(), _quantized.data(), _width, _height);
-		encode_huffman(_quantized.data(), &_out_bit, _width, _height);
+		color_trans_rgb_to_yuv(rgb_data, yuv_data_.data(), width_, height_);
+		dct(yuv_data_.data(), coefficient_.data(), width_, height_);
+		zig_quantize(coefficient_.data(), quantized_.data(), width_, height_);
+		encode_huffman(quantized_.data(), &out_bit_, width_, height_);
 	}
 
 	// -------------------------------------------------------------------------
 	// CPUデコーダ
 	// =========================================================================
 	JpegDecoder::JpegDecoder() :
-		_yuv_data(),
-		_coefficient(),
-		_quantized(),
-		_width(0),
-		_height(0) {
+		yuv_data_(),
+		coefficient_(),
+		quantized_(),
+		width_(0),
+		height_(0) {
 
 	}
 
 	JpegDecoder::JpegDecoder(size_t width, size_t height) :
-		_yuv_data(width * height * 3 / 2),
-		_coefficient(width * height * 3 / 2),
-		_quantized(width * height * 3 / 2),
-		_width(width),
-		_height(height) {
+		yuv_data_(width * height * 3 / 2),
+		coefficient_(width * height * 3 / 2),
+		quantized_(width * height * 3 / 2),
+		width_(width),
+		height_(height) {
 	}
 
 	void JpegDecoder::setImageSize(size_t width, size_t height) {
-		_yuv_data.resize(width * height * 3 / 2);
-		_coefficient.resize(width * height * 3 / 2);
-		_quantized.resize(width * height * 3 / 2);
-		_width = width;
-		_height = height;
+		yuv_data_.resize(width * height * 3 / 2);
+		coefficient_.resize(width * height * 3 / 2);
+		quantized_.resize(width * height * 3 / 2);
+		width_ = width;
+		height_ = height;
 	}
 
 	void JpegDecoder::decode(const byte *src, size_t src_size, byte *result, size_t result_size) {
-		assert(result_size>=_width * _height * 3);
+		assert(result_size>=width_ * height_ * 3);
 		InBitStream in_bit(src, src_size);
 
 		inner_decode(&in_bit, result);
 	}
 
 	void JpegDecoder::decode(const ByteBuffer& src, ByteBuffer &result) {
-		result.resize(_width * _height * 3);
+		result.resize(width_ * height_ * 3);
 		InBitStream in_bit(src.data(), src.size());
 
 		inner_decode(&in_bit, result.data());
 	}
 
 	void JpegDecoder::decode(const byte *src, size_t src_size, ByteBuffer &result) {
-		result.resize(_width * _height * 3);
+		result.resize(width_ * height_ * 3);
 		InBitStream in_bit(src, src_size);
 
 		inner_decode(&in_bit, result.data());
 	}
 
 	void JpegDecoder::decode(const ByteBuffer &src, byte *result, size_t result_size) {
-		assert(result_size>=_width * _height * 3);
+		assert(result_size>=width_ * height_ * 3);
 		InBitStream in_bit(src.data(), src.size());
 
 		inner_decode(&in_bit, result);
 	}
 
 	void JpegDecoder::inner_decode(InBitStream *in_bit, byte *result) {
-		decode_huffman(in_bit, _quantized.data(), _width, _height);
-		izig_quantize(_quantized.data(), _coefficient.data(), _width, _height);
-		idct(_coefficient.data(), _yuv_data.data(), _width, _height);
-		color_trans_yuv_to_rgb(_yuv_data.data(), result, _width, _height);
+		decode_huffman(in_bit, quantized_.data(), width_, height_);
+		izig_quantize(quantized_.data(), coefficient_.data(), width_, height_);
+		idct(coefficient_.data(), yuv_data_.data(), width_, height_);
+		color_trans_yuv_to_rgb(yuv_data_.data(), result, width_, height_);
 	}
 
 	// -------------------------------------------------------------------------

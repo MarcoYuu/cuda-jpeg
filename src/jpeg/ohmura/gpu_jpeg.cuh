@@ -17,70 +17,71 @@ namespace jpeg {
 
 		using namespace util;
 
-		//-------------------------------------------------------------------
-		// Jpeg圧縮用の変数まとめクラス
-		//===================================================================
+		/**
+		 * Jpeg圧縮用の変数まとめクラス
+		 *
+		 * @author yuumomma
+		 * @version 1.0
+		 */
 		class JpegOutBitStream {
 		public:
-			typedef util::cuda::cuda_memory<jpeg::ohmura::GPUOutBitStreamState> StreamState;
-			typedef jpeg::ohmura::GPUOutBitStreamBuffer StreamBuffer;
+			typedef util::cuda::cuda_memory<jpeg::ohmura::OutBitStreamState> StreamState;
+			typedef jpeg::ohmura::OutBitStreamBuffer StreamBuffer;
 
 		private:
-			StreamBuffer _out_bit_stream_buffer;
-			StreamState _out_bit_stream_status;
+			StreamBuffer out_bit_stream_buffer_;
+			StreamState out_bit_stream_status_;
 
 		public:
 			JpegOutBitStream(size_t blocks, size_t block_size) :
-				_out_bit_stream_buffer(blocks * block_size),
-				_out_bit_stream_status(blocks) {
-				_out_bit_stream_status.sync_to_device();
+				out_bit_stream_buffer_(blocks * block_size),
+				out_bit_stream_status_(blocks) {
+				out_bit_stream_status_.sync_to_device();
 			}
 
 			void resize(size_t blocks, size_t block_size, bool force = false) {
-				_out_bit_stream_buffer.resize(blocks * block_size, force);
-				_out_bit_stream_status.resize(blocks, force);
-				_out_bit_stream_status.sync_to_device();
+				out_bit_stream_buffer_.resize(blocks * block_size, force);
+				out_bit_stream_status_.resize(blocks, force);
+				out_bit_stream_status_.sync_to_device();
 			}
 
 			StreamState& status() {
-				return _out_bit_stream_status;
+				return out_bit_stream_status_;
 			}
 
 			const StreamState& status() const {
-				return _out_bit_stream_status;
+				return out_bit_stream_status_;
 			}
 
-			byte* head() {
-				return _out_bit_stream_buffer.head();
+			util::cuda::cuda_memory<byte>& get_stream_buffer() {
+				return out_bit_stream_buffer_.get_stream_buffer();
 			}
 
-			byte* end() {
-				return _out_bit_stream_buffer.end();
+			const util::cuda::cuda_memory<byte>& get_stream_buffer() const {
+				return out_bit_stream_buffer_.get_stream_buffer();
 			}
 
-			byte* writable_head() {
-				return _out_bit_stream_buffer.writable_head();
+			byte* head_device() {
+				return out_bit_stream_buffer_.head_device();
+			}
+			const byte* head_device() const {
+				return out_bit_stream_buffer_.head_device();
 			}
 
-			const byte* head() const {
-				return _out_bit_stream_buffer.head();
+			byte* end_device() {
+				return out_bit_stream_buffer_.end_device();
+			}
+			const byte* end_device() const {
+				return out_bit_stream_buffer_.end_device();
 			}
 
-			const byte* end() const {
-				return _out_bit_stream_buffer.end();
+			size_t blocks() const {
+				return out_bit_stream_status_.size();
 			}
 
-			const byte* writable_head() const {
-				return _out_bit_stream_buffer.writable_head();
-			}
-
-			size_t blocks() {
-				return _out_bit_stream_status.size();
-			}
-
-			size_t available_size() {
-				return status()[blocks() - 1]._byte_pos
-					+ (status()[blocks() - 1]._bit_pos == 7 ? 0 : 1);
+			size_t available_size() const {
+				return status()[blocks() - 1].byte_pos_
+					+ (status()[blocks() - 1].bit_pos_ == 7 ? 0 : 1);
 			}
 		};
 
@@ -119,7 +120,6 @@ namespace jpeg {
 			 * エンコードする
 			 * @param rgb_data BGRBGR…なデータ
 			 * @param result 結果を格納するバッファ
-			 * @param num_bits 結果バッファの各bits
 			 * @return エンコードされたサイズ
 			 */
 			size_t encode(const byte *rgb_data, util::cuda::device_memory<byte> &result);
@@ -129,35 +129,35 @@ namespace jpeg {
 			 * @param rgb_data BGRBGR…なデータ
 			 * @param out_bit_stream ハフマン符号化されたビット列
 			 * @param num_bits 各MCUのビット数
-			 * @return
+			 * @return エンコードされたサイズ
 			 */
 			size_t encode(const byte *rgb_data, JpegOutBitStream &out_bit_stream,
 				ByteBuffer &num_bits);
 
 		private:
-			size_t _width;
-			size_t _height;
-			size_t _y_size;
-			size_t _c_size;
-			size_t _ycc_size;
+			size_t width_;
+			size_t height_;
+			size_t y_size_;
+			size_t c_size_;
+			size_t ycc_size_;
 
-			ByteBuffer _num_bits;
-			JpegOutBitStream _out_bit_stream;
+			ByteBuffer num_bits_;
+			JpegOutBitStream out_bit_stream_;
 
-			util::cuda::cuda_memory<int> _trans_table_Y;
-			util::cuda::cuda_memory<int> _trans_table_C;
-			util::cuda::device_memory<byte> _src;
-			util::cuda::device_memory<int> _yuv_buffer;
-			util::cuda::device_memory<int> _quantized;
-			util::cuda::device_memory<int> _dct_coeficient;
-			util::cuda::device_memory<float> _dct_tmp_buffer;
+			util::cuda::cuda_memory<int> trans_table_Y_;
+			util::cuda::cuda_memory<int> trans_table_C_;
+			util::cuda::device_memory<byte> src_;
+			util::cuda::device_memory<int> yuv_buffer_;
+			util::cuda::device_memory<int> quantized_;
+			util::cuda::device_memory<int> dct_coeficient_;
+			util::cuda::device_memory<float> dct_tmp_buffer_;
 
-			dim3 _grid_color, _block_color;
-			dim3 _grid_dct, _block_dct;
-			dim3 _grid_quantize_y, _block_quantize_y;
-			dim3 _grid_quantize_c, _block_quantize_c;
-			dim3 _grid_mcu, _block_mcu;
-			dim3 _grid_huffman, _block_huffman;
+			dim3 grid_color_, block_color_;
+			dim3 grid_dct_, block_dct_;
+			dim3 grid_quantize_y_, block_quantize_y_;
+			dim3 grid_quantize_c_, block_quantize_c_;
+			dim3 grid_mcu_, block_mcu_;
+			dim3 grid_huffman_, block_huffman_;
 
 			static const int THREADS = 256;
 			static const int DCT4_TH = 1;
@@ -209,28 +209,27 @@ namespace jpeg {
 			 * @param src JpegEncoderにより生成されたソースデータ
 			 * @param src_size ソースサイズ
 			 * @param result 結果を格納するバッファ
-			 * @param result_size 結果バッファの有効なバイト数
 			 */
 			void decode(const byte *src, size_t src_size, util::cuda::device_memory<byte> &result);
 
 		private:
-			size_t _width;
-			size_t _height;
-			size_t _y_size;
-			size_t _c_size;
-			size_t _ycc_size;
+			size_t width_;
+			size_t height_;
+			size_t y_size_;
+			size_t c_size_;
+			size_t ycc_size_;
 
-			util::cuda::cuda_memory<int> _itrans_table_Y;
-			util::cuda::cuda_memory<int> _itrans_table_C;
-			util::cuda::device_memory<int> _yuv_buffer;
-			util::cuda::cuda_memory<int> _quantized;
-			util::cuda::device_memory<int> _dct_coeficient;
-			util::cuda::device_memory<float> _dct_tmp_buffer;
+			util::cuda::cuda_memory<int> itrans_table_Y_;
+			util::cuda::cuda_memory<int> itrans_table_C_;
+			util::cuda::device_memory<int> yuv_buffer_;
+			util::cuda::cuda_memory<int> quantized_;
+			util::cuda::device_memory<int> dct_coeficient_;
+			util::cuda::device_memory<float> dct_tmp_buffer_;
 
-			dim3 _grid_color, _block_color;
-			dim3 _grid_dct, _block_dct;
-			dim3 _grid_quantize_y, _block_quantize_y;
-			dim3 _grid_quantize_c, _block_quantize_c;
+			dim3 grid_color_, block_color_;
+			dim3 grid_dct_, block_dct_;
+			dim3 grid_quantize_y_, block_quantize_y_;
+			dim3 grid_quantize_c_, block_quantize_c_;
 
 			static const int THREADS = 256;
 			static const int DCT4_TH = 1;
@@ -285,20 +284,20 @@ namespace jpeg {
 		//-------------------------------------------------------------------
 		// Huffman Coding
 		//-------------------------------------------------------------------
-		__global__ void gpu_huffman_mcu(int *src_qua, jpeg::ohmura::GPUOutBitStreamState *mOBSP,
+		__global__ void gpu_huffman_mcu(int *src_qua, jpeg::ohmura::OutBitStreamState *mOBSP,
 			byte *mBufP, byte *mEndOfBufP, int sizeX, int sizeY);
 
 		//完全逐次処理、CPUで行った方が圧倒的に速い
-		void cpu_huffman_middle(jpeg::ohmura::GPUOutBitStreamState *ImOBSP, int sizeX, int sizeY,
+		void cpu_huffman_middle(jpeg::ohmura::OutBitStreamState *ImOBSP, int sizeX, int sizeY,
 			byte* dst_NumBits);
 
 		//排他処理のため3つに分ける
 		//1MCUは最小4bit(EOBのみ)なので1Byteのバッファに最大3MCUが競合する。だから3つに分ける。
-		__global__ void gpu_huffman_write_devide0(jpeg::ohmura::GPUOutBitStreamState *mOBSP,
+		__global__ void gpu_huffman_write_devide0(jpeg::ohmura::OutBitStreamState *mOBSP,
 			byte *mBufP, byte *OmBufP, int sizeX, int sizeY);
-		__global__ void gpu_huffman_write_devide1(jpeg::ohmura::GPUOutBitStreamState *mOBSP,
+		__global__ void gpu_huffman_write_devide1(jpeg::ohmura::OutBitStreamState *mOBSP,
 			byte *mBufP, byte *OmBufP, int sizeX, int sizeY);
-		__global__ void gpu_huffman_write_devide2(jpeg::ohmura::GPUOutBitStreamState *mOBSP,
+		__global__ void gpu_huffman_write_devide2(jpeg::ohmura::OutBitStreamState *mOBSP,
 			byte *mBufP, byte *OmBufP, int sizeX, int sizeY);
 	} // namespace gpu
 } // namespace jpeg

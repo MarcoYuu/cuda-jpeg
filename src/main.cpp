@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 	parse_arg(argc, argv, file_name, out_file_name);
 
 	//cpu_exec(file_name, out_file_name);
-	//gpu_exec(file_name, out_file_name);
+	gpu_exec(file_name, out_file_name);
 	cuda_exec(file_name, out_file_name);
 
 	return 0;

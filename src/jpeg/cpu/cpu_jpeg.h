@@ -83,13 +83,13 @@ namespace jpeg {
 		size_t encode(const ByteBuffer &rgb_data, ByteBuffer &result);
 
 	private:
-		IntBuffer _yuv_data;
-		IntBuffer _coefficient;
-		IntBuffer _quantized;
-		util::OutBitStream _out_bit;
+		IntBuffer yuv_data_;
+		IntBuffer coefficient_;
+		IntBuffer quantized_;
+		util::OutBitStream out_bit_;
 
-		size_t _width;
-		size_t _height;
+		size_t width_;
+		size_t height_;
 
 	private:
 		void reset();
@@ -157,12 +157,12 @@ namespace jpeg {
 		void decode(const ByteBuffer &src, ByteBuffer &result);
 
 	private:
-		IntBuffer _yuv_data;
-		IntBuffer _coefficient;
-		IntBuffer _quantized;
+		IntBuffer yuv_data_;
+		IntBuffer coefficient_;
+		IntBuffer quantized_;
 
-		size_t _width;
-		size_t _height;
+		size_t width_;
+		size_t height_;
 
 	private:
 		void inner_decode(util::InBitStream *in_bit, byte * result);

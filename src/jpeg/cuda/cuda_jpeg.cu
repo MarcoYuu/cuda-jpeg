@@ -71,25 +71,31 @@ namespace jpeg {
 			// Y [0,255]
 			yuv_result[dst_id] = byte(0.11448 * b + 0.58661 * g + 0.29891 * r);
 
+			printf("dst_id,%d,yuv_result,%d,r,%d,g,%d,b,%d\n", dst_id, yuv_result[dst_id], r, g, b);
+
+			const int local_dst_c_index = threadIdx.x / 2 + threadIdx.y / 2 * 8; // 0-63
+			const int dst_u_id = block_size * blockIdx.z * 3 / 2 + block_size + blockIdx.x * 64
+				+ blockIdx.y * 64 * gridDim.x + local_dst_c_index;
+			const int dst_v_id = dst_u_id + block_size / 4;
+
+			//printf("pixel,%d,y_id,%d,u_id,%d,v_id,%d\n", src_id / 3, dst_id, dst_u_id, dst_v_id);
+
 			// U,V [-128,127] -> [0,255]
 			if (threadIdx.x % 2 == 0 && threadIdx.y % 2 == 0) {
-				const int local_dst_c_index = threadIdx.x / 2 + threadIdx.y / 2 * 8; // 0-63
-				const int dst_u_id = block_size * blockIdx.z * 3 / 2 + block_size + blockIdx.x * 64
-					+ blockIdx.y * 64 * gridDim.x + local_dst_c_index;
-				const int dst_v_id = dst_u_id + block_size / 4;
-
 				yuv_result[dst_u_id] = 0.50000 * b - 0.33126 * g - 0.16874 * r + 128;
 				yuv_result[dst_v_id] = -0.08131 * b - 0.41869 * g + 0.50000 * r + 128;
+				//yuv_result[dst_u_id] = 128;
+				//yuv_result[dst_v_id] = 128;
 			}
 		}
 
 		__global__ void kernelOfConvertYUVToRGB(const byte* yuv, byte* rgb_result,
 			size_t block_size, int *table) {
-			const int local_dst_c_index = threadIdx.x / 2 + threadIdx.y / 2 * 8; // 0-63
-
 			const int src_y_id = threadIdx.x + threadIdx.y * blockDim.x
 				+ (blockIdx.x + blockIdx.y * gridDim.x + blockIdx.z * gridDim.x * gridDim.y)
 					* blockDim.x * blockDim.y;
+
+			const int local_dst_c_index = threadIdx.x / 2 + threadIdx.y / 2 * 8; // 0-63
 			const int src_u_id = block_size * blockIdx.z * 3 / 2 + block_size + blockIdx.x * 64
 				+ blockIdx.y * 64 * gridDim.x + local_dst_c_index;
 			const int src_v_id = src_u_id + block_size / 4;
@@ -103,6 +109,8 @@ namespace jpeg {
 			rgb_result[dst_id + 0] = (y + 1.77200 * u - 16) * 1.164;
 			rgb_result[dst_id + 1] = (y - 0.34414 * u - 0.71414 * v - 16) * 1.164;
 			rgb_result[dst_id + 2] = (y + 1.40200 * v - 16) * 1.164;
+
+			//printf("pixel,%d,y_id,%d,u_id,%d,v_id,%d\n", dst_id / 3, src_y_id, src_u_id, src_v_id);
 		}
 
 		void CreateConvertTable(size_t width, size_t height, size_t block_width,
