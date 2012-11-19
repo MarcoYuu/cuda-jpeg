@@ -1,0 +1,663 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<title>cuda_jpeg: クラス jpeg::ohmura::JpegDecoder</title>
+
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript">
+  $(document).ready(initResizable);
+</script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+
+</head>
+<body>
+<div id="top"><!-- do not remove this div! -->
+
+
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  
+  
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">cuda_jpeg
+   &#160;<span id="projectnumber">0.1</span>
+   </div>
+   
+  </td>
+  
+  
+  
+ </tr>
+ </tbody>
+</table>
+</div>
+
+<!-- 作成： Doxygen 1.7.6.1 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'検索');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>メインページ</span></a></li>
+      <li><a href="pages.html"><span>関連ページ</span></a></li>
+      <li><a href="namespaces.html"><span>ネームスペース</span></a></li>
+      <li class="current"><a href="annotated.html"><span>クラス</span></a></li>
+      <li><a href="files.html"><span>ファイル</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="検索" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="annotated.html"><span>構成</span></a></li>
+      <li><a href="classes.html"><span>構成索引</span></a></li>
+      <li><a href="inherits.html"><span>クラス階層</span></a></li>
+      <li><a href="functions.html"><span>構成メンバ</span></a></li>
+    </ul>
+  </div>
+</div>
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+  initNavTree('classjpeg_1_1ohmura_1_1JpegDecoder.html','');
+</script>
+<div id="doc-content">
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public メソッド</a> &#124;
+<a href="#pri-attribs">Private 変数</a> &#124;
+<a href="#pri-static-attribs">Static Private 変数</a>  </div>
+  <div class="headertitle">
+<div class="title">クラス jpeg::ohmura::JpegDecoder</div>  </div>
+</div><!--header-->
+<div class="contents">
+<!-- doxytag: class="jpeg::ohmura::JpegDecoder" --><div class="dynheader">
+jpeg::ohmura::JpegDecoderのコラボレーション図</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1ohmura_1_1JpegDecoder__coll__graph.png" border="0" usemap="#jpeg_1_1ohmura_1_1JpegDecoder_coll__map" alt="Collaboration graph"/></div>
+<map name="jpeg_1_1ohmura_1_1JpegDecoder_coll__map" id="jpeg_1_1ohmura_1_1JpegDecoder_coll__map">
+<area shape="rect" id="node2" href="classutil_1_1cuda_1_1cuda__memory.html" title="util::cuda::cuda_memory\&lt; int \&gt;" alt="" coords="280,89,483,119"/><area shape="rect" id="node4" href="classutil_1_1cuda_1_1device__memory.html" title="util::cuda::device_memory\&lt; int \&gt;" alt="" coords="5,49,219,79"/><area shape="rect" id="node6" href="classutil_1_1cuda_1_1device__memory.html" title="util::cuda::device_memory\&lt; float \&gt;" alt="" coords="269,145,493,175"/></map>
+<center><span class="legend">[<a target="top" href="graph_legend.html">凡例</a>]</span></center></div>
+
+<p><a href="classjpeg_1_1ohmura_1_1JpegDecoder-members.html">すべてのメンバ一覧</a></p>
+<table class="memberdecls">
+<tr><td colspan="2"><h2><a name="pub-methods"></a>
+Public メソッド</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a834cf92675d1ccfa1d66be5f9dd553e1">JpegDecoder</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ac12d0248bb41504db8f28eebf4d3fab2">JpegDecoder</a> (size_t width, size_t height)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a097e1b1abe2fe799d061443fc120b580">setImageSize</a> (size_t width, size_t height)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ac231d08a5e3620ef4039a3e2d124e38a">decode</a> (const <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *src, size_t src_size, <a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt; <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> &gt; &amp;result)</td></tr>
+<tr><td colspan="2"><h2><a name="pri-attribs"></a>
+Private 変数</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#af42b61fa6993c589f2f7c27c109016c1">_width</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a409c9b78194ac8344884d1d0bad99bec">_height</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#acccbbc3b8ec889c5179d8efc7adfeeb0">_y_size</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a5e2bf1f6e988f8cce7eb6a96c98ba987">_c_size</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a3cfc43899c02bfd3d60bc672487ce987">_ycc_size</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classutil_1_1cuda_1_1cuda__memory.html">util::cuda::cuda_memory</a>&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a4618cdedc588f7699ffbe648458d895c">_itrans_table_Y</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classutil_1_1cuda_1_1cuda__memory.html">util::cuda::cuda_memory</a>&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a07e17ef718295c7f4e11c013b82c77ad">_itrans_table_C</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ae9c93f5010bf2d4ab97d63138190f229">_yuv_buffer</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classutil_1_1cuda_1_1cuda__memory.html">util::cuda::cuda_memory</a>&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ab1a05c4fe837824bcff80b891aef693b">_quantized</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#aced6387cdf3266e86eae6e52792cd789">_dct_coeficient</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a98a1617062a9f7d1cb2490a13df3d0ab">_dct_tmp_buffer</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dim3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ad89d5ddea470f515577c794e077ea60c">_grid_color</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dim3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#af6f1801abfcb331ca652fc54f213eaf9">_block_color</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dim3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a77106e70a59c654e2fed8cbb1e189272">_grid_dct</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dim3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a8722ef547e0a48382fcf31db6ef8eb7f">_block_dct</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dim3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a088ef7f2da8dc494a44f633987f45659">_grid_quantize_y</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dim3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a6e18bfe440f23bb02a720c9b596224e6">_block_quantize_y</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dim3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a52cc727c4f92ad8f2497ae736307bb7e">_grid_quantize_c</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">dim3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#abacdd14d3457ec1abef68ad4bbe8c520">_block_quantize_c</a></td></tr>
+<tr><td colspan="2"><h2><a name="pri-static-attribs"></a>
+Static Private 変数</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a984afc122632fcc806af02a2c9c86fc6">THREADS</a> = 256</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#aafec19b1009c742b43b786745d9c0837">DCT4_TH</a> = 1</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#acfc87efed84951f6e88bc3a5246ece4a">QUA0_TH</a> = 64</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ace99f671e7568b0ec016aca1d585395d">QUA1_TH</a> = 64</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ac767fa837d1eed52151dea87c2b03318">BYTES_PER_MCU</a> = 128</td></tr>
+</table>
+<hr/><a name="details" id="details"></a><h2>説明</h2>
+<div class="textblock"><p>Jpegデコーダ</p>
+<dl class="author"><dt><b>作者:</b></dt><dd>yuumomma </dd></dl>
+<dl class="version"><dt><b>バージョン:</b></dt><dd>1.0 </dd></dl>
+</div><hr/><h2>コンストラクタとデストラクタ</h2>
+<a class="anchor" id="a834cf92675d1ccfa1d66be5f9dd553e1"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::JpegDecoder" ref="a834cf92675d1ccfa1d66be5f9dd553e1" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a834cf92675d1ccfa1d66be5f9dd553e1">jpeg::ohmura::JpegDecoder::JpegDecoder</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>コンストラクタ</p>
+<p>利用可能な状態にするためには幅と高さをセットする必要がある </p>
+
+</div>
+</div>
+<a class="anchor" id="ac12d0248bb41504db8f28eebf4d3fab2"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::JpegDecoder" ref="ac12d0248bb41504db8f28eebf4d3fab2" args="(size_t width, size_t height)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a834cf92675d1ccfa1d66be5f9dd553e1">jpeg::ohmura::JpegDecoder::JpegDecoder</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>height</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>コンストラクタ </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">width</td><td>幅 </td></tr>
+    <tr><td class="paramname">height</td><td>高さ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1ohmura_1_1JpegDecoder_ac12d0248bb41504db8f28eebf4d3fab2_cgraph.png" border="0" usemap="#classjpeg_1_1ohmura_1_1JpegDecoder_ac12d0248bb41504db8f28eebf4d3fab2_cgraph" alt=""/></div>
+<map name="classjpeg_1_1ohmura_1_1JpegDecoder_ac12d0248bb41504db8f28eebf4d3fab2_cgraph" id="classjpeg_1_1ohmura_1_1JpegDecoder_ac12d0248bb41504db8f28eebf4d3fab2_cgraph">
+<area shape="rect" id="node3" href="namespacejpeg_1_1ohmura.html#a90e4d26d7d3d950cc30831e673a16b12" title="jpeg::ohmura::make_itrans_table" alt="" coords="347,5,557,35"/><area shape="rect" id="node5" href="classutil_1_1cuda_1_1cuda__memory.html#a021ae07ac70da027356e5964ebdb7681" title="util::cuda::cuda_memory::host_data" alt="" coords="337,59,567,88"/><area shape="rect" id="node7" href="classutil_1_1cuda_1_1cuda__memory.html#acc59f86dd91bb657e4f347a724752c9e" title="util::cuda::cuda_memory::sync_to_device" alt="" coords="320,112,584,141"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<hr/><h2>関数</h2>
+<a class="anchor" id="ac231d08a5e3620ef4039a3e2d124e38a"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::decode" ref="ac231d08a5e3620ef4039a3e2d124e38a" args="(const byte *src, size_t src_size, util::cuda::device_memory&lt; byte &gt; &amp;result)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ac231d08a5e3620ef4039a3e2d124e38a">jpeg::ohmura::JpegDecoder::decode</a> </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>src_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt; <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>result</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>デコードする </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">src</td><td>JpegEncoderにより生成されたソースデータ </td></tr>
+    <tr><td class="paramname">src_size</td><td>ソースサイズ </td></tr>
+    <tr><td class="paramname">result</td><td>結果を格納するバッファ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1ohmura_1_1JpegDecoder_ac231d08a5e3620ef4039a3e2d124e38a_cgraph.png" border="0" usemap="#classjpeg_1_1ohmura_1_1JpegDecoder_ac231d08a5e3620ef4039a3e2d124e38a_cgraph" alt=""/></div>
+<map name="classjpeg_1_1ohmura_1_1JpegDecoder_ac231d08a5e3620ef4039a3e2d124e38a_cgraph" id="classjpeg_1_1ohmura_1_1JpegDecoder_ac231d08a5e3620ef4039a3e2d124e38a_cgraph">
+<area shape="rect" id="node3" href="namespacejpeg.html#af22e1dc5512e8b1f86e46a902794de79" title="jpeg::decode_huffman" alt="" coords="343,31,492,60"/><area shape="rect" id="node12" href="classutil_1_1cuda_1_1cuda__memory.html#a021ae07ac70da027356e5964ebdb7681" title="util::cuda::cuda_memory::host_data" alt="" coords="303,84,532,113"/><area shape="rect" id="node14" href="classutil_1_1cuda_1_1cuda__memory.html#acc59f86dd91bb657e4f347a724752c9e" title="util::cuda::cuda_memory::sync_to_device" alt="" coords="285,137,549,167"/><area shape="rect" id="node16" href="classutil_1_1cuda_1_1device__memory.html#a75e080080672daf53f33cc2b41a82498" title="util::cuda::device_memory::device_data" alt="" coords="291,191,544,220"/><area shape="rect" id="node5" href="namespacejpeg.html#a1425c3b9d076aa84ac788b2e77f20460" title="jpeg::decode_huffman_word" alt="" coords="599,5,783,35"/><area shape="rect" id="node7" href="classutil_1_1InBitStream.html#aeddb4b556dd18c7539e3bbc72125dbc8" title="util::InBitStream::getBits" alt="" coords="832,32,997,61"/><area shape="rect" id="node9" href="classutil_1_1InBitStream.html#ad86f68b1c62203b8eace536ad0fe688c" title="1:読み出し可, 0:読み出し不可" alt="" coords="1047,32,1207,61"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="a097e1b1abe2fe799d061443fc120b580"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::setImageSize" ref="a097e1b1abe2fe799d061443fc120b580" args="(size_t width, size_t height)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a097e1b1abe2fe799d061443fc120b580">jpeg::ohmura::JpegDecoder::setImageSize</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>height</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>デコードするイメージのサイズを指定する </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">width</td><td>幅 </td></tr>
+    <tr><td class="paramname">height</td><td>高さ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p><div class="dynheader">
+関数の呼び出しグラフ:</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1ohmura_1_1JpegDecoder_a097e1b1abe2fe799d061443fc120b580_cgraph.png" border="0" usemap="#classjpeg_1_1ohmura_1_1JpegDecoder_a097e1b1abe2fe799d061443fc120b580_cgraph" alt=""/></div>
+<map name="classjpeg_1_1ohmura_1_1JpegDecoder_a097e1b1abe2fe799d061443fc120b580_cgraph" id="classjpeg_1_1ohmura_1_1JpegDecoder_a097e1b1abe2fe799d061443fc120b580_cgraph">
+<area shape="rect" id="node3" href="classutil_1_1cuda_1_1cuda__memory.html#ac0740f2bc2be3b43bf1015e4c5a6f723" title="util::cuda::cuda_memory::resize" alt="" coords="353,5,561,35"/><area shape="rect" id="node5" href="classutil_1_1cuda_1_1device__memory.html#a6edddbe8b41dad2a4ed67ccc334b31cf" title="util::cuda::device_memory::resize" alt="" coords="348,59,567,88"/><area shape="rect" id="node7" href="namespacejpeg_1_1ohmura.html#a90e4d26d7d3d950cc30831e673a16b12" title="jpeg::ohmura::make_itrans_table" alt="" coords="352,112,563,141"/><area shape="rect" id="node9" href="classutil_1_1cuda_1_1cuda__memory.html#a021ae07ac70da027356e5964ebdb7681" title="util::cuda::cuda_memory::host_data" alt="" coords="343,165,572,195"/><area shape="rect" id="node11" href="classutil_1_1cuda_1_1cuda__memory.html#acc59f86dd91bb657e4f347a724752c9e" title="util::cuda::cuda_memory::sync_to_device" alt="" coords="325,219,589,248"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<hr/><h2>変数</h2>
+<a class="anchor" id="af6f1801abfcb331ca652fc54f213eaf9"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_block_color" ref="af6f1801abfcb331ca652fc54f213eaf9" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dim3 <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#af6f1801abfcb331ca652fc54f213eaf9">jpeg::ohmura::JpegDecoder::_block_color</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a8722ef547e0a48382fcf31db6ef8eb7f"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_block_dct" ref="a8722ef547e0a48382fcf31db6ef8eb7f" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dim3 <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a8722ef547e0a48382fcf31db6ef8eb7f">jpeg::ohmura::JpegDecoder::_block_dct</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="abacdd14d3457ec1abef68ad4bbe8c520"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_block_quantize_c" ref="abacdd14d3457ec1abef68ad4bbe8c520" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dim3 <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#abacdd14d3457ec1abef68ad4bbe8c520">jpeg::ohmura::JpegDecoder::_block_quantize_c</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a6e18bfe440f23bb02a720c9b596224e6"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_block_quantize_y" ref="a6e18bfe440f23bb02a720c9b596224e6" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dim3 <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a6e18bfe440f23bb02a720c9b596224e6">jpeg::ohmura::JpegDecoder::_block_quantize_y</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a5e2bf1f6e988f8cce7eb6a96c98ba987"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_c_size" ref="a5e2bf1f6e988f8cce7eb6a96c98ba987" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a5e2bf1f6e988f8cce7eb6a96c98ba987">jpeg::ohmura::JpegDecoder::_c_size</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aced6387cdf3266e86eae6e52792cd789"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_dct_coeficient" ref="aced6387cdf3266e86eae6e52792cd789" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt;int&gt; <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#aced6387cdf3266e86eae6e52792cd789">jpeg::ohmura::JpegDecoder::_dct_coeficient</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a98a1617062a9f7d1cb2490a13df3d0ab"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_dct_tmp_buffer" ref="a98a1617062a9f7d1cb2490a13df3d0ab" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt;float&gt; <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a98a1617062a9f7d1cb2490a13df3d0ab">jpeg::ohmura::JpegDecoder::_dct_tmp_buffer</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ad89d5ddea470f515577c794e077ea60c"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_grid_color" ref="ad89d5ddea470f515577c794e077ea60c" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dim3 <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ad89d5ddea470f515577c794e077ea60c">jpeg::ohmura::JpegDecoder::_grid_color</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a77106e70a59c654e2fed8cbb1e189272"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_grid_dct" ref="a77106e70a59c654e2fed8cbb1e189272" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dim3 <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a77106e70a59c654e2fed8cbb1e189272">jpeg::ohmura::JpegDecoder::_grid_dct</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a52cc727c4f92ad8f2497ae736307bb7e"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_grid_quantize_c" ref="a52cc727c4f92ad8f2497ae736307bb7e" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dim3 <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a52cc727c4f92ad8f2497ae736307bb7e">jpeg::ohmura::JpegDecoder::_grid_quantize_c</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a088ef7f2da8dc494a44f633987f45659"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_grid_quantize_y" ref="a088ef7f2da8dc494a44f633987f45659" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dim3 <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a088ef7f2da8dc494a44f633987f45659">jpeg::ohmura::JpegDecoder::_grid_quantize_y</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a409c9b78194ac8344884d1d0bad99bec"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_height" ref="a409c9b78194ac8344884d1d0bad99bec" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a409c9b78194ac8344884d1d0bad99bec">jpeg::ohmura::JpegDecoder::_height</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a07e17ef718295c7f4e11c013b82c77ad"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_itrans_table_C" ref="a07e17ef718295c7f4e11c013b82c77ad" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1cuda_1_1cuda__memory.html">util::cuda::cuda_memory</a>&lt;int&gt; <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a07e17ef718295c7f4e11c013b82c77ad">jpeg::ohmura::JpegDecoder::_itrans_table_C</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a4618cdedc588f7699ffbe648458d895c"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_itrans_table_Y" ref="a4618cdedc588f7699ffbe648458d895c" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1cuda_1_1cuda__memory.html">util::cuda::cuda_memory</a>&lt;int&gt; <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a4618cdedc588f7699ffbe648458d895c">jpeg::ohmura::JpegDecoder::_itrans_table_Y</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ab1a05c4fe837824bcff80b891aef693b"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_quantized" ref="ab1a05c4fe837824bcff80b891aef693b" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1cuda_1_1cuda__memory.html">util::cuda::cuda_memory</a>&lt;int&gt; <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ab1a05c4fe837824bcff80b891aef693b">jpeg::ohmura::JpegDecoder::_quantized</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="af42b61fa6993c589f2f7c27c109016c1"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_width" ref="af42b61fa6993c589f2f7c27c109016c1" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#af42b61fa6993c589f2f7c27c109016c1">jpeg::ohmura::JpegDecoder::_width</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="acccbbc3b8ec889c5179d8efc7adfeeb0"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_y_size" ref="acccbbc3b8ec889c5179d8efc7adfeeb0" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#acccbbc3b8ec889c5179d8efc7adfeeb0">jpeg::ohmura::JpegDecoder::_y_size</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a3cfc43899c02bfd3d60bc672487ce987"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_ycc_size" ref="a3cfc43899c02bfd3d60bc672487ce987" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a3cfc43899c02bfd3d60bc672487ce987">jpeg::ohmura::JpegDecoder::_ycc_size</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ae9c93f5010bf2d4ab97d63138190f229"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::_yuv_buffer" ref="ae9c93f5010bf2d4ab97d63138190f229" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt;int&gt; <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ae9c93f5010bf2d4ab97d63138190f229">jpeg::ohmura::JpegDecoder::_yuv_buffer</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ac767fa837d1eed52151dea87c2b03318"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::BYTES_PER_MCU" ref="ac767fa837d1eed52151dea87c2b03318" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ac767fa837d1eed52151dea87c2b03318">jpeg::ohmura::JpegDecoder::BYTES_PER_MCU</a> = 128<code> [static, private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aafec19b1009c742b43b786745d9c0837"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::DCT4_TH" ref="aafec19b1009c742b43b786745d9c0837" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#aafec19b1009c742b43b786745d9c0837">jpeg::ohmura::JpegDecoder::DCT4_TH</a> = 1<code> [static, private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="acfc87efed84951f6e88bc3a5246ece4a"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::QUA0_TH" ref="acfc87efed84951f6e88bc3a5246ece4a" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#acfc87efed84951f6e88bc3a5246ece4a">jpeg::ohmura::JpegDecoder::QUA0_TH</a> = 64<code> [static, private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ace99f671e7568b0ec016aca1d585395d"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::QUA1_TH" ref="ace99f671e7568b0ec016aca1d585395d" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#ace99f671e7568b0ec016aca1d585395d">jpeg::ohmura::JpegDecoder::QUA1_TH</a> = 64<code> [static, private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a984afc122632fcc806af02a2c9c86fc6"></a><!-- doxytag: member="jpeg::ohmura::JpegDecoder::THREADS" ref="a984afc122632fcc806af02a2c9c86fc6" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int <a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html#a984afc122632fcc806af02a2c9c86fc6">jpeg::ohmura::JpegDecoder::THREADS</a> = 256<code> [static, private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<hr/>このクラスの説明は次のファイルから生成されました:<ul>
+<li>src/jpeg/ohmura/<a class="el" href="gpu__jpeg_8cuh.html">gpu_jpeg.cuh</a></li>
+<li>src/jpeg/ohmura/<a class="el" href="gpu__jpeg_8cu.html">gpu_jpeg.cu</a></li>
+</ul>
+</div><!-- contents -->
+</div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>全て</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>クラス</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>ネームスペース</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>ファイル</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>関数</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>変数</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>型定義</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>列挙型</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>列挙型の値</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>マクロ定義</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+  <div id="nav-path" class="navpath">
+    <ul>
+      <li class="navelem"><a class="el" href="namespacejpeg.html">jpeg</a>      </li>
+      <li class="navelem"><a class="el" href="namespacejpeg_1_1ohmura.html">ohmura</a>      </li>
+      <li class="navelem"><a class="el" href="classjpeg_1_1ohmura_1_1JpegDecoder.html">JpegDecoder</a>      </li>
+
+    <li class="footer">cuda_jpegに対してSat Nov 17 2012 20:49:13に生成されました。
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
+   </ul>
+ </div>
+
+
+</body>
+</html>

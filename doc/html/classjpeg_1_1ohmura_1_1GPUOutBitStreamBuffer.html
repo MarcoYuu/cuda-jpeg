@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<title>cuda_jpeg: クラス jpeg::ohmura::GPUOutBitStreamBuffer</title>
+
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript">
+  $(document).ready(initResizable);
+</script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { searchBox.OnSelectItem(0); });
+</script>
+
+</head>
+<body>
+<div id="top"><!-- do not remove this div! -->
+
+
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  
+  
+  <td style="padding-left: 0.5em;">
+   <div id="projectname">cuda_jpeg
+   &#160;<span id="projectnumber">0.1</span>
+   </div>
+   
+  </td>
+  
+  
+  
+ </tr>
+ </tbody>
+</table>
+</div>
+
+<!-- 作成： Doxygen 1.7.6.1 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'検索');
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li><a href="index.html"><span>メインページ</span></a></li>
+      <li><a href="pages.html"><span>関連ページ</span></a></li>
+      <li><a href="namespaces.html"><span>ネームスペース</span></a></li>
+      <li class="current"><a href="annotated.html"><span>クラス</span></a></li>
+      <li><a href="files.html"><span>ファイル</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <img id="MSearchSelect" src="search/mag_sel.png"
+               onmouseover="return searchBox.OnSearchSelectShow()"
+               onmouseout="return searchBox.OnSearchSelectHide()"
+               alt=""/>
+          <input type="text" id="MSearchField" value="検索" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="annotated.html"><span>構成</span></a></li>
+      <li><a href="classes.html"><span>構成索引</span></a></li>
+      <li><a href="inherits.html"><span>クラス階層</span></a></li>
+      <li><a href="functions.html"><span>構成メンバ</span></a></li>
+    </ul>
+  </div>
+</div>
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+  initNavTree('classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html','');
+</script>
+<div id="doc-content">
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public メソッド</a> &#124;
+<a href="#pri-attribs">Private 変数</a>  </div>
+  <div class="headertitle">
+<div class="title">クラス jpeg::ohmura::GPUOutBitStreamBuffer</div>  </div>
+</div><!--header-->
+<div class="contents">
+<!-- doxytag: class="jpeg::ohmura::GPUOutBitStreamBuffer" --><div class="dynheader">
+jpeg::ohmura::GPUOutBitStreamBufferのコラボレーション図</div>
+<div class="dyncontent">
+<div class="center"><img src="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer__coll__graph.png" border="0" usemap="#jpeg_1_1ohmura_1_1GPUOutBitStreamBuffer_coll__map" alt="Collaboration graph"/></div>
+<map name="jpeg_1_1ohmura_1_1GPUOutBitStreamBuffer_coll__map" id="jpeg_1_1ohmura_1_1GPUOutBitStreamBuffer_coll__map">
+<area shape="rect" id="node2" href="classutil_1_1cuda_1_1device__memory.html" title="util::cuda::device_memory\&lt; byte \&gt;" alt="" coords="17,5,241,35"/></map>
+<center><span class="legend">[<a target="top" href="graph_legend.html">凡例</a>]</span></center></div>
+
+<p><a href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer-members.html">すべてのメンバ一覧</a></p>
+<table class="memberdecls">
+<tr><td colspan="2"><h2><a name="pub-methods"></a>
+Public メソッド</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a7c005a0d8098cfb341edc56b1859d8f7">GPUOutBitStreamBuffer</a> (size_t buff_size)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#ae87d6fc5e5c629673f0aa2079851fdab">resize</a> (size_t size, bool force=false)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#abaf27b4ed9282545660a5807239f8171">head</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a200f8abbe00f8a4306e80c5701f34ddf">end</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#adf9416e869211926f2c23b8d6b4de12e">writable_head</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#ab0d4cdbceaf6853d5238348e1eff0477">head</a> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a5724f967a8b0ac6852765bca4eac67e4">end</a> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a6e8e862a3c5abd11640059a3ee7a2b9d">writable_head</a> () const </td></tr>
+<tr><td colspan="2"><h2><a name="pri-attribs"></a>
+Private 変数</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt; <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#ab278ad6f045e97211a1f4c09a0d32436">_head_of_buff</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a7ade50cac532d3d1e5f9448c3d686d08">_write_buff_address</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a0154222af0cc683ed560229f22348ef0">_end_of_buff</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#ad99fc6b2e1ee630489aed17e924312d7">_buff_size</a></td></tr>
+</table>
+<hr/><h2>コンストラクタとデストラクタ</h2>
+<a class="anchor" id="a7c005a0d8098cfb341edc56b1859d8f7"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::GPUOutBitStreamBuffer" ref="a7c005a0d8098cfb341edc56b1859d8f7" args="(size_t buff_size)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a7c005a0d8098cfb341edc56b1859d8f7">jpeg::ohmura::GPUOutBitStreamBuffer::GPUOutBitStreamBuffer</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>buff_size</em></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<hr/><h2>関数</h2>
+<a class="anchor" id="a200f8abbe00f8a4306e80c5701f34ddf"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::end" ref="a200f8abbe00f8a4306e80c5701f34ddf" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a>* <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a200f8abbe00f8a4306e80c5701f34ddf">jpeg::ohmura::GPUOutBitStreamBuffer::end</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a5724f967a8b0ac6852765bca4eac67e4"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::end" ref="a5724f967a8b0ac6852765bca4eac67e4" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a>* <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a200f8abbe00f8a4306e80c5701f34ddf">jpeg::ohmura::GPUOutBitStreamBuffer::end</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="abaf27b4ed9282545660a5807239f8171"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::head" ref="abaf27b4ed9282545660a5807239f8171" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a>* <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#abaf27b4ed9282545660a5807239f8171">jpeg::ohmura::GPUOutBitStreamBuffer::head</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ab0d4cdbceaf6853d5238348e1eff0477"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::head" ref="ab0d4cdbceaf6853d5238348e1eff0477" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a>* <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#abaf27b4ed9282545660a5807239f8171">jpeg::ohmura::GPUOutBitStreamBuffer::head</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ae87d6fc5e5c629673f0aa2079851fdab"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::resize" ref="ae87d6fc5e5c629673f0aa2079851fdab" args="(size_t size, bool force=false)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#ae87d6fc5e5c629673f0aa2079851fdab">jpeg::ohmura::GPUOutBitStreamBuffer::resize</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>リサイズする </p>
+<dl class="params"><dt><b>引数:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td>変更サイズ </td></tr>
+    <tr><td class="paramname">force</td><td>より小さくする際に、現在のバッファを完全に破棄するかどうか </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="adf9416e869211926f2c23b8d6b4de12e"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::writable_head" ref="adf9416e869211926f2c23b8d6b4de12e" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a>* <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#adf9416e869211926f2c23b8d6b4de12e">jpeg::ohmura::GPUOutBitStreamBuffer::writable_head</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a6e8e862a3c5abd11640059a3ee7a2b9d"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::writable_head" ref="a6e8e862a3c5abd11640059a3ee7a2b9d" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a>* <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#adf9416e869211926f2c23b8d6b4de12e">jpeg::ohmura::GPUOutBitStreamBuffer::writable_head</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<hr/><h2>変数</h2>
+<a class="anchor" id="ad99fc6b2e1ee630489aed17e924312d7"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::_buff_size" ref="ad99fc6b2e1ee630489aed17e924312d7" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#ad99fc6b2e1ee630489aed17e924312d7">jpeg::ohmura::GPUOutBitStreamBuffer::_buff_size</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a0154222af0cc683ed560229f22348ef0"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::_end_of_buff" ref="a0154222af0cc683ed560229f22348ef0" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a>* <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a0154222af0cc683ed560229f22348ef0">jpeg::ohmura::GPUOutBitStreamBuffer::_end_of_buff</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ab278ad6f045e97211a1f4c09a0d32436"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::_head_of_buff" ref="ab278ad6f045e97211a1f4c09a0d32436" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classutil_1_1cuda_1_1device__memory.html">util::cuda::device_memory</a>&lt;<a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a>&gt; <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#ab278ad6f045e97211a1f4c09a0d32436">jpeg::ohmura::GPUOutBitStreamBuffer::_head_of_buff</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a7ade50cac532d3d1e5f9448c3d686d08"></a><!-- doxytag: member="jpeg::ohmura::GPUOutBitStreamBuffer::_write_buff_address" ref="a7ade50cac532d3d1e5f9448c3d686d08" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceutil.html#adcc498ff9edd6ed0c34c6a3b695da64c">byte</a>* <a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html#a7ade50cac532d3d1e5f9448c3d686d08">jpeg::ohmura::GPUOutBitStreamBuffer::_write_buff_address</a><code> [private]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
+<hr/>このクラスの説明は次のファイルから生成されました:<ul>
+<li>src/jpeg/ohmura/<a class="el" href="gpu__out__bit__stream_8cuh.html">gpu_out_bit_stream.cuh</a></li>
+</ul>
+</div><!-- contents -->
+</div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>全て</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>クラス</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>ネームスペース</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>ファイル</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>関数</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>変数</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>型定義</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>列挙型</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>列挙型の値</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>マクロ定義</a></div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+  <div id="nav-path" class="navpath">
+    <ul>
+      <li class="navelem"><a class="el" href="namespacejpeg.html">jpeg</a>      </li>
+      <li class="navelem"><a class="el" href="namespacejpeg_1_1ohmura.html">ohmura</a>      </li>
+      <li class="navelem"><a class="el" href="classjpeg_1_1ohmura_1_1GPUOutBitStreamBuffer.html">GPUOutBitStreamBuffer</a>      </li>
+
+    <li class="footer">cuda_jpegに対してSat Nov 17 2012 20:49:13に生成されました。
+    <a href="http://www.doxygen.org/index.html">
+    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
+   </ul>
+ </div>
+
+
+</body>
+</html>
