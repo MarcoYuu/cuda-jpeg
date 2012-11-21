@@ -51,8 +51,8 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 	}
 
 	// ブロックサイズ
-	const int BLOCK_WIDTH = 16;
-	const int BLOCK_HEIGHT = 16;
+	const int BLOCK_WIDTH = 64;
+	const int BLOCK_HEIGHT = 64;
 
 	std::cout << "===============================================" << std::endl;
 	std::cout << " Start CUDA Encoding & Decoding" << std::endl;
@@ -66,7 +66,7 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 		std::cout << "	-----------------------------------------------\n" << std::endl;
 
 		std::cout << "	 	CreateConvertTable" << std::endl;
-		cuda_memory<int> table(width * height);
+		cuda_memory<TableElementSrcToDst> table(width * height);
 		table.fill_zero();
 		CreateConversionTable(width, height, BLOCK_WIDTH, BLOCK_HEIGHT, table);
 
@@ -74,7 +74,7 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 			table.sync_to_host();
 			ofstream ofs("table.txt");
 			for (int i = 0; i < table.size(); ++i) {
-				ofs << i << "," << table[i] << endl;
+				ofs << i << "," << table[i].y << endl;
 			}
 		}
 
@@ -107,14 +107,14 @@ void cuda_exec(const std::string &file_name, const std::string &out_file_name) {
 		std::cout << "	-----------------------------------------------\n" << std::endl;
 
 		std::cout << "	 	CreateConvertTable" << std::endl;
-		cuda_memory<int> table(BLOCK_WIDTH * BLOCK_HEIGHT);
+		cuda_memory<TableElementSrcToDst> table(BLOCK_WIDTH * BLOCK_HEIGHT);
 		CreateConversionTable(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT, table);
 
 		{
 			table.sync_to_host();
 			ofstream ofs("table_decode.txt");
 			for (int i = 0; i < table.size(); ++i) {
-				ofs << i << "," << table[i] << endl;
+				ofs << i << "," << table[i].y << endl;
 			}
 		}
 

@@ -17,6 +17,12 @@ namespace jpeg {
 		using namespace util;
 		using namespace util::cuda;
 
+		struct TableElementSrcToDst {
+			size_t y;
+			size_t u;
+			size_t v;
+		};
+
 		/**
 		 * 色変換テーブルを作成する
 		 *
@@ -30,9 +36,7 @@ namespace jpeg {
 		 * @param table テーブル出力
 		 */
 		void CreateConversionTable(size_t width, size_t height, size_t block_width,
-			size_t block_height, device_memory<int> &table);
-		void CreateConversionTable(size_t width, size_t height, size_t block_width,
-			size_t block_height, int *table);
+			size_t block_height, device_memory<TableElementSrcToDst> &table);
 
 		/**
 		 * RGBをYUVに変換
@@ -53,7 +57,7 @@ namespace jpeg {
 		 */
 		void ConvertRGBToYUV(const device_memory<byte> &rgb, device_memory<byte> &yuv_result,
 			size_t width, size_t height, size_t block_width, size_t block_height,
-			const device_memory<int> &table);
+			const device_memory<TableElementSrcToDst> &table);
 
 		/**
 		 * YUVをRGBに変換
@@ -70,7 +74,7 @@ namespace jpeg {
 		 */
 		void ConvertYUVToRGB(const device_memory<byte> &yuv, device_memory<byte> &rgb_result,
 			size_t width, size_t height, size_t block_width, size_t block_height,
-			device_memory<int> &table);
+			device_memory<TableElementSrcToDst> &table);
 	}
 }
 
