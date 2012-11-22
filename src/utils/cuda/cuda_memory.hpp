@@ -106,7 +106,7 @@ namespace util {
 			 */
 			void write_device(const T* data, size_t size, size_t offset = 0) {
 				assert(size + offset <= size_);
-				cudaMemcpy(device_mem_ + offset, data, sizeof(T) * size, cudaMemcpyHostToDevice);
+				cudaMemcpy(device_mem_ + sizeof(T) * offset, data, sizeof(T) * size, cudaMemcpyHostToDevice);
 			}
 
 			/**
@@ -177,7 +177,8 @@ namespace util {
 
 				// デバイスメモリのコピー
 				if (copy_to_device) {
-					write_device(data, size);
+					//write_device(data, size);
+					sync_to_device();
 				}
 			}
 

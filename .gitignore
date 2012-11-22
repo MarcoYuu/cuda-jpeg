@@ -8,3 +8,6 @@ doc/latex
 doc/html
 img/
 img/*
+!.gitignore
+!*.mk
+!makefile

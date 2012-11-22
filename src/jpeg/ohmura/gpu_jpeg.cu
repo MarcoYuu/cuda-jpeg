@@ -142,7 +142,7 @@ namespace jpeg {
 
 		//各ドットについて一気にDCTを行う。全てグローバルメモリ
 		__global__ void gpu_dct_0(int *src_ycc, float *pro_f) {
-			int id = 64 * (blockIdx.x * (blockDim.x) + threadIdx.x);
+			int id = 64 * (blockIdx.x * blockDim.x + threadIdx.x);
 			int y = threadIdx.y, u = threadIdx.z;
 			pro_f[id + y * 8 + u] = src_ycc[id + y * 8 + 0] * CosT[u * 8 + 0]
 				+ src_ycc[id + y * 8 + 1] * CosT[u * 8 + 1]
@@ -154,7 +154,7 @@ namespace jpeg {
 				+ src_ycc[id + y * 8 + 7] * CosT[u * 8 + 7];
 		}
 		__global__ void gpu_dct_1(float *pro_f, int *dst_coef) {
-			int id = 64 * (blockIdx.x * (blockDim.x) + threadIdx.x);
+			int id = 64 * (blockIdx.x * blockDim.x + threadIdx.x);
 			int v = threadIdx.y, u = threadIdx.z;
 			dst_coef[id + v * 8 + u] = int(
 				(pro_f[id + 0 * 8 + u] * CosT[v * 8 + 0] + pro_f[id + 1 * 8 + u] * CosT[v * 8 + 1]
@@ -168,7 +168,7 @@ namespace jpeg {
 
 		//各ドットについて一気にDCTを行う。全てグローバルメモリ
 		__global__ void gpu_idct_0(int *src_ycc, float *pro_f) {
-			int id = 64 * (blockIdx.x * (blockDim.x) + threadIdx.x);
+			int id = 64 * (blockIdx.x * blockDim.x + threadIdx.x);
 			int v = threadIdx.y, x = threadIdx.z;
 			//uが0~7
 			pro_f[id + v * 8 + x] = kDisSqrt2 * src_ycc[id + v * 8 + 0] * ICosT[0 * 8 + x] //kDisSqrt2 = Cu
@@ -181,7 +181,7 @@ namespace jpeg {
 				+ src_ycc[id + v * 8 + 7] * ICosT[7 * 8 + x];
 		}
 		__global__ void gpu_idct_1(float *pro_f, int *dst_coef) {
-			int id = 64 * (blockIdx.x * (blockDim.x) + threadIdx.x);
+			int id = 64 * (blockIdx.x * blockDim.x + threadIdx.x);
 			int y = threadIdx.y, x = threadIdx.z;
 			//vが0~7
 			dst_coef[id + y * 8 + x] = int(

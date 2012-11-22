@@ -23,8 +23,22 @@ namespace jpeg {
 			size_t v;
 		};
 
+		typedef device_memory<TableElementSrcToDst> DeviceTable;
+		typedef cuda_memory<TableElementSrcToDst> CudaTable;
+
+		typedef device_memory<byte> DeviceByteBuffer;
+		typedef cuda_memory<byte> CudaByteBuffer;
+
+		typedef device_memory<int> DeviceIntBuffer;
+		typedef cuda_memory<int> CudaIntBuffer;
+
+		typedef device_memory<float> DevicefloatBuffer;
+		typedef cuda_memory<float> CudafloatBuffer;
+
 		/**
 		 * 色変換テーブルを作成する
+		 *
+		 * pixel番号→Y書き込み位置のマップを作成
 		 *
 		 * - grid(block_width/16, block_height/16, width/block_width * height/block_height)
 		 * - block(16, 16, 1)
@@ -36,7 +50,7 @@ namespace jpeg {
 		 * @param table テーブル出力
 		 */
 		void CreateConversionTable(size_t width, size_t height, size_t block_width,
-			size_t block_height, device_memory<TableElementSrcToDst> &table);
+			size_t block_height, DeviceTable &table);
 
 		/**
 		 * RGBをYUVに変換
@@ -55,9 +69,9 @@ namespace jpeg {
 		 * @param block_height ブロックの高さ
 		 * @param table 変換テーブル
 		 */
-		void ConvertRGBToYUV(const device_memory<byte> &rgb, device_memory<byte> &yuv_result,
+		void ConvertRGBToYUV(const DeviceByteBuffer &rgb, DeviceByteBuffer &yuv_result,
 			size_t width, size_t height, size_t block_width, size_t block_height,
-			const device_memory<TableElementSrcToDst> &table);
+			const DeviceTable &table);
 
 		/**
 		 * YUVをRGBに変換
@@ -72,9 +86,19 @@ namespace jpeg {
 		 * @param block_height ブロックの高さ
 		 * @param table 変換テーブル
 		 */
-		void ConvertYUVToRGB(const device_memory<byte> &yuv, device_memory<byte> &rgb_result,
+		void ConvertYUVToRGB(const DeviceByteBuffer &yuv, DeviceByteBuffer &rgb_result,
 			size_t width, size_t height, size_t block_width, size_t block_height,
-			device_memory<TableElementSrcToDst> &table);
+			const DeviceTable &table);
+
+		void DiscreteCosineTransform(const DeviceByteBuffer &yuv, DeviceIntBuffer &dct_coefficient,
+			size_t width, size_t height, size_t block_width, size_t block_height);
+
+		void InverseDiscreteCosineTransform(const DeviceIntBuffer &dct_coefficient, DeviceByteBuffer &yuv_result,
+			size_t width, size_t height, size_t block_width, size_t block_height);
+
+		void CalculateDCTMatrix(float *dct_mat);
+
+		void CalculateiDCTMatrix(float *idct_mat);
 	}
 }
 

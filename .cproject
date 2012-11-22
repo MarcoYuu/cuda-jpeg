@@ -24,7 +24,7 @@
 						<toolChain id="com.nvidia.cuda.tools.toolchain.exe.debug.439122026" name="CUDA Toolkit 5.0" resourceTypeBasedDiscovery="true" superClass="com.nvidia.cuda.tools.toolchain.exe.debug">
 							<targetPlatform archList="all" binaryParser="com.nvidia.cuda.ide.elf;com.nvidia.cuda.ide.macho;com.nvidia.cuda.ide.cubin" id="com.nvidia.cuda.ide.targetPlatform.1517773683" isAbstract="false" name="デバッグ・プラットフォーム" osList="linux,macosx" superClass="com.nvidia.cuda.ide.targetPlatform"/>
 							<builder buildPath="${workspace_loc:/cuda_jpeg/Debug}" id="com.nvidia.cuda.ide.builder.328615413" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CUDA Toolkit 5.0 Builder" superClass="com.nvidia.cuda.ide.builder"/>
-							<tool command="nvcc -DDEBUG" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="nvcc.compiler.base.1484664795" name="nvcc compiler" superClass="nvcc.compiler.base">
+							<tool command="nvcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="nvcc.compiler.base.1484664795" name="nvcc compiler" superClass="nvcc.compiler.base">
 								<option id="nvcc.compiler.deviceDebug.179162154" name="Generate device debug information (-G)" superClass="nvcc.compiler.deviceDebug" value="true" valueType="boolean"/>
 								<option id="nvcc.compiler.option.level.972364413" name="Generate host debug information (-g)" superClass="nvcc.compiler.option.level" value="true" valueType="boolean"/>
 								<option defaultValue="nvcc.compiler.optimization.level.none" id="nvcc.compiler.optimization.level.887348094" name="最適化レベル" superClass="nvcc.compiler.optimization.level" valueType="enumerated"/>
@@ -65,9 +65,9 @@
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="com.nvidia.cuda.ide.build.project.ICudaProjectConfiguration">
-				<executable devicelink="true">
-					<ptx major="2" minor="0"/>
+				<executable devicelink="false">
 					<sass major="2" minor="1"/>
+					<ptx major="2" minor="0"/>
 				</executable>
 				<editor-arch major="2" minor="1"/>
 			</storageModule>
@@ -156,39 +156,104 @@
 				</externalSettings>
 			</storageModule>
 			<storageModule moduleId="com.nvidia.cuda.ide.build.project.ICudaProjectConfiguration">
-				<executable devicelink="true">
+				<executable devicelink="false">
+					<sass major="1" minor="0"/>
 					<sass major="2" minor="1"/>
+					<ptx major="1" minor="0"/>
 					<ptx major="2" minor="0"/>
 				</executable>
 				<editor-arch major="2" minor="1"/>
 			</storageModule>
 			<storageModule atk="false" atkmm-1.6="false" banshee-collection-indexer="false" banshee-core="false" banshee-hyena="false" banshee-hyena-data-sqlite="false" banshee-hyena-gui="false" banshee-lastfm="false" banshee-lastfm-gui="false" banshee-mono-media="false" banshee-musicbrainz="false" banshee-nowplaying="false" banshee-services="false" banshee-thickclient="false" banshee-webbrowser="false" cairo="false" cairo-fc="false" cairo-ft="false" cairo-gobject="false" cairo-pdf="false" cairo-png="false" cairo-ps="false" cairo-svg="false" cairo-xcb="false" cairo-xcb-shm="false" cairo-xlib="false" cairo-xlib-xrender="false" cairomm-1.0="false" cairomm-ft-1.0="false" cairomm-pdf-1.0="false" cairomm-png-1.0="false" cairomm-ps-1.0="false" cairomm-svg-1.0="false" cairomm-xlib-1.0="false" cairomm-xlib-xrender-1.0="false" compositeproto="false" damageproto="false" dbus-python="false" dri="false" fixesproto="false" fontconfig="false" fontutil="false" freetype2="false" gdk-2.0="false" gdk-3.0="false" gdk-pixbuf-2.0="false" gdk-pixbuf-xlib-2.0="false" gdk-x11-2.0="false" gdk-x11-3.0="false" gdkmm-2.4="false" gdkmm-3.0="false" ginn="false" gio-2.0="false" gio-unix-2.0="false" giomm-2.4="false" gl="false" glew="false" glib-2.0="false" glibmm-2.4="false" glibmm-utils="false" glu="false" gmodule-2.0="false" gmodule-export-2.0="false" gmodule-no-export-2.0="false" gnome-icon-theme="false" gobject-2.0="false" gstreamer-0.10="false" gstreamer-app-0.10="false" gstreamer-audio-0.10="false" gstreamer-base-0.10="false" gstreamer-cdda-0.10="false" gstreamer-check-0.10="false" gstreamer-controller-0.10="false" gstreamer-dataprotocol-0.10="false" gstreamer-fft-0.10="false" gstreamer-floatcast-0.10="false" gstreamer-interfaces-0.10="false" gstreamer-net-0.10="false" gstreamer-netbuffer-0.10="false" gstreamer-pbutils-0.10="false" gstreamer-plugins-base-0.10="false" gstreamer-riff-0.10="false" gstreamer-rtp-0.10="false" gstreamer-rtsp-0.10="false" gstreamer-sdp-0.10="false" gstreamer-tag-0.10="false" gstreamer-video-0.10="false" gstreamermm-0.10="false" gthread-2.0="false" gtkmm-2.4="false" gtkmm-3.0="false" gtkmm-utils="false" gtkplus-2.0="false" gtkplus-3.0="false" gtkplus-unix-print-2.0="false" gtkplus-unix-print-3.0="false" gtkplus-x11-2.0="false" gtkplus-x11-3.0="false" ibus-table="false" ice="false" inputproto="false" iso-codes="false" kbproto="false" libavcodec="false" libavformat="false" libavutil="false" libcrypto="false" libdrm="false" libdrm_intel="false" libdrm_nouveau="false" libdrm_radeon="false" libgdiplus="false" libkms="false" libpng="false" libpng12="false" libssl="false" libswscale="false" libxml-2.0="false" libxmlplusplus-2.6="false" m17n-db="false" mobile-broadband-provider-info="false" moduleId="packages" nautilus-sendto="false" notify-python="false" opencv="true" openssl="false" pango="false" pangocairo="false" pangoft2="false" pangomm-1.4="false" pangox="false" pangoxft="false" pixman-1="false" pm-utils="false" pthread-stubs="false" pygtksourceview-2.0="false" python="false" python-2.7="false" randrproto="false" renderproto="false" shared-mime-info="false" sigcplusplus-2.0="false" sm="false" tomboy-addins="false" udev="false" udisks="false" usbutils="false" x11="false" xau="false" xbitmaps="false" xcb="false" xcb-render="false" xcb-shm="false" xcomposite="false" xcursor="false" xdamage="false" xdmcp="false" xext="false" xextproto="false" xfixes="false" xft="false" xi="false" xinerama="false" xineramaproto="false" xorg-sgml-doctools="false" xorg-wacom="false" xproto="false" xrandr="false" xrender="false" xt="false" xtrans="false" yelp-xsl="false" zeitgeist-daemon="false" zlib="false"/>
 		</cconfiguration>
+		<cconfiguration id="com.nvidia.cuda.ide.configuration.debug.1580856681">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.nvidia.cuda.ide.configuration.debug.1580856681" moduleId="org.eclipse.cdt.core.settings" name="Debug">
+				<externalSettings/>
+				<extensions>
+					<extension id="com.nvidia.cuda.ide.cubin" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="com.nvidia.cuda.ide.elf" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="com.nvidia.cuda.ide.macho" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="nvcc.errorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="com.nvidia.cuda.ide.configuration.debug.1580856681" name="Debug" parent="com.nvidia.cuda.ide.configuration.debug">
+					<folderInfo id="com.nvidia.cuda.ide.configuration.debug.1580856681." name="/" resourcePath="">
+						<toolChain id="com.nvidia.cuda.tools.toolchain.exe.debug.1094289530" name="CUDA Toolkit 5.0" superClass="com.nvidia.cuda.tools.toolchain.exe.debug">
+							<targetPlatform archList="all" binaryParser="com.nvidia.cuda.ide.elf;com.nvidia.cuda.ide.macho;com.nvidia.cuda.ide.cubin" id="com.nvidia.cuda.ide.targetPlatform.1765750851" isAbstract="false" name="デバッグ・プラットフォーム" osList="linux,macosx" superClass="com.nvidia.cuda.ide.targetPlatform"/>
+							<builder buildPath="${workspace_loc:/cuda_jpeg-0.2/Debug}" id="com.nvidia.cuda.ide.builder.2111440841" managedBuildOn="true" name="CUDA Toolkit 5.0 Builder.Debug" superClass="com.nvidia.cuda.ide.builder"/>
+							<tool id="nvcc.compiler.base.1169254156" name="nvcc compiler" superClass="nvcc.compiler.base">
+								<option id="nvcc.compiler.deviceDebug.1108764544" superClass="nvcc.compiler.deviceDebug" value="true" valueType="boolean"/>
+								<option id="nvcc.compiler.option.level.113900352" superClass="nvcc.compiler.option.level" value="true" valueType="boolean"/>
+								<option defaultValue="nvcc.compiler.optimization.level.none" id="nvcc.compiler.optimization.level.1652396644" superClass="nvcc.compiler.optimization.level" valueType="enumerated"/>
+								<option id="nvcc.compiler.pic.653061970" superClass="nvcc.compiler.pic"/>
+								<inputType id="nvcc.compiler.input.cu.298740304" superClass="nvcc.compiler.input.cu"/>
+								<inputType id="nvcc.compiler.input.cpp.31450810" superClass="nvcc.compiler.input.cpp"/>
+								<inputType id="nvcc.compiler.input.c.662278358" superClass="nvcc.compiler.input.c"/>
+							</tool>
+							<tool id="nvcc.linker.base.969828767" name="NVCC Linker" superClass="nvcc.linker.base">
+								<inputType id="nvcc.linker.input.303376823" superClass="nvcc.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="nvcc.archiver.base.1887997701" name="NVCC Archiver" superClass="nvcc.archiver.base"/>
+							<tool id="com.nvidia.host.assembler.1176066371" name="Host Assembler" superClass="com.nvidia.host.assembler">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.597446008" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="com.nvidia.cuda.ide.build.project.ICudaProjectConfiguration">
+				<executable devicelink="false">
+					<sass major="1" minor="0"/>
+					<sass major="2" minor="1"/>
+					<ptx major="1" minor="0"/>
+					<ptx major="2" minor="0"/>
+				</executable>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="cuda_jpeg.com.nvidia.cuda.ide.exe.1585026865" name="実行可能" projectType="com.nvidia.cuda.ide.exe"/>
+		<project id="cuda_jpeg-0.2.com.nvidia.cuda.ide.exe.1384829495" name="実行可能" projectType="com.nvidia.cuda.ide.exe"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="1">
 		<resource resourceType="PROJECT" workspacePath="/cuda_jpeg"/>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.cpp.220799909">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.cpp.637445117">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.cu.632062340">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.c.411805777">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.cu.870514610">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.1580856681;com.nvidia.cuda.ide.configuration.debug.1580856681.;nvcc.compiler.base.1169254156;nvcc.compiler.input.cu.298740304">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.cu.632062340">
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.1580856681;com.nvidia.cuda.ide.configuration.debug.1580856681.;nvcc.compiler.base.1169254156;nvcc.compiler.input.cpp.31450810">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.cpp.637445117">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.cpp.220799909">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.826797892;com.nvidia.cuda.ide.configuration.debug.826797892.;nvcc.compiler.base.1484664795;nvcc.compiler.input.c.44154797">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.release.654051710;com.nvidia.cuda.ide.configuration.release.654051710.;nvcc.compiler.base.61230537;nvcc.compiler.input.cu.870514610">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.nvidia.cuda.ide.configuration.debug.1580856681;com.nvidia.cuda.ide.configuration.debug.1580856681.;nvcc.compiler.base.1169254156;nvcc.compiler.input.c.662278358">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
