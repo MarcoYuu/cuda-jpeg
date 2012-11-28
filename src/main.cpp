@@ -11,39 +11,43 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "utils/debug_log.h"
+
+#include "jpeg/cpu/cpu_jpeg.h"
 #include "jpeg/cuda/cuda_jpeg.cuh"
+#include "jpeg/ohmura/gpu_jpeg.cuh"
+
+using namespace std;
+using namespace util;
 
 void parse_arg(int argc, char *argv[]);
-//void cpu_exec(const std::string &file_name, const std::string &out_file_name);
-//void gpu_exec(const std::string &file_name, const std::string &out_file_name);
-void cuda_exec(const std::string &file_name, const std::string &out_file_name, size_t block_width,
-	size_t block_height);
+void cpu_main(const string &file_name, const string &out_file_name);
+void gpu_main(const string &file_name, const string &out_file_name);
+void cuda_main(const string &file_name, const string &out_file_name, size_t block_width, size_t block_height);
 
-std::string program_name;
-std::string infile_name;
-std::string outfile_name;
+string program_name;
+string infile_name;
+string outfile_name;
 size_t block_width = 32;
 size_t block_height = 32;
 
 int main(int argc, char *argv[]) {
 	parse_arg(argc, argv);
 
-	//cpu_exec(file_name, out_file_name);
-	//gpu_exec(file_name, out_file_name);
-	cuda_exec(infile_name, outfile_name, block_width, block_height);
+	cpu_main(infile_name, outfile_name);
+	gpu_main(infile_name, outfile_name);
+	cuda_main(infile_name, outfile_name, block_width, block_height);
 
 	return 0;
 }
 
 // コマンドライン引数解析
-// command <input_filename> [output_filename] [-b <block_width> <block_height>]
+// command <input_filename> [output_filename] [-b <block_width> <block_height>] [-log <true|false>] [-logfile <true|false>]
 // command <-h | --help>
 void parse_arg(int argc, char *argv[]) {
 	program_name = argv[0];
-	std::cout << "program_name: " << program_name << std::endl;
-
 	if (argc == 1) {
-		std::cout << "Please input source file." << std::endl;
+		cout << "Please input source file." << endl;
 		exit(0);
 	}
 
@@ -51,26 +55,39 @@ void parse_arg(int argc, char *argv[]) {
 	outfile_name = argv[1];
 
 	for (int i = 2; i < argc; ++i) {
-		std::string arg(argv[i]);
+		string arg(argv[i]);
 		if (arg == "-h" || arg == "--help") {
-			std::cout
-				<< "command <input_filename> [output_filename] [-b <block_width> <block_height>]\n"
-					"command <-h | --help>" << std::endl;
+			cout << "command "
+				"<input_filename> "
+				"[output_filename] "
+				"[-b <block_width> <block_height>] "
+				"[-log <true|false>] "
+				"[-logfile <true|false>]"
+				"\n"
+				"command <-h | --help>" << endl;
 			exit(0);
 		} else if (arg == "-b") {
 			if (argc - (i + 1) < 2) {
-				std::cout << "Please input block size." << std::endl;
+				cout << "Please input block size." << endl;
 				exit(0);
 			}
 			block_width = boost::lexical_cast<size_t>(argv[++i]);
 			block_height = boost::lexical_cast<size_t>(argv[++i]);
+		} else if (arg == "-log") {
+			string subarg(argv[++i]);
+			bool flag = false;
+			if (subarg == "true")
+				flag = true;
+			DebugLog::enablePrint(flag);
+		} else if (arg == "-logfile") {
+			string subarg(argv[++i]);
+			bool flag = false;
+			if (subarg == "true")
+				flag = true;
+			DebugLog::enableExport(flag);
 		} else {
 			outfile_name = argv[i];
 		}
 	}
-	std::cout << "infile_name: " << infile_name << std::endl;
-	std::cout << "outfile_name: " << outfile_name << std::endl;
-	std::cout << "block_width: " << block_width << std::endl;
-	std::cout << "block_height: " << block_height << std::endl;
 }
 

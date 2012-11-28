@@ -19,6 +19,21 @@ namespace util {
 		virtual double getTimeInSeconds() const = 0;
 	};
 
+	class Watch {
+	public:
+		typedef std::vector<double> LapList;
+		virtual ~Watch() {
+		}
+		virtual void start() =0;
+		virtual void stop() =0;
+		virtual void lap() =0;
+		virtual void clear() =0;
+
+		virtual size_t getLapCount() const =0;
+		virtual double getTotalTime() const =0;
+		virtual double getLastElapsedTime() const =0;
+		virtual const LapList& getLapList() const =0;
+	};
 	//-----------------------------------------------------------------------------------------------
 	// StopWatch :stopではラップは刻まれないlap->stopで。
 	//-----------------------------------------------------------------------------------------------
@@ -28,9 +43,8 @@ namespace util {
 	 * @author yuumomma
 	 * @version 1.0
 	 */
-	class StopWatch {
+	class StopWatch: public Watch {
 	public:
-		typedef std::vector<double> LapList;
 		/**
 		 * 時間計測に用いる手法の選択フラグ
 		 * -CPU_OPTIMUM:WindowsとLinuxでそれなりに精度の高いもの
@@ -49,7 +63,7 @@ namespace util {
 		 * @param mode モード
 		 * @sa StopWatch::Mode
 		 */
-		explicit StopWatch(Mode mode);
+		explicit StopWatch(Mode mode = CPU_OPTIMUM);
 		/**
 		 * デストラクタ
 		 */
@@ -101,6 +115,6 @@ namespace util {
 		impl *m_impl;
 
 		StopWatch(StopWatch &rhs);
-		void operator=(StopWatch);
+		void operator=(StopWatch &);
 	};
 } // namespace util

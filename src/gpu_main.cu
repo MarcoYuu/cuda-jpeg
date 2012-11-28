@@ -13,7 +13,7 @@
 #include "utils/cuda/cuda_timer.h"
 #include "utils/cuda/cuda_memory.hpp"
 
-void gpu_exec(const std::string &file_name, const std::string &out_file_name) {
+void gpu_main(const std::string &file_name, const std::string &out_file_name) {
 	using namespace std;
 	using namespace util;
 	using namespace util::cuda;

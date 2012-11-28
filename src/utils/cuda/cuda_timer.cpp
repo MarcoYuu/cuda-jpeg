@@ -59,7 +59,7 @@ namespace util {
 			cudaEventCreate(&m_end);
 		}
 
-		int CudaStopWatch::getLapCount() const {
+		size_t CudaStopWatch::getLapCount() const {
 			return m_lap.size();
 		}
 

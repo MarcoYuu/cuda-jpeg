@@ -17,7 +17,7 @@ using namespace jpeg;
 //----------------------------------------------------------------------------
 // CPU Jpeg圧縮テストルーチン
 //============================================================================
-void cpu_exec(const std::string &file_name, const std::string &out_file_name) {
+void cpu_main(const std::string &file_name, const std::string &out_file_name) {
 	StopWatch watch(StopWatch::CPU_OPTIMUM);
 
 	// 画像データを読み出し

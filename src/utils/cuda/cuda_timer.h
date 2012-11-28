@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <cuda_runtime.h>
+#include "../timer.h"
 
 namespace util {
 	namespace cuda {
@@ -24,10 +25,8 @@ namespace util {
 		 * @author yuumomma
 		 * @version 1.0
 		 */
-		class CudaStopWatch {
+		class CudaStopWatch: public Watch {
 		public:
-			typedef std::vector<double> LapList;
-
 			/**
 			 * コンストラクタ
 			 */
@@ -58,7 +57,7 @@ namespace util {
 			 * 記録されているラップカウント数を返す
 			 * @return ラップ数
 			 */
-			int getLapCount() const;
+			size_t getLapCount() const;
 			/**
 			 * 現在までの総経過時間を取得する
 			 * @return
