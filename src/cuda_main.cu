@@ -20,7 +20,7 @@
 #include "utils/cuda/cuda_memory.hpp"
 
 template<class CudaMemory>
-struct BlockExport {
+struct BlockExport: public util::DebugLog::OutputFormat {
 private:
 	const size_t size_;
 	CudaMemory &yuv_;
@@ -31,7 +31,7 @@ public:
 		yuv_(yuv) {
 
 	}
-	void operator()(std::ofstream& ofs) {
+	void operator()(std::ofstream& ofs) const {
 		yuv_.sync_to_host();
 		ofs << yuv_.size() << std::endl;
 		for (int i = 0; i < yuv_.size(); ++i) {
@@ -71,7 +71,8 @@ void CalcurateMatrixTest() {
 	}
 }
 
-void cuda_main(const std::string &file_name, const std::string &out_file_name, size_t block_width, size_t block_height) {
+void cuda_main(const std::string &file_name, const std::string &out_file_name, size_t block_width, size_t block_height,
+	int quarity) {
 	using namespace std;
 	using namespace util;
 	using namespace util::cuda;
@@ -96,11 +97,13 @@ void cuda_main(const std::string &file_name, const std::string &out_file_name, s
 	DebugLog::log("outfile_name: " + out_file_name);
 	DebugLog::log("block_width: " + boost::lexical_cast<string>(block_width));
 	DebugLog::log("block_height: " + boost::lexical_cast<string>(block_height));
+	DebugLog::log("quarity: " + boost::lexical_cast<string>(quarity));
 
 	DeviceByteBuffer encode_src((byte*) (source.getRawData()), width * height * 3);
+	CudaTable encode_table(width * height);
 	CudaByteBuffer encode_yuv_result(width * height * 3 / 2);
 	CudaIntBuffer encode_dct_result(width * height * 3 / 2);
-	CudaTable encode_table(width * height);
+	CudaIntBuffer encode_qua_result(width * height * 3 / 2);
 	{
 		DebugLog::startSubSection("Encode");
 
@@ -115,9 +118,14 @@ void cuda_main(const std::string &file_name, const std::string &out_file_name, s
 
 		DebugLog::startLoggingTime("DiscreteCosineTransform");
 		DiscreteCosineTransform(encode_yuv_result, encode_dct_result);
-		encode_dct_result.sync_to_host();
 		DebugLog::endLoggingTime();
 		DebugLog::exportToFile("encode_dct_result.txt", BlockExport<CudaIntBuffer>(encode_dct_result, BLOCK_SIZE));
+
+		DebugLog::startLoggingTime("ZigzagQuantize");
+		ZigzagQuantize(encode_dct_result, encode_qua_result, quarity);
+		encode_qua_result.sync_to_host();
+		DebugLog::endLoggingTime();
+		DebugLog::exportToFile("encode_qua_result.txt", BlockExport<CudaIntBuffer>(encode_qua_result, BLOCK_SIZE));
 
 		DebugLog::printTotalTime();
 		DebugLog::endSubSection();
@@ -127,6 +135,7 @@ void cuda_main(const std::string &file_name, const std::string &out_file_name, s
 
 	BitmapCVUtil bmp(BLOCK_WIDTH, BLOCK_HEIGHT, 8, source.getBytePerPixel());
 	CudaTable decode_table(BLOCK_WIDTH * BLOCK_HEIGHT);
+	CudaIntBuffer decode_qua_src(BLOCK_WIDTH * BLOCK_HEIGHT * 3 / 2);
 	CudaIntBuffer decode_dct_src(BLOCK_WIDTH * BLOCK_HEIGHT * 3 / 2);
 	CudaByteBuffer decode_yuv_src(BLOCK_WIDTH * BLOCK_HEIGHT * 3 / 2);
 	CudaByteBuffer decode_result(BLOCK_WIDTH * BLOCK_HEIGHT * 3);
@@ -139,8 +148,14 @@ void cuda_main(const std::string &file_name, const std::string &out_file_name, s
 
 		for (int i = 0; i < width / BLOCK_WIDTH * height / BLOCK_HEIGHT; ++i) {
 			string index = boost::lexical_cast<string>(i);
+
 			DebugLog::log("copy block memory.");
-			decode_dct_src.write_device(encode_dct_result.host_data() + i * decode_dct_src.size(), decode_dct_src.size());
+			decode_qua_src.write_device(encode_qua_result.host_data() + i * decode_qua_src.size(), decode_qua_src.size());
+			DebugLog::exportToFile("decode_qua_src" + index + ".txt", BlockExport<CudaIntBuffer>(decode_qua_src, BLOCK_SIZE));
+
+			DebugLog::startLoggingTime("InverseZigzagQuantize");
+			InverseZigzagQuantize(decode_qua_src, decode_dct_src, quarity);
+			DebugLog::endLoggingTime();
 			DebugLog::exportToFile("decode_dct_src" + index + ".txt", BlockExport<CudaIntBuffer>(decode_dct_src, BLOCK_SIZE));
 
 			DebugLog::startLoggingTime("InverseDiscreteCosineTransform");
@@ -154,7 +169,11 @@ void cuda_main(const std::string &file_name, const std::string &out_file_name, s
 			decode_result.copy_to_host((byte*) (bmp.getRawData()), decode_result.size());
 			DebugLog::endLoggingTime();
 
-			bmp.saveToFile("cuda_" + index + "_" + out_file_name);
+			string outname = "cuda_" + index + "_" + boost::lexical_cast<string>(quarity) + "_" + out_file_name;
+
+			DebugLog::log("export to file :" + outname);
+
+			bmp.saveToFile(outname);
 		}
 		DebugLog::printTotalTime();
 		DebugLog::endSubSection();

@@ -75,7 +75,7 @@ namespace jpeg {
 					99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
 					99, 99, 99, 99, 99, 99, 99, 99, 99, 99 };
 
-				__device__ __constant__ static const int* YUV[] = { luminance, component };
+				__device__ __constant__ static const int* YUV[] = { luminance, luminance, component };
 			} // namespace Quantize
 
 			/**
@@ -270,35 +270,63 @@ namespace jpeg {
 			}
 
 			// (dct_coefficient.size() / 64 / 3, 3, 1) (8,8,1)
-			__global__ void ZigzagQuantizeLow(const int *dst_coefficient, int *quantized, int quariry) {
+			__global__ void ZigzagQuantizeLow(const int *dst_coefficient, int *quantized, float quariry) {
+				using Quantize::YUV;
+				using Zigzag::sequence;
+
 				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * (blockIdx.x + blockDim.x * blockIdx.y);
-				quantized[start_index + Zigzag::sequence[local_index]] = dst_coefficient[start_index + local_index]
-					/ (255 - ((255 - Quantize::YUV[blockIdx.y / 2][local_index]) * (100 + quariry) / 100));
+				int start_index = 64 * (blockIdx.x + gridDim.x * blockIdx.y);
+				quantized[start_index + sequence[local_index]] = dst_coefficient[start_index + local_index]
+					/ ((255.0f - ((255.0f - YUV[blockIdx.y][local_index]) * (1.0f + quariry))));
 			}
 
 			// (dct_coefficient.size() / 64 / 3, 3, 1) (8,8,1)
-			__global__ void ZigzagQuantizeHigh(const int *dst_coefficient, int *quantized, int quariry) {
+			__global__ void InverseZigzagQuantizeLow(const int *dst_quantized, int *coefficient, float quariry) {
+				using Quantize::YUV;
+				using Zigzag::sequence;
+
 				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * (blockIdx.x + blockDim.x * blockIdx.y);
-				quantized[start_index + Zigzag::sequence[local_index]] = dst_coefficient[start_index + local_index]
-					/ Quantize::YUV[blockIdx.y / 2][local_index] * (100 - quariry);
+				int start_index = 64 * (blockIdx.x + gridDim.x * blockIdx.y);
+				coefficient[start_index + local_index] = dst_quantized[start_index + sequence[local_index]]
+					* ((255.0f - ((255.0f - YUV[blockIdx.y][local_index]) * (1.0f + quariry))));
+			}
+			// (dct_coefficient.size() / 64 / 3, 3, 1) (8,8,1)
+			__global__ void ZigzagQuantizeHigh(const int *dst_coefficient, int *quantized, float quarity) {
+				using Quantize::YUV;
+				using Zigzag::sequence;
+
+				int local_index = threadIdx.x + threadIdx.y * 8;
+				int start_index = 64 * (blockIdx.x + gridDim.x * blockIdx.y);
+				quantized[start_index + sequence[local_index]] = dst_coefficient[start_index + local_index]
+					/ (YUV[blockIdx.y][local_index] * (1.0f - quarity));
 			}
 
 			// (dct_coefficient.size() / 64 / 3, 3, 1) (8,8,1)
-			__global__ void InverseZigzagQuantizeLow(const int *dst_quantized, int *coefficient, int quariry) {
+			__global__ void InverseZigzagQuantizeHigh(const int *dst_quantized, int *coefficient, float quarity) {
+				using Quantize::YUV;
+				using Zigzag::sequence;
+
 				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * (blockIdx.x + blockDim.x * blockIdx.y);
-				coefficient[start_index + local_index] = dst_quantized[start_index + Zigzag::sequence[local_index]]
-					/ (255 - ((255 - Quantize::YUV[blockIdx.y / 2][Zigzag::sequence[local_index]]) * (100 + quariry) / 100));
+				int start_index = 64 * (blockIdx.x + gridDim.x * blockIdx.y);
+				coefficient[start_index + local_index] = dst_quantized[start_index + sequence[local_index]]
+					* (YUV[blockIdx.y][local_index] * (1.0f - quarity));
+			}
+			// (dct_coefficient.size() / 64 / 3, 3, 1) (8,8,1)
+			__global__ void ZigzagQuantizeMax(const int *dst_coefficient, int *quantized) {
+				using Zigzag::sequence;
+
+				int local_index = threadIdx.x + threadIdx.y * 8;
+				int start_index = 64 * (blockIdx.x + gridDim.x * blockIdx.y);
+				quantized[start_index + sequence[local_index]] = dst_coefficient[start_index + local_index];
 			}
 
 			// (dct_coefficient.size() / 64 / 3, 3, 1) (8,8,1)
-			__global__ void InverseZigzagQuantizeHigh(const int *dst_quantized, int *coefficient, int quariry) {
+			__global__ void InverseZigzagQuantizeMax(const int *dst_quantized, int *coefficient) {
+				using Zigzag::sequence;
+
 				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * (blockIdx.x + blockDim.x * blockIdx.y);
-				coefficient[start_index + local_index] = dst_quantized[start_index + Zigzag::sequence[local_index]]
-					/ Quantize::YUV[blockIdx.y / 2][Zigzag::sequence[local_index]] * (100 - quariry);
+				int start_index = 64 * (blockIdx.x + gridDim.x * blockIdx.y);
+				coefficient[start_index + local_index] = dst_quantized[start_index + sequence[local_index]];
 			}
 		} // namespace kernel
 
@@ -379,12 +407,18 @@ namespace jpeg {
 			// grid (1, 8x8ブロック)
 			const dim3 block(8, 8, 1);
 
-			if (quarity < 50) {
+			if (quarity < 0) {
 				kernel::ZigzagQuantizeLow<<<grid,block>>>(
-					dct_coefficient.device_data(), quantized.device_data(), quarity);
-			} else {
+					dct_coefficient.device_data(), quantized.device_data(), -1.0f);
+			} else if (quarity < 50) {
+				kernel::ZigzagQuantizeLow<<<grid,block>>>(
+					dct_coefficient.device_data(), quantized.device_data(), (quarity - 50.0f) / 50.0f);
+			} else if (quarity < 100) {
 				kernel::ZigzagQuantizeHigh<<<grid,block>>>(
-					dct_coefficient.device_data(), quantized.device_data(), quarity);
+					dct_coefficient.device_data(), quantized.device_data(), (quarity - 50.0f) / 50.0f);
+			} else {
+				kernel::ZigzagQuantizeMax<<<grid,block>>>(
+					dct_coefficient.device_data(), quantized.device_data());
 			}
 		}
 
@@ -394,12 +428,18 @@ namespace jpeg {
 			// grid (1, 8x8ブロック)
 			const dim3 block(8, 8, 1);
 
-			if (quarity < 50) {
+			if (quarity < 0) {
 				kernel::InverseZigzagQuantizeLow<<<grid,block>>>(
-					quantized.device_data(), dct_coefficient.device_data(), quarity);
-			} else {
+					quantized.device_data(), dct_coefficient.device_data(), -1.0f);
+			} else if (quarity < 50) {
+				kernel::InverseZigzagQuantizeLow<<<grid,block>>>(
+					quantized.device_data(), dct_coefficient.device_data(), (quarity - 50.0f) / 50.0f);
+			} else if (quarity < 100) {
 				kernel::InverseZigzagQuantizeHigh<<<grid,block>>>(
-					quantized.device_data(), dct_coefficient.device_data(), quarity);
+					quantized.device_data(), dct_coefficient.device_data(), (quarity - 50.0f) / 50.0f);
+			} else {
+				kernel::InverseZigzagQuantizeMax<<<grid,block>>>(
+					quantized.device_data(), dct_coefficient.device_data());
 			}
 		}
 

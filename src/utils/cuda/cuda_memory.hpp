@@ -10,6 +10,7 @@
 
 #include <cuda_runtime.h>
 #include <cstdlib>
+#include <cstring>
 #include <cassert>
 
 namespace util {

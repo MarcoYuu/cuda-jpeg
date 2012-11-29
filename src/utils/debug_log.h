@@ -35,7 +35,7 @@ namespace util {
 		static void dump_memory(void* data, size_t data_size, const std::string &filename);
 
 		template<class OutputFormat>
-		static void exportToFile(const std::string &file_name, OutputFormat format) {
+		static void exportToFile(const std::string &file_name, const OutputFormat &format) {
 			if (!isExport())
 				return;
 			std::ofstream ofs(file_name.c_str());
@@ -43,7 +43,7 @@ namespace util {
 		}
 
 		struct OutputFormat {
-			virtual void operator()(std::ofstream&) =0;
+			virtual void operator()(std::ofstream&) const =0;
 		};
 
 	private:
