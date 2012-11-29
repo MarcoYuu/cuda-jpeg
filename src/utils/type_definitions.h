@@ -16,6 +16,6 @@ namespace util {
 
 	typedef std::vector<byte> ByteBuffer;
 	typedef std::vector<int> IntBuffer;
-}  // namespace util
+} // namespace util
 
 #endif /* CUDA_JPEG_TYPES_H_ */

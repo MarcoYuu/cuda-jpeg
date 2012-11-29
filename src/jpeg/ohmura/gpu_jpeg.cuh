@@ -18,7 +18,7 @@ namespace jpeg {
 		using namespace util;
 
 		/**
-		 * Jpeg圧縮用の変数まとめクラス
+		 * @brief Jpeg圧縮用の変数まとめクラス
 		 *
 		 * @author yuumomma
 		 * @version 1.0
@@ -80,8 +80,7 @@ namespace jpeg {
 			}
 
 			size_t available_size() const {
-				return status()[blocks() - 1].byte_pos_
-					+ (status()[blocks() - 1].bit_pos_ == 7 ? 0 : 1);
+				return status()[blocks() - 1].byte_pos_ + (status()[blocks() - 1].bit_pos_ == 7 ? 0 : 1);
 			}
 		};
 
@@ -89,7 +88,7 @@ namespace jpeg {
 		// GPUエンコーダ
 		// =========================================================================
 		/**
-		 * エンコーダ
+		 * @brief エンコーダ
 		 *
 		 * @author yuumomma
 		 * @version 1.0
@@ -131,8 +130,7 @@ namespace jpeg {
 			 * @param num_bits 各MCUのビット数
 			 * @return エンコードされたサイズ
 			 */
-			size_t encode(const byte *rgb_data, JpegOutBitStream &out_bit_stream,
-				ByteBuffer &num_bits);
+			size_t encode(const byte *rgb_data, JpegOutBitStream &out_bit_stream, ByteBuffer &num_bits);
 
 		private:
 			size_t width_;
@@ -176,7 +174,7 @@ namespace jpeg {
 		// GPUデコーダ
 		// =========================================================================
 		/**
-		 * Jpegデコーダ
+		 * @brief Jpegデコーダ
 		 *
 		 * @author yuumomma
 		 * @version 1.0
@@ -284,8 +282,8 @@ namespace jpeg {
 		//-------------------------------------------------------------------
 		// Huffman Coding
 		//-------------------------------------------------------------------
-		__global__ void gpu_huffman_mcu(int *src_qua, jpeg::ohmura::OutBitStreamState *mOBSP,
-			byte *mBufP, byte *mEndOfBufP, int sizeX, int sizeY);
+		__global__ void gpu_huffman_mcu(int *src_qua, jpeg::ohmura::OutBitStreamState *mOBSP, byte *mBufP,
+			byte *mEndOfBufP, int sizeX, int sizeY);
 
 		//完全逐次処理、CPUで行った方が圧倒的に速い
 		void cpu_huffman_middle(jpeg::ohmura::OutBitStreamState *ImOBSP, int sizeX, int sizeY,
@@ -293,12 +291,12 @@ namespace jpeg {
 
 		//排他処理のため3つに分ける
 		//1MCUは最小4bit(EOBのみ)なので1Byteのバッファに最大3MCUが競合する。だから3つに分ける。
-		__global__ void gpu_huffman_write_devide0(jpeg::ohmura::OutBitStreamState *mOBSP,
-			byte *mBufP, byte *OmBufP, int sizeX, int sizeY);
-		__global__ void gpu_huffman_write_devide1(jpeg::ohmura::OutBitStreamState *mOBSP,
-			byte *mBufP, byte *OmBufP, int sizeX, int sizeY);
-		__global__ void gpu_huffman_write_devide2(jpeg::ohmura::OutBitStreamState *mOBSP,
-			byte *mBufP, byte *OmBufP, int sizeX, int sizeY);
+		__global__ void gpu_huffman_write_devide0(jpeg::ohmura::OutBitStreamState *mOBSP, byte *mBufP,
+			byte *OmBufP, int sizeX, int sizeY);
+		__global__ void gpu_huffman_write_devide1(jpeg::ohmura::OutBitStreamState *mOBSP, byte *mBufP,
+			byte *OmBufP, int sizeX, int sizeY);
+		__global__ void gpu_huffman_write_devide2(jpeg::ohmura::OutBitStreamState *mOBSP, byte *mBufP,
+			byte *OmBufP, int sizeX, int sizeY);
 	} // namespace gpu
 } // namespace jpeg
 

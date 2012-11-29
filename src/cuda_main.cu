@@ -19,6 +19,12 @@
 #include "utils/cuda/cuda_timer.h"
 #include "utils/cuda/cuda_memory.hpp"
 
+/**
+ * @brief ログファイル出力用
+ *
+ * @author yuumomma
+ * @version 1.0
+ */
 template<class CudaMemory>
 struct BlockExport: public util::DebugLog::OutputFormat {
 private:
@@ -79,7 +85,7 @@ void cuda_main(const std::string &file_name, const std::string &out_file_name, s
 	using namespace jpeg;
 	using namespace jpeg::cuda;
 
-	DebugLog::init(false);
+	DebugLog::initTimer(false);
 
 	// 画像読み込み
 	BitmapCVUtil source(file_name, BitmapCVUtil::RGB_COLOR);
@@ -87,8 +93,8 @@ void cuda_main(const std::string &file_name, const std::string &out_file_name, s
 	const int height = source.getHeight();
 
 	// ブロックサイズ
-	const int BLOCK_WIDTH = block_width;
-	const int BLOCK_HEIGHT = block_height;
+	const int BLOCK_WIDTH = block_width == 0 ? width : block_width;
+	const int BLOCK_HEIGHT = block_height == 0 ? height : block_height;
 	const int BLOCK_SIZE = BLOCK_WIDTH * BLOCK_HEIGHT * 3 / 2;
 
 	DebugLog::startSection("Start CUDA Encoding & Decoding");
@@ -122,7 +128,7 @@ void cuda_main(const std::string &file_name, const std::string &out_file_name, s
 		DebugLog::exportToFile("encode_dct_result.txt", BlockExport<CudaIntBuffer>(encode_dct_result, BLOCK_SIZE));
 
 		DebugLog::startLoggingTime("ZigzagQuantize");
-		ZigzagQuantize(encode_dct_result, encode_qua_result, quarity);
+		ZigzagQuantize(encode_dct_result, encode_qua_result, BLOCK_SIZE, quarity);
 		encode_qua_result.sync_to_host();
 		DebugLog::endLoggingTime();
 		DebugLog::exportToFile("encode_qua_result.txt", BlockExport<CudaIntBuffer>(encode_qua_result, BLOCK_SIZE));
@@ -154,7 +160,7 @@ void cuda_main(const std::string &file_name, const std::string &out_file_name, s
 			DebugLog::exportToFile("decode_qua_src" + index + ".txt", BlockExport<CudaIntBuffer>(decode_qua_src, BLOCK_SIZE));
 
 			DebugLog::startLoggingTime("InverseZigzagQuantize");
-			InverseZigzagQuantize(decode_qua_src, decode_dct_src, quarity);
+			InverseZigzagQuantize(decode_qua_src, decode_dct_src, BLOCK_SIZE, quarity);
 			DebugLog::endLoggingTime();
 			DebugLog::exportToFile("decode_dct_src" + index + ".txt", BlockExport<CudaIntBuffer>(decode_dct_src, BLOCK_SIZE));
 

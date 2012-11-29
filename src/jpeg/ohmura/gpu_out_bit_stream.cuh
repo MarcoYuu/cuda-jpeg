@@ -20,7 +20,7 @@ namespace jpeg {
 		using namespace util;
 
 		/**
-		 * CUDAによる圧縮のMCUごとのステート
+		 * @brief CUDAによる圧縮のMCUごとのステート
 		 *
 		 * @author yuumomma
 		 * @version 1.0
@@ -40,20 +40,21 @@ namespace jpeg {
 			}
 
 			/**
-			 * ストリーム出力
+			 * @brief ストリーム出力
+			 *
 			 * @param os
 			 * @param state
 			 * @return
 			 */
 			friend std::ostream& operator<<(std::ostream& os, const OutBitStreamState& state) {
 				return (os << "{\n" << "_byte_pos	:" << state.byte_pos_ << "\n" << "_bit_pos	:"
-					<< state.bit_pos_ << "\n" << "_writable	:" << state.writable_ << "\n"
-					<< "_num_bits	:" << state.num_bits_ << "\n" << "}\n");
+					<< state.bit_pos_ << "\n" << "_writable	:" << state.writable_ << "\n" << "_num_bits	:"
+					<< state.num_bits_ << "\n" << "}\n");
 			}
 		};
 
 		/**
-		 * 出力バッファ
+		 * @brief 出力バッファ
 		 *
 		 * @author yuumomma
 		 * @version 1.0
@@ -67,7 +68,8 @@ namespace jpeg {
 
 		public:
 			/**
-			 * コンストラクタ
+			 * @brief コンストラクタ
+			 *
 			 * @param buff_size バッファサイズ
 			 */
 			OutBitStreamBuffer(size_t buff_size) :
@@ -80,7 +82,8 @@ namespace jpeg {
 			}
 
 			/**
-			 * リサイズする
+			 * @brief リサイズする
+			 *
 			 * @param size 変更サイズ
 			 * @param force より小さくする際に、現在のバッファを完全に破棄するかどうか
 			 */
@@ -94,14 +97,16 @@ namespace jpeg {
 			}
 
 			/**
-			 * CUDAバッファを取得する
+			 * @brief CUDAバッファを取得する
+			 *
 			 * @return CUDAメモリ
 			 */
 			util::cuda::cuda_memory<byte>& get_stream_buffer() {
 				return head_of_buff_;
 			}
 			/**
-			 * CUDAバッファを取得する
+			 * @brief CUDAバッファを取得する
+			 *
 			 * @return CUDAメモリ
 			 */
 			const util::cuda::cuda_memory<byte>& get_stream_buffer() const {
@@ -109,14 +114,16 @@ namespace jpeg {
 			}
 
 			/**
-			 * デバイスメモリの先頭を取得する
+			 * @brief デバイスメモリの先頭を取得する
+			 *
 			 * @return デバイスメモリの先頭
 			 */
 			byte* head_device() {
 				return write_buff_address_;
 			}
 			/**
-			 * デバイスメモリの先頭を取得する
+			 * @brief デバイスメモリの先頭を取得する
+			 *
 			 * @return デバイスメモリの先頭
 			 */
 			const byte* head_device() const {
@@ -124,14 +131,16 @@ namespace jpeg {
 			}
 
 			/**
-			 * デバイスメモリの末尾を取得する
+			 * @brief デバイスメモリの末尾を取得する
+			 *
 			 * @return デバイスメモリの末尾
 			 */
 			byte* end_device() {
 				return end_of_buff_;
 			}
 			/**
-			 * デバイスメモリの末尾を取得する
+			 * @brief デバイスメモリの末尾を取得する
+			 *
 			 * @return デバイスメモリの末尾
 			 */
 			const byte* end_device() const {
@@ -139,14 +148,15 @@ namespace jpeg {
 			}
 		};
 		/** 余ったビットに1を詰めるためのマスク */__device__
-		           __constant__           static const byte kBitFullMaskT[8] = {
+		                 __constant__                 static const byte kBitFullMaskT[8] = {
 			0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff };
 		/** 余ったビットに1を詰めるためのマスク */__device__
-		           __constant__           static const byte kBitFullMaskLowT[8] = {
+		                 __constant__                 static const byte kBitFullMaskLowT[8] = {
 			0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff };
 
 		/**
-		 * バッファのカウンタをすすめる
+		 * @brief バッファのカウンタをすすめる
+		 *
 		 * @param state マクロブロック毎の書き込み位置と書き込みbit数を記録してある
 		 * @param dst 書き込み先先頭アドレス、一枚のバッファ
 		 * @param end_of_buff バッファの末尾
@@ -159,15 +169,16 @@ namespace jpeg {
 		}
 
 		/**
-		 * 8ビット以下のデータを１つのアドレスに書き込む
+		 * @brief 8ビット以下のデータを１つのアドレスに書き込む
+		 *
 		 * @param state マクロブロック毎の書き込み位置と書き込みbit数を記録してある
 		 * @param dst 書き込み先先頭アドレス、一枚のバッファ
 		 * @param end_of_buff バッファの末尾
 		 * @param value 書き込む値
 		 * @param num_bits 書き込みビット数
 		 */
-		inline __device__ void SetFewBits(OutBitStreamState *state, byte *dst, byte *end_of_buff,
-			byte value, int num_bits) {
+		inline __device__ void SetFewBits(OutBitStreamState *state, byte *dst, byte *end_of_buff, byte value,
+			int num_bits) {
 			// 上位ビットをクリア
 			value &= kBitFullMaskT[num_bits - 1];
 			*(dst + state->byte_pos_) |= value << (state->bit_pos_ + 1 - num_bits);
@@ -178,7 +189,8 @@ namespace jpeg {
 		}
 
 		/**
-		 * 8ビット以下のデータを2つのアドレスに分けて書き込む
+		 * @brief 8ビット以下のデータを2つのアドレスに分けて書き込む
+		 *
 		 * @param state マクロブロック毎の書き込み位置と書き込みbit数を記録してある
 		 * @param dst 書き込み先先頭アドレス、一枚のバッファ
 		 * @param end_of_buff バッファの末尾
@@ -197,15 +209,16 @@ namespace jpeg {
 		}
 
 		/**
-		 * 8ビット以下のデータを書き込む
+		 * @brief 8ビット以下のデータを書き込む
+		 *
 		 * @param state マクロブロック毎の書き込み位置と書き込みbit数を記録してある
 		 * @param dst 書き込み先先頭アドレス、一枚のバッファ
 		 * @param end_of_buff バッファの末尾
 		 * @param value 書き込む値
 		 * @param num_bits 書き込みビット数
 		 */
-		inline __device__ void Set8Bits(OutBitStreamState *state, byte *dst, byte *end_of_buff,
-			byte value, int num_bits) {
+		inline __device__ void Set8Bits(OutBitStreamState *state, byte *dst, byte *end_of_buff, byte value,
+			int num_bits) {
 			if (state->bit_pos_ + 1 >= num_bits) // 現在のバイトに全部入るとき
 				SetFewBits(state, dst, end_of_buff, (byte) value, num_bits);
 			else
@@ -214,7 +227,7 @@ namespace jpeg {
 		}
 
 		/**
-		 * ビット単位で書き込む（最大16ビット）
+		 * @brief ビット単位で書き込む（最大16ビット）
 		 *
 		 * - valueには右詰めでデータが入っている。
 		 * - dstには左詰めで格納する
@@ -229,8 +242,8 @@ namespace jpeg {
 		 * @param value 書き込む値
 		 * @param num_bits 書き込みビット数
 		 */
-		inline __device__ void SetBits(OutBitStreamState *state, byte *dst, byte *end_of_buff,
-			int value, int num_bits) {
+		inline __device__ void SetBits(OutBitStreamState *state, byte *dst, byte *end_of_buff, int value,
+			int num_bits) {
 			if (num_bits == 0)
 				return;
 
@@ -245,7 +258,8 @@ namespace jpeg {
 		// MCU毎から1枚のバッファへ。上位ビットから書き込むので上の流用不可
 		//==============================================================================================
 		/**
-		 * バッファのカウンタをすすめる
+		 * @brief バッファのカウンタをすすめる
+		 *
 		 * @param state マクロブロック毎の書き込み位置と書き込みbit数を記録してある
 		 */
 		inline __device__ void IncBuf_w(OutBitStreamState *state) {
@@ -253,7 +267,8 @@ namespace jpeg {
 		}
 
 		/**
-		 * 8ビット以下のデータを１つのアドレスに書き込む
+		 * @brief 8ビット以下のデータを１つのアドレスに書き込む
+		 *
 		 * @param state マクロブロック毎の書き込み位置と書き込みbit数を記録してある
 		 * @param dst 書き込み先先頭アドレス、一枚のバッファ
 		 * @param value 書き込む値
@@ -274,7 +289,8 @@ namespace jpeg {
 		}
 
 		/**
-		 * 8ビット以下のデータを2つのアドレスに分けて書き込む
+		 * @brief 8ビット以下のデータを2つのアドレスに分けて書き込む
+		 *
 		 * @param state マクロブロック毎の書き込み位置と書き込みbit数を記録してある
 		 * @param dst 書き込み先先頭アドレス、一枚のバッファ
 		 * @param value 書き込む値
@@ -294,7 +310,8 @@ namespace jpeg {
 		}
 
 		/**
-		 * 8ビット以下のデータを書き込む
+		 * @brief 8ビット以下のデータを書き込む
+		 *
 		 * @param state マクロブロック毎の書き込み位置と書き込みbit数を記録してある
 		 * @param dst 書き込み先先頭アドレス、一枚のバッファ
 		 * @param value 書き込む値
@@ -311,26 +328,22 @@ namespace jpeg {
 		}
 
 		/**
-		 * bitを書き込む
+		 * @brief bitを書き込む
 		 *
 		 * @param state マクロブロック毎の書き込み位置と書き込みbit数を記録してある
 		 * @param dst 書き込み先先頭アドレス、一枚のバッファ
 		 * @param src 書き込み元先頭アドレス、マクロ毎のバッファ
 		 */
-		inline __device__ void WriteBits(OutBitStreamState *Od, //マクロブロック毎の書き込み位置と書き込みbit数を記録してある
-			byte *OmBufP, //書き込み先先頭アドレス、一枚のバッファ
-			byte *ImBufP, // 書き込み元先頭アドレス、マクロ毎のバッファ
-			int id //バグチェック用に使ってた
-			) {
+		inline __device__ void WriteBits(OutBitStreamState *state, byte *dst, byte *src) {
 			int bytepos = 0;
-			while (Od->num_bits_ > 8) {
-				Set8Bits_w(Od, OmBufP, *(ImBufP + bytepos), 8); // 1バイト書き込み
-				Od->num_bits_ -= 8;
+			while (state->num_bits_ > 8) {
+				Set8Bits_w(state, dst, *(src + bytepos), 8); // 1バイト書き込み
+				state->num_bits_ -= 8;
 				bytepos++;
 			}
 
-			Set8Bits_w(Od, OmBufP, *(ImBufP + bytepos), Od->num_bits_); // 端数バイト書き込み
+			Set8Bits_w(state, dst, *(src + bytepos), state->num_bits_); // 端数バイト書き込み
 		}
-	} // namespace gpu
+	} // namespace ohmura
 } // namespace jpeg
 #endif

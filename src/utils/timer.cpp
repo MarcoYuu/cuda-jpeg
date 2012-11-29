@@ -25,6 +25,12 @@ namespace util {
 	//-----------------------------------------------------------------------------------------------
 	//clock()関数を用いた時間計測クラス
 	//-----------------------------------------------------------------------------------------------
+	/**
+	 * @brief clock()関数を用いた時間計測クラス
+	 *
+	 * @author yuumomma
+	 * @version 1.0
+	 */
 	class StdTimeCounter: public ICountTime {
 	public:
 		double getTimeInSeconds() const {
@@ -37,6 +43,14 @@ namespace util {
 	//-----------------------------------------------------------------------------------------------
 	//マルチメディタイマを用いた時間計測クラス
 	//-----------------------------------------------------------------------------------------------
+	/**
+	 * @brief マルチメディタイマを用いた時間計測クラス
+	 *
+	 * @warning Windows only
+	 *
+	 * @author yuumomma
+	 * @version 1.0
+	 */
 	class MultiMediaCounter : public ICountTime {
 	public:
 		MultiMediaCounter() {
@@ -53,6 +67,14 @@ namespace util {
 	//-----------------------------------------------------------------------------------------------
 	//FrequencyTimerを用いた時間計測クラス
 	//-----------------------------------------------------------------------------------------------
+	/**
+	 * @brief FrequencyTimerを用いた時間計測クラス
+	 *
+	 * @warning Windows only
+	 *
+	 * @author yuumomma
+	 * @version 1.0
+	 */
 	class ClockFreqCounter : public ICountTime {
 	private:
 		double mCPUFreqency;
@@ -79,11 +101,20 @@ namespace util {
 		}
 	};
 
-#elif defined(__linux__)
+#endif
+#if defined(__linux__)
 
 	//-----------------------------------------------------------------------------------------------
 	//gettimeofday()関数を用いた時間計測クラス
 	//-----------------------------------------------------------------------------------------------
+	/**
+	 * @brief gettimeofday()関数を用いた時間計測クラス
+	 *
+	 * @warning Linux only
+	 *
+	 * @author yuumomma
+	 * @version 1.0
+	 */
 	class UnixTimeCounter: public ICountTime {
 	public:
 		double getTimeInSeconds() const {
@@ -96,6 +127,14 @@ namespace util {
 	//-----------------------------------------------------------------------------------------------
 	//getrusage()関数を用いた時間計測クラス
 	//-----------------------------------------------------------------------------------------------
+	/**
+	 * @brief getrusage()関数を用いた時間計測クラス
+	 *
+	 * @warning Linux only
+	 *
+	 * @author yuumomma
+	 * @version 1.0
+	 */
 	class ResourceTimeCounter: public ICountTime {
 	public:
 		double getTimeInSeconds() const {
@@ -113,7 +152,7 @@ namespace util {
 	ICountTime* CreateCounter(StopWatch::Mode mode) {
 		switch (mode) {
 		case StopWatch::CPU_OPTIMUM:
-			#if defined(_WIN32) | defined(_WIN64)
+#if defined(_WIN32) | defined(_WIN64)
 			if(ClockFreqCounter::isAvailable())
 			return new ClockFreqCounter();
 			else
@@ -123,12 +162,18 @@ namespace util {
 			//return new ResourceTimeCounter();
 #endif
 		case StopWatch::C_STD:
-			default:
+		default:
 			return new StdTimeCounter();
 		}
 		return NULL;
 	}
 
+	/**
+	 * @brief StopWatchクラス実装
+	 *
+	 * @author yuumomma
+	 * @version 1.0
+	 */
 	struct StopWatch::impl {
 		ICountTime *m_counter;
 		double m_prev_time;

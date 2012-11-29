@@ -1,9 +1,9 @@
 ﻿/******************************************************
-CInBitStream ビットストリーム・クラス Ver.1.1.0
-Copyright 2004 AsWe Co.,Ltd.
-All rights reserved.
-The comments are written in Japanese (Shift-JIS).
-******************************************************/
+ CInBitStream ビットストリーム・クラス Ver.1.1.0
+ Copyright 2004 AsWe Co.,Ltd.
+ All rights reserved.
+ The comments are written in Japanese (Shift-JIS).
+ ******************************************************/
 
 #include <assert.h>
 #include <string.h>

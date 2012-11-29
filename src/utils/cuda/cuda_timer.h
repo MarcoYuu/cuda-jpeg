@@ -18,61 +18,66 @@ namespace util {
 		// StopWatch :stopではラップは刻まれないlap->stopで。
 		//-----------------------------------------------------------------------------------------------
 		/**
-		 * CUDAの同期関数を用いたGPU時間計測クラス
+		 * @brief CUDAの同期関数を用いたGPU時間計測クラス
 		 *
-		 * -stopではラップは刻まれない。リセットせず特定区間の経過時間をgetElapseするには、lap->stopで。
+		 * - stopではラップは刻まれない。リセットせず特定区間の経過時間をgetElapseするには、lap->stopで。
 		 *
 		 * @author yuumomma
 		 * @version 1.0
 		 */
-		class CudaStopWatch: public Watch {
+		class CudaStopWatch: public WatchInterface {
 		public:
 			/**
-			 * コンストラクタ
+			 * @brief コンストラクタ
 			 */
 			explicit CudaStopWatch();
 			/**
-			 * デストラクタ
+			 * @brief デストラクタ
 			 */
 			~CudaStopWatch();
 
 			/**
-			 * 計測開始
+			 * @brief 計測開始
 			 */
 			void start();
 			/**
-			 * 一時停止
+			 * @brief 一時停止
 			 */
 			void stop();
 			/**
-			 * ラップタイムを記録する
+			 * @brief ラップタイムを記録する
 			 */
 			void lap();
 			/**
-			 * リセット
+			 * @brief リセット
 			 */
 			void clear();
 
 			/**
-			 * 記録されているラップカウント数を返す
+			 * @brief 記録されているラップカウント数を返す
+			 *
 			 * @return ラップ数
 			 */
 			size_t getLapCount() const;
 			/**
-			 * 現在までの総経過時間を取得する
+			 * @brief 現在までの総経過時間を取得する
+			 *
 			 * @return
 			 */
 			double getTotalTime() const;
 			/**
-			 * 直前の差分時間を返す
-			 * -stop()で止めた場合、直前のstart()またはlap()からの時間である
-			 * -lap()を使った場合、直前のstart()またはlap()からの時間である
-			 * -したがって、lap()しない場合返り値はgetTotalTime()と同じである
+			 * @brief 直前の差分時間を返す
+			 *
+			 * - stop()で止めた場合、直前のstart()またはlap()からの時間である
+			 * - lap()を使った場合、直前のstart()またはlap()からの時間である
+			 * - lap()しない場合返り値はgetTotalTime()と同じである
+			 *
 			 * @return 差分時間
 			 */
 			double getLastElapsedTime() const;
 			/**
-			 * ラップタイムリストを返す
+			 * @brief ラップタイムリストを返す
+			 *
 			 * @return リスト
 			 */
 			const LapList& getLapList() const;

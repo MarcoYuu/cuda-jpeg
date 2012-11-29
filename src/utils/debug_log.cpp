@@ -19,7 +19,7 @@ namespace util {
 	using namespace std;
 	using namespace util;
 
-	static boost::shared_ptr<Watch> watch;
+	static boost::shared_ptr<WatchInterface> watch;
 	static bool is_print = true;
 	static bool is_export = true;
 
@@ -27,7 +27,7 @@ namespace util {
 		ROOT, SECTION, SUBSECTION
 	} section_ = ROOT;
 
-	void DebugLog::init(bool cpu) {
+	void DebugLog::initTimer(bool cpu) {
 		if (cpu) {
 			watch.reset(new StopWatch());
 		} else {
@@ -116,7 +116,8 @@ namespace util {
 	void DebugLog::printTotalTime() {
 		if (!is_print)
 			return;
-		log("Total Time: " + boost::lexical_cast<string>(watch->getTotalTime() * 1000) + "[ms]");
+		string total = boost::lexical_cast<string>(watch->getTotalTime() * 1000);
+		log("Total Time: " + total + "[ms]");
 	}
 	void DebugLog::resetTotalTime() {
 		if (!is_print)

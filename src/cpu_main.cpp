@@ -12,7 +12,7 @@
 
 using namespace std;
 using namespace util;
-using namespace jpeg;
+using namespace jpeg::cpu;
 
 //----------------------------------------------------------------------------
 // CPU Jpeg圧縮テストルーチン
@@ -54,8 +54,8 @@ void cpu_main(const std::string &file_name, const std::string &out_file_name) {
 		JpegDecoder decoder(width, height);
 
 		watch.start();
-		decoder.decode(encode_result.data(), encode_result.size(), (byte*) result.getRawData(),
-			width * height * 3);
+		decoder.decode(encode_result.data(), encode_result.size(),
+			(byte*) result.getRawData(), width * height * 3);
 		watch.lap();
 		watch.stop();
 		std::cout << "	" << watch.getLastElapsedTime() * 1000 << "[ms]\n" << std::endl;

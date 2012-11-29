@@ -11,7 +11,7 @@
 
 namespace util {
 	/**
-	 * ビット読み出しクラス
+	 * @brief ビット読み出しクラス
 	 *
 	 * コンストラクタに渡した読み込みバッファは、
 	 * このクラスの寿命より先に破棄されてはいけない
@@ -22,41 +22,46 @@ namespace util {
 	class InBitStream {
 	public:
 		/**
-		 * コンストラクタ
+		 * @brief コンストラクタ
+		 *
 		 * @param aBufP 読み込みバッファ
 		 * @param size バッファの有効サイズ
 		 */
 		InBitStream(const byte* aBufP, size_t size);
 
 		/**
-		 * ビット単位で読み出す
+		 * @brief ビット単位で読み出す
+		 *
 		 * @param numOfBits 読みだすビット数
 		 * @return 読み出し値
 		 */
 		int getBits(size_t numOfBits);
 
-		/** 1バイト読み出す */
+		/** @brief 1バイト読み出す */
 		byte getByte();
 
-		/** 2バイト読み出す */
+		/** @brief 2バイト読み出す */
 		u_int getWord();
 
 		/**
-		 * nバイト読み出す
+		 * @brief nバイト読み出す
+		 *
 		 * @param disP [out] 結果を読み出すバッファ
 		 * @param n 読みだすビット数
 		 */
 		void copyByte(byte* disP, size_t n);
 
 		/**
-		 * nバイト進める
+		 * @brief nバイト進める
+		 *
 		 * @param n 読み飛ばすバイト数
 		 */
 		void skipByte(size_t n);
 
 		/**
-		 * 次の読み出しアドレスを取得する
-		 * @return
+		 * @brief 次の読み出しアドレスを取得する
+		 *
+		 * @return アドレス
 		 */
 		char* getNextAddress();
 
@@ -67,7 +72,7 @@ namespace util {
 		int mNextFlag; 		//! 次のバイトを読んでいいかどうか
 		int mReadFlag; 		//! 1:読み出し可, 0:読み出し不可
 
-		/** 読み出しアドレスのインクリメントとアクセス違反のチェック */
+		/** @brief 読み出しアドレスのインクリメントとアクセス違反のチェック */
 		void incBuf();
 
 		InBitStream(InBitStream &);
