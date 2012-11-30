@@ -12,6 +12,9 @@
 
 namespace util {
 	typedef unsigned char byte;
+	typedef unsigned short byte2;
+	typedef unsigned int byte4;
+
 	typedef unsigned int u_int;
 
 	typedef std::vector<byte> ByteBuffer;

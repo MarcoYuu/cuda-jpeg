@@ -230,7 +230,7 @@ namespace jpeg {
 					absC >>= 1;
 					dIdx++;
 				}
-				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::luminance::code[dIdx], DC::luminance::size[dIdx]);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::luminance::code[dIdx], DC::luminance::code_size[dIdx]);
 				if (dIdx) {
 					if (diff < 0)
 						diff--;
@@ -280,7 +280,7 @@ namespace jpeg {
 					absC >>= 1;
 					dIdx++;
 				}
-				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::component::code[dIdx], DC::component::size[dIdx]);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::component::code[dIdx], DC::component::code_size[dIdx]);
 				if (dIdx) {
 					if (diff < 0)
 						diff--;
@@ -330,7 +330,7 @@ namespace jpeg {
 					absC >>= 1;
 					dIdx++;
 				}
-				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::component::code[dIdx], DC::component::size[dIdx]);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::component::code[dIdx], DC::component::code_size[dIdx]);
 				if (dIdx) {
 					if (diff < 0)
 						diff--;

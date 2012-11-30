@@ -68,7 +68,7 @@ namespace jpeg {
 				namespace DC {
 					namespace luminance {
 						/** 輝度DC成分用サイズテーブル */
-						__device__ __constant__ static const int	size[] = {
+						__device__ __constant__ static const int	code_size[] = {
 							0x0002, 0x0003, 0x0003, 0x0003,
 							0x0003, 0x0003, 0x0004, 0x0005,
 							0x0006, 0x0007, 0x0008, 0x0009
@@ -84,7 +84,7 @@ namespace jpeg {
 
 					namespace component {
 						/** 色差DC成分用サイズテーブル */
-						__device__ __constant__ static const int	size[] = {
+						__device__ __constant__ static const int	code_size[] = {
 							0x0002, 0x0002, 0x0002, 0x0003,
 							0x0004, 0x0005, 0x0006, 0x0007,
 							0x0008, 0x0009, 0x000a, 0x000b
