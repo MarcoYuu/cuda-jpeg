@@ -3,18 +3,18 @@
 
 #include "gpu_jpeg.cuh"
 #include "gpu_out_bit_stream.cuh"
-#include "encoder_tables_device.cuh"
+#include "../encoder_tables_device.cuh"
 
-#include "../cpu/cpu_jpeg.h"
+#include "../../cpu/cpu_jpeg.h"
 
-#include "../../utils/out_bit_stream.h"
-#include "../../utils/in_bit_stream.h"
+#include "../../../utils/out_bit_stream.h"
+#include "../../../utils/in_bit_stream.h"
 
 namespace jpeg {
 	namespace ohmura {
 
 		using namespace util;
-		using namespace ohmura::encode_table;
+		using namespace cuda::encode_table;
 
 		__device__ __constant__ static float kDisSqrt2 = 1.0 / 1.41421356; //! 2の平方根の逆数
 
@@ -230,7 +230,8 @@ namespace jpeg {
 					absC >>= 1;
 					dIdx++;
 				}
-				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::luminance::code[dIdx], DC::luminance::code_size[dIdx]);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::luminance::code[dIdx],
+					DC::luminance::code_size[dIdx]);
 				if (dIdx) {
 					if (diff < 0)
 						diff--;
@@ -244,7 +245,7 @@ namespace jpeg {
 					if (absC) {
 						while (run > 15) {
 							SetBits(&dst[id], tmp_p, mEndOfBufP, AC::luminance::code[AC::luminance::ZRL],
-								AC::luminance::size[AC::luminance::ZRL]);
+								AC::luminance::code_size[AC::luminance::ZRL]);
 							run -= 16;
 						}
 						s = 0;
@@ -254,7 +255,7 @@ namespace jpeg {
 						}
 						aIdx = run * 10 + s + (run == 15);
 						SetBits(&dst[id], tmp_p, mEndOfBufP, AC::luminance::code[aIdx],
-							AC::luminance::size[aIdx]);
+							AC::luminance::code_size[aIdx]);
 						v = src_qua[mid + i];
 						if (v < 0)
 							v--;
@@ -263,7 +264,7 @@ namespace jpeg {
 					} else {
 						if (i == 63) {
 							SetBits(&dst[id], tmp_p, mEndOfBufP, AC::luminance::code[AC::luminance::EOB],
-								AC::luminance::size[AC::luminance::EOB]);
+								AC::luminance::code_size[AC::luminance::EOB]);
 						} else
 							run++;
 					}
@@ -280,7 +281,8 @@ namespace jpeg {
 					absC >>= 1;
 					dIdx++;
 				}
-				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::component::code[dIdx], DC::component::code_size[dIdx]);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::component::code[dIdx],
+					DC::component::code_size[dIdx]);
 				if (dIdx) {
 					if (diff < 0)
 						diff--;
@@ -294,7 +296,7 @@ namespace jpeg {
 					if (absC) {
 						while (run > 15) {
 							SetBits(&dst[id], tmp_p, mEndOfBufP, AC::component::code[AC::component::ZRL],
-								AC::component::size[AC::component::ZRL]);
+								AC::component::code_size[AC::component::ZRL]);
 							run -= 16;
 						}
 						s = 0;
@@ -304,7 +306,7 @@ namespace jpeg {
 						}
 						aIdx = run * 10 + s + (run == 15);
 						SetBits(&dst[id], tmp_p, mEndOfBufP, AC::component::code[aIdx],
-							AC::component::size[aIdx]);
+							AC::component::code_size[aIdx]);
 						v = src_qua[mid + i];
 						if (v < 0)
 							v--;
@@ -313,7 +315,7 @@ namespace jpeg {
 					} else {
 						if (i == 63) {
 							SetBits(&dst[id], tmp_p, mEndOfBufP, AC::component::code[AC::component::EOB],
-								AC::component::size[AC::component::EOB]);
+								AC::component::code_size[AC::component::EOB]);
 						} else
 							run++;
 					}
@@ -330,7 +332,8 @@ namespace jpeg {
 					absC >>= 1;
 					dIdx++;
 				}
-				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::component::code[dIdx], DC::component::code_size[dIdx]);
+				SetBits(&dst[id], tmp_p, mEndOfBufP, DC::component::code[dIdx],
+					DC::component::code_size[dIdx]);
 				if (dIdx) {
 					if (diff < 0)
 						diff--;
@@ -344,7 +347,7 @@ namespace jpeg {
 					if (absC) {
 						while (run > 15) {
 							SetBits(&dst[id], tmp_p, mEndOfBufP, AC::component::code[AC::component::ZRL],
-								AC::component::size[AC::component::ZRL]);
+								AC::component::code_size[AC::component::ZRL]);
 							run -= 16;
 						}
 						s = 0;
@@ -354,7 +357,7 @@ namespace jpeg {
 						}
 						aIdx = run * 10 + s + (run == 15);
 						SetBits(&dst[id], tmp_p, mEndOfBufP, AC::component::code[aIdx],
-							AC::component::size[aIdx]);
+							AC::component::code_size[aIdx]);
 						v = src_qua[mid + i];
 						if (v < 0)
 							v--;
@@ -363,7 +366,7 @@ namespace jpeg {
 					} else {
 						if (i == 63) {
 							SetBits(&dst[id], tmp_p, mEndOfBufP, AC::component::code[AC::component::EOB],
-								AC::component::size[AC::component::EOB]);
+								AC::component::code_size[AC::component::EOB]);
 						} else
 							run++;
 					}
@@ -372,57 +375,57 @@ namespace jpeg {
 		}
 
 		//完全逐次処理、CPUで行った方が圧倒的に速い
-		void cpu_huffman_middle(OutBitStreamState *ImOBSP, int sizeX, int sizeY, byte* num_bits) { //,
+		void cpu_huffman_middle(OutBitStreamState *state, int sizeX, int sizeY, byte* num_bits) { //,
 			int i;
 			const int blsize = (sizeX * sizeY + sizeX * sizeY / 2) / 64; //2*(size/2)*(size/2)
 
 			//BitPosは7が上位で0が下位なので注意,更に位置なので注意。7なら要素は0,0なら要素は7
-			ImOBSP[0].num_bits_ = ImOBSP[0].byte_pos_ * 8 + (7 - ImOBSP[0].bit_pos_);
+			state[0].num_bits_ = state[0].byte_pos_ * 8 + (7 - state[0].bit_pos_);
 
 			//出力用、構造体無駄な要素が入っちゃうので
-			num_bits[0] = ImOBSP[0].num_bits_;
+			num_bits[0] = state[0].num_bits_;
 
-			ImOBSP[0].byte_pos_ = 0;
-			ImOBSP[0].bit_pos_ = 7;
+			state[0].byte_pos_ = 0;
+			state[0].bit_pos_ = 7;
 
 			for (i = 1; i < blsize; i++) {
 
-				ImOBSP[i].num_bits_ = ImOBSP[i].byte_pos_ * 8 + (7 - ImOBSP[i].bit_pos_);
+				state[i].num_bits_ = state[i].byte_pos_ * 8 + (7 - state[i].bit_pos_);
 
 				//出力用、構造体無駄な要素が入っちゃうので
-				num_bits[i] = ImOBSP[i].num_bits_;
+				num_bits[i] = state[i].num_bits_;
 
-				ImOBSP[i].bit_pos_ = ImOBSP[i - 1].bit_pos_;
-				ImOBSP[i].byte_pos_ = ImOBSP[i - 1].byte_pos_;
+				state[i].bit_pos_ = state[i - 1].bit_pos_;
+				state[i].byte_pos_ = state[i - 1].byte_pos_;
 
-				ImOBSP[i].bit_pos_ -= ImOBSP[i - 1].num_bits_ % 8;
+				state[i].bit_pos_ -= state[i - 1].num_bits_ % 8;
 				//繰り上がり
-				if (ImOBSP[i].bit_pos_ < 0) {
-					ImOBSP[i].byte_pos_++;
-					ImOBSP[i].bit_pos_ += 8;
+				if (state[i].bit_pos_ < 0) {
+					state[i].byte_pos_++;
+					state[i].bit_pos_ += 8;
 				}
-				ImOBSP[i].byte_pos_ += ImOBSP[i - 1].num_bits_ / 8;
+				state[i].byte_pos_ += state[i - 1].num_bits_ / 8;
 			}
 		}
 
 		//排他処理のため3つに分ける
 		//1MCUは最小4bit(EOBのみ)なので1Byteのバッファに最大3MCUが競合する。だから3つに分ける。
-		__global__ void gpu_huffman_write_devide0(OutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP) { //,
+		__global__ void gpu_huffman_write_devide0(OutBitStreamState *state, const byte *src, byte *dst) { //,
 			int id = (blockIdx.x * blockDim.x + threadIdx.x); //マクロブロック番号
 			if (id % 3 == 0) {
-				WriteBits(&mOBSP[id], OmBufP, &mBufP[id * MBS]);
+				WriteBits(&state[id], dst, &src[id * MBS]);
 			}
 		}
-		__global__ void gpu_huffman_write_devide1(OutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP) { //,
+		__global__ void gpu_huffman_write_devide1(OutBitStreamState *state, const byte *src, byte *dst) { //,
 			int id = (blockIdx.x * blockDim.x + threadIdx.x); //マクロブロック番号
 			if (id % 3 == 1) {
-				WriteBits(&mOBSP[id], OmBufP, &mBufP[id * MBS]);
+				WriteBits(&state[id], dst, &src[id * MBS]);
 			}
 		}
-		__global__ void gpu_huffman_write_devide2(OutBitStreamState *mOBSP, byte *mBufP, byte *OmBufP) { //,
+		__global__ void gpu_huffman_write_devide2(OutBitStreamState *state, const byte *src, byte *dst) { //,
 			int id = (blockIdx.x * blockDim.x + threadIdx.x); //マクロブロック番号
 			if (id % 3 == 2) {
-				WriteBits(&mOBSP[id], OmBufP, &mBufP[id * MBS]);
+				WriteBits(&state[id], dst, &src[id * MBS]);
 			}
 		}
 

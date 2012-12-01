@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "jpeg/ohmura/gpu_jpeg.cuh"
+#include "jpeg/cuda/ohmura/gpu_jpeg.cuh"
 
 #include "utils/util_cv.h"
 #include "utils/timer.h"

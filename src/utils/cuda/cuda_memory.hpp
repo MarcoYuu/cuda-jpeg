@@ -94,7 +94,7 @@ namespace util {
 			/**
 			 * @brief サイズを返す
 			 *
-			 * Tの個数を取得する。バイト数はsizeof(T)*CudaMemory::size()。
+			 * Tの個数を取得する。バイト数はsizeof(T)*size()。
 			 *
 			 * @return Tの個数
 			 */

@@ -15,7 +15,7 @@
 
 #include "jpeg/cpu/cpu_jpeg.h"
 #include "jpeg/cuda/cuda_jpeg.cuh"
-#include "jpeg/ohmura/gpu_jpeg.cuh"
+#include "jpeg/cuda/ohmura/gpu_jpeg.cuh"
 
 using namespace std;
 using namespace util;

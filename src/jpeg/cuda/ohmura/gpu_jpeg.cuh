@@ -9,8 +9,8 @@
 #define GPU_JPEG_H_
 
 #include "gpu_out_bit_stream.cuh"
-#include "../../utils/in_bit_stream.h"
-#include "../../utils/type_definitions.h"
+#include "../../../utils/in_bit_stream.h"
+#include "../../../utils/type_definitions.h"
 
 namespace jpeg {
 	namespace ohmura {

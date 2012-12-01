@@ -5,8 +5,8 @@
  ******************************************************/
 #ifndef GPU_OUT_BIT_STREAM_H_
 #define GPU_OUT_BIT_STREAM_H_
-#include "../../utils/type_definitions.h"
-#include "../../utils/cuda/cuda_memory.hpp"
+#include "../../../utils/type_definitions.h"
+#include "../../../utils/cuda/cuda_memory.hpp"
 #include <cstdio>
 #include <iostream>
 
@@ -334,7 +334,7 @@ namespace jpeg {
 		 * @param dst 書き込み先先頭アドレス、一枚のバッファ
 		 * @param src 書き込み元先頭アドレス、マクロ毎のバッファ
 		 */
-		inline __device__ void WriteBits(OutBitStreamState *state, byte *dst, byte *src) {
+		inline __device__ void WriteBits(OutBitStreamState *state, byte *dst, const byte *src) {
 			int bytepos = 0;
 			while (state->num_bits_ > 8) {
 				Set8Bits_w(state, dst, *(src + bytepos), 8); // 1バイト書き込み
