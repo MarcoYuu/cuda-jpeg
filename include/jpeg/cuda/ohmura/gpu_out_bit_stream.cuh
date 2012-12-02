@@ -5,10 +5,12 @@
  ******************************************************/
 #ifndef GPU_OUT_BIT_STREAM_H_
 #define GPU_OUT_BIT_STREAM_H_
-#include "../../../utils/type_definitions.h"
-#include "../../../utils/cuda/cuda_memory.hpp"
+
 #include <cstdio>
 #include <iostream>
+
+#include <utils/type_definitions.h>
+#include <utils/cuda/cuda_memory.hpp>
 
 //------------------------------------------------------------
 //Max_Block_size:ハフマンエンコードの時のマクロブロック毎のバッファのサイズ,コンスタントのがいいかも
@@ -147,11 +149,13 @@ namespace jpeg {
 				return end_of_buff_;
 			}
 		};
-		/** 余ったビットに1を詰めるためのマスク */__device__
-		                 __constant__                 static const byte kBitFullMaskT[8] = {
+		/**
+		 * 余ったビットに1を詰めるためのマスク
+		 */__device__ __constant__ static const unsigned char kBitFullMaskT[8] = {
 			0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff };
-		/** 余ったビットに1を詰めるためのマスク */__device__
-		                 __constant__                 static const byte kBitFullMaskLowT[8] = {
+		/**
+		 * 余ったビットに1を詰めるためのマスク
+		 */__device__ __constant__ static const unsigned char kBitFullMaskLowT[8] = {
 			0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff };
 
 		/**

@@ -5,9 +5,10 @@
  The comments are written in Japanese (Shift-JIS).
  ******************************************************/
 
-#include <assert.h>
-#include <string.h>
-#include "in_bit_stream.h"
+#include <cassert>
+#include <cstring>
+
+#include <utils/in_bit_stream.h>
 
 namespace util {
 	// ビット取り出しのためのマスク

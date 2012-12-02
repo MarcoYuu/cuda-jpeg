@@ -6,7 +6,8 @@
 
 #include <cassert>
 #include <cstring>
-#include "out_bit_stream.h"
+
+#include <utils/out_bit_stream.h>
 
 namespace util {
 	// 余ったビットに1を詰めるためのマスク

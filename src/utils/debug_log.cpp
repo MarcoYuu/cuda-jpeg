@@ -5,15 +5,15 @@
  *      Author: yuumomma
  */
 
-#include "debug_log.h"
-
 #include <iostream>
 #include <fstream>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "timer.h"
-#include "cuda/cuda_timer.h"
+#include <utils/debug_log.h>
+#include <utils/timer.h>
+#include <utils/cuda/cuda_timer.h>
 
 namespace util {
 	using namespace std;

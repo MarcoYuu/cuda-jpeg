@@ -10,7 +10,8 @@
 
 #include <vector>
 #include <cuda_runtime.h>
-#include "../timer.h"
+
+#include <utils/timer.h>
 
 namespace util {
 	namespace cuda {

@@ -5,7 +5,7 @@
  *      Author: momma
  */
 
-#include "cuda_timer.h"
+#include <utils/cuda/cuda_timer.h>
 
 namespace util {
 	namespace cuda {

@@ -21,9 +21,10 @@ using namespace std;
 using namespace util;
 
 bool parse_arg(int argc, char *argv[]);
-void cpu_main(const string &file_name, const string &out_file_name);
-void gpu_main(const string &file_name, const string &out_file_name);
-void cuda_main(const string &file_name, const string &out_file_name, size_t block_width, size_t block_height, int quarity);
+//void cpu_main(const string &file_name, const string &out_file_name);
+//void gpu_main(const string &file_name, const string &out_file_name);
+void cuda_main(const string &file_name, const string &out_file_name, size_t block_width, size_t block_height,
+	int quarity);
 
 string program_name;
 string infile_name;
@@ -54,9 +55,8 @@ bool parse_arg(int argc, char *argv[]) {
 
 	if (argc == 1) {
 		cout << "command "
-			"<input_filename [output_filename]> "
-			"[-b <block_width> <block_height>] "
-			"[-log <true|false>] " "[-logfile <true|false>]"
+			"<input_filename [output_filename]> [-b <block_width> <block_height>] "
+			"[-log <true|false>] [-logfile <true|false>] [-q <quarity[1,100]>]"
 			"\n"
 			"command <-h | --help>" << endl;
 		return false;
@@ -66,9 +66,8 @@ bool parse_arg(int argc, char *argv[]) {
 
 	if (infile_name == "-h" || infile_name == "--help") {
 		cout << "command "
-			"<input_filename [output_filename]>"
-			"[-b <block_width> <block_height>] "
-			"[-log <true|false>] " "[-logfile <true|false>]"
+			"<input_filename [output_filename]> [-b <block_width> <block_height>] "
+			"[-log <true|false>] [-logfile <true|false>] [-q <quarity[1,100]>]"
 			"\n"
 			"command <-h | --help>" << endl;
 		return false;
@@ -111,7 +110,7 @@ bool parse_arg(int argc, char *argv[]) {
 			quarity = boost::lexical_cast<int>(argv[i]);
 		} else {
 			if (i == 2 && arg[0] != '-') {
-				if (arg.substr(arg.length() - 3, arg.length()) != ".bmp") {
+				if (arg.substr(arg.length() - 4, arg.length()) != ".bmp") {
 					outfile_name = arg + ".bmp";
 				} else {
 					outfile_name = arg;

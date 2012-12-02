@@ -8,8 +8,8 @@
 #ifndef UTIL_CVLAP_H_
 #define UTIL_CVLAP_H_
 
-#include "type_definitions.h"
 #include <string>
+#include <utils/type_definitions.h>
 
 struct _IplImage;
 

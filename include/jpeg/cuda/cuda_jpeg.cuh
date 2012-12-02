@@ -8,8 +8,8 @@
 #ifndef CUDA_JPEG_H_
 #define CUDA_JPEG_H_
 
-#include "../../utils/type_definitions.h"
-#include "../../utils/cuda/cuda_memory.hpp"
+#include <utils/type_definitions.h>
+#include <utils/cuda/cuda_memory.hpp>
 
 namespace jpeg {
 	namespace cuda {
@@ -29,17 +29,17 @@ namespace jpeg {
 			size_t v; /// 色差
 		};
 
-		typedef device_memory<TableElementSrcToDst> DeviceTable; 	/// デバイスメモリテーブル
-		typedef cuda_memory<TableElementSrcToDst> CudaTable; 		/// ホスト同期可能テーブル
+		typedef device_memory<TableElementSrcToDst> DeviceTable; /// デバイスメモリテーブル
+		typedef cuda_memory<TableElementSrcToDst> CudaTable; /// ホスト同期可能テーブル
 
-		typedef device_memory<byte> DeviceByteBuffer; 				/// デバイスメモリバイトバッファ
-		typedef cuda_memory<byte> CudaByteBuffer;					/// ホスト同期可能バイトバッファ
+		typedef device_memory<byte> DeviceByteBuffer; /// デバイスメモリバイトバッファ
+		typedef cuda_memory<byte> CudaByteBuffer; /// ホスト同期可能バイトバッファ
 
-		typedef device_memory<int> DeviceIntBuffer; 				/// デバイスメモリ整数バッファ
-		typedef cuda_memory<int> CudaIntBuffer;					/// ホスト同期可能整数バッファ
+		typedef device_memory<int> DeviceIntBuffer; /// デバイスメモリ整数バッファ
+		typedef cuda_memory<int> CudaIntBuffer; /// ホスト同期可能整数バッファ
 
-		typedef device_memory<float> DevicefloatBuffer; 			/// デバイスメモリfloatバッファ
-		typedef cuda_memory<float> CudafloatBuffer;				/// ホスト同期可能floatバッファ
+		typedef device_memory<float> DevicefloatBuffer; /// デバイスメモリfloatバッファ
+		typedef cuda_memory<float> CudafloatBuffer; /// ホスト同期可能floatバッファ
 
 		/**
 		 * @brief 色変換テーブルを作成する
@@ -129,7 +129,7 @@ namespace jpeg {
 		 * @param quarity 量子化品質[0,100]
 		 */
 		void ZigzagQuantize(const DeviceIntBuffer &dct_coefficient, DeviceIntBuffer &quantized,
-			int block_size, int quarity = 50);
+			int block_size, int quarity = 80);
 
 		/**
 		 * @brief 逆ジグザグ量子化
@@ -142,7 +142,20 @@ namespace jpeg {
 		 * @param quarity 量子化品質[0,100]
 		 */
 		void InverseZigzagQuantize(const DeviceIntBuffer &quantized, DeviceIntBuffer &dct_coefficient,
-			int block_size, int quarity = 50);
+			int block_size, int quarity = 80);
+
+		/**
+		 * @brief ハフマンエンコードする
+		 *
+		 * ハフマン符号化された結果をバッファに書き込む。
+		 * ただし、バッファはハフマン符号化されたデータが十分入る大きさでなければならず、
+		 * 量子化結果はeffective_bits.size()個のブロックに分割されたデータとみなし書き込みを行う。
+		 *
+		 * @param quantized 量子化データ
+		 * @param result 結果
+		 * @param block_size 有効ビット数
+		 */
+		void HuffmanEncode(const DeviceIntBuffer &quantized, DeviceByteBuffer &result, IntBuffer &effective_bits);
 	}
 }
 

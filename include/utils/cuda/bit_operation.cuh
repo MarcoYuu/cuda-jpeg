@@ -8,7 +8,7 @@
 #ifndef BIT_OPERATION_HPP_
 #define BIT_OPERATION_HPP_
 
-#include "../type_definitions.h"
+#include <utils/type_definitions.h>
 
 namespace util {
 	/**

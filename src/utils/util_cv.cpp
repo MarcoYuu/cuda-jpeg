@@ -12,7 +12,7 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
-#include "util_cv.h"
+#include <utils/util_cv.h>
 
 namespace util {
 	inline void SetUtilImageAttrFromplImage(UtilImage *_p_im, IplImage *_p_ipl_im) {
@@ -22,10 +22,8 @@ namespace util {
 		(_p_im)->px_byte = (_p_ipl_im)->nChannels;
 	}
 
-	UtilCVImageStruct *utilCV_CreateImage(int width, int height, int depth,
-		int channels) {
-		UtilCVImageStruct *p_im = (UtilCVImageStruct *) calloc(1,
-			sizeof(UtilCVImageStruct));
+	UtilCVImageStruct *utilCV_CreateImage(int width, int height, int depth, int channels) {
+		UtilCVImageStruct *p_im = (UtilCVImageStruct *) calloc(1, sizeof(UtilCVImageStruct));
 		IplImage *p_im_cv = cvCreateImage(cvSize(width, height), depth, channels);
 
 		SetUtilImageAttrFromplImage(&(p_im->im), p_im_cv);
@@ -35,8 +33,7 @@ namespace util {
 	}
 
 	UtilCVImageStruct *utilCV_CloneImage(UtilCVImageStruct *p_im_org) {
-		UtilCVImageStruct *p_im = (UtilCVImageStruct *) calloc(1,
-			sizeof(UtilCVImageStruct));
+		UtilCVImageStruct *p_im = (UtilCVImageStruct *) calloc(1, sizeof(UtilCVImageStruct));
 		IplImage *p_im_cv = cvCloneImage((IplImage *) p_im_org->p_iplimg);
 
 		SetUtilImageAttrFromplImage(&(p_im->im), p_im_cv);
@@ -46,8 +43,7 @@ namespace util {
 	}
 
 	UtilCVImageStruct *utilCV_LoadImage(const char *p_fname, UtilCVImageType im_type) {
-		UtilCVImageStruct *p_im = (UtilCVImageStruct *) calloc(1,
-			sizeof(UtilCVImageStruct));
+		UtilCVImageStruct *p_im = (UtilCVImageStruct *) calloc(1, sizeof(UtilCVImageStruct));
 		IplImage *p_im_cv;
 
 		switch (im_type) {
@@ -67,11 +63,9 @@ namespace util {
 		return p_im;
 	}
 
-	void utilCV_AddWeighted(UtilCVImageStruct *p_im_src1, double alpha,
-		UtilCVImageStruct *p_im_src2, double beta, double gamma,
-		UtilCVImageStruct *p_im_dst) {
-		cvAddWeighted((IplImage *) p_im_src1->p_iplimg, alpha,
-			(IplImage *) p_im_src2->p_iplimg, beta, gamma,
+	void utilCV_AddWeighted(UtilCVImageStruct *p_im_src1, double alpha, UtilCVImageStruct *p_im_src2,
+		double beta, double gamma, UtilCVImageStruct *p_im_dst) {
+		cvAddWeighted((IplImage *) p_im_src1->p_iplimg, alpha, (IplImage *) p_im_src2->p_iplimg, beta, gamma,
 			(IplImage *) p_im_dst->p_iplimg);
 	}
 

@@ -6,12 +6,13 @@
 
 #include <string>
 
-#include "cpu_jpeg.h"
-#include "encoder_tables.h"
+#include <jpeg/cpu/cpu_jpeg.h>
 
-#include "../../utils/util_cv.h"
-#include "../../utils/out_bit_stream.h"
-#include "../../utils/in_bit_stream.h"
+#include <utils/util_cv.h>
+#include <utils/out_bit_stream.h>
+#include <utils/in_bit_stream.h>
+
+#include "encoder_tables.h"
 
 using namespace util;
 using namespace jpeg::cpu::encode_table;
@@ -599,11 +600,10 @@ namespace jpeg {
 				length++;
 				code <<= 1;
 				next = ibit_stream->getBits(1);
-				//if( next < 0 )// マーカだったら
-				//  return next;
+
 				code |= next;
 
-				while (theHT.size_table[k] == length) { // 候補と符号語のビット数が等しい間だ検索
+				while (theHT.size_table[k] == length) { // 候補と符号語のビット数が等しい間検索
 					if (theHT.code_table[k] == code) { // ヒット
 						return theHT.value_table[k]; // 復号結果を返す
 					}

@@ -1,14 +1,14 @@
 ﻿#include <cstdio>
 #include <cstdlib>
 
-#include "gpu_jpeg.cuh"
-#include "gpu_out_bit_stream.cuh"
+#include <jpeg/cpu/cpu_jpeg.h>
+#include <jpeg/cuda/ohmura/gpu_out_bit_stream.cuh>
+#include <jpeg/cuda/ohmura/gpu_jpeg.cuh>
+
+#include <utils/out_bit_stream.h>
+#include <utils/in_bit_stream.h>
+
 #include "../encoder_tables_device.cuh"
-
-#include "../../cpu/cpu_jpeg.h"
-
-#include "../../../utils/out_bit_stream.h"
-#include "../../../utils/in_bit_stream.h"
 
 namespace jpeg {
 	namespace ohmura {

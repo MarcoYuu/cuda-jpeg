@@ -32,6 +32,26 @@ namespace util {
 			device_memory<T>& operator=(const device_memory<T>&);
 
 		public:
+			typedef T* iterator;
+			typedef const T* const_iterator;
+
+			virtual iterator begin() {
+				return device_mem_;
+			}
+
+			virtual const_iterator begin() const {
+				return device_mem_;
+			}
+
+			virtual iterator end() {
+				return device_mem_ + size_;
+			}
+
+			virtual const_iterator end() const {
+				return device_mem_ + size_;
+			}
+
+		public:
 			/**
 			 * @brief コンストラクタ
 			 *
@@ -154,6 +174,23 @@ namespace util {
 
 			cuda_memory(const cuda_memory<T>&);
 			cuda_memory<T>& operator=(const cuda_memory<T>&);
+
+		public:
+			typename base::iterator begin() {
+				return host_mem_;
+			}
+
+			typename base::const_iterator begin() const {
+				return host_mem_;
+			}
+
+			typename base::iterator end() {
+				return host_mem_ + base::size();
+			}
+
+			typename base::const_iterator end() const {
+				return host_mem_ + base::size();
+			}
 
 		public:
 			/**
