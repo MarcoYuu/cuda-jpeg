@@ -584,7 +584,7 @@ namespace jpeg {
 		}
 
 		// ハフマン符号1語の復号
-		int decode_huffman_word(InBitStream *ibit_stream, int tc, int sc) {		//sc:Y==0,C==1,tc:DC==0,AC==1
+		int decode_huffman_word(InBitStream *ibit_stream, int tc, int sc) {		//tc:DC==0,AC==1, sc:Y==0,C==1,
 			// ハフマンテーブル指定
 			using HuffmanDecode::TableSet;
 			const TableSet &theHT = (

@@ -46,7 +46,7 @@ namespace jpeg {
 			//============================================================================
 			namespace Zigzag {
 				/** ジグザグシーケンス用 */
-				__device__ __constant__ static const int	sequence[64] = {
+				__device__ __constant__ static const u_int	sequence[64] = {
 					 0,  1,  5,  6, 14, 15, 27, 28,
 					 2,  4,  7, 13, 16, 26, 29, 42,
 					 3,  8, 12, 17, 25, 30, 41, 43,
@@ -99,14 +99,14 @@ namespace jpeg {
 				namespace DC {
 					namespace luminance {
 						/** 輝度DC成分用サイズテーブル */
-						__device__ __constant__ static const int	code_size[] = {
+						__device__ __constant__ static const u_int	code_size[] = {
 							0x0002, 0x0003, 0x0003, 0x0003,
 							0x0003, 0x0003, 0x0004, 0x0005,
 							0x0006, 0x0007, 0x0008, 0x0009
 						};
 
 						/** 輝度DC成分用符号語テーブル */
-						__device__ __constant__ static const int	code[] = {
+						__device__ __constant__ static const u_int	code[] = {
 							0x0000, 0x0002, 0x0003, 0x0004,
 							0x0005, 0x0006, 0x000e, 0x001e,
 							0x003e, 0x007e, 0x00fe, 0x01fe
@@ -115,14 +115,14 @@ namespace jpeg {
 
 					namespace component {
 						/** 色差DC成分用サイズテーブル */
-						__device__ __constant__ static const int	code_size[] = {
+						__device__ __constant__ static const u_int	code_size[] = {
 							0x0002, 0x0002, 0x0002, 0x0003,
 							0x0004, 0x0005, 0x0006, 0x0007,
 							0x0008, 0x0009, 0x000a, 0x000b
 						};
 
 						/** 色差DC成分用符号語テーブル */
-						__device__ __constant__ static const int	code[] = {
+						__device__ __constant__ static const u_int	code[] = {
 							0x0000, 0x0001, 0x0002, 0x0006,
 							0x000e, 0x001e, 0x003e, 0x007e,
 							0x00fe, 0x01fe, 0x03fe, 0x07fe
@@ -133,7 +133,7 @@ namespace jpeg {
 				namespace AC {
 					namespace luminance {
 						/** 輝度AC成分用サイズテーブル */
-						__device__ __constant__ static const int	code_size[] = {
+						__device__ __constant__ static const u_int	code_size[] = {
 							 4, // EOB
 							 2,  2,  3,  4,  5,  7,  8,	10, 16, 16,
 							 4,  5,  7,  9, 11,	16, 16, 16, 16, 16,
@@ -155,7 +155,7 @@ namespace jpeg {
 						};
 
 						/** 輝度AC成分用符号語テーブル */
-						__device__ __constant__ static const int	code[] = {
+						__device__ __constant__ static const u_int	code[] = {
 							0x000a, // EOB
 							0x0000, 0x0001, 0x0004,	0x000b, 0x001a, 0x0078, 0x00f8,	0x03f6, 0xff82, 0xff83,// ZRL
 							0x000c,	0x001b, 0x0079, 0x01f6, 0x07f6,	0xff84, 0xff85, 0xff86, 0xff87,	0xff88,
@@ -175,12 +175,12 @@ namespace jpeg {
 							0x07f9,	// ZRL
 							0xfff5, 0xfff6, 0xfff7, 0xfff8,	0xfff9, 0xfffa, 0xfffb, 0xfffc,	0xfffd, 0xfffe
 						};
-						__device__ __constant__ static const int	EOB = 0;	//! EOBのインデックス
-						__device__ __constant__ static const int	ZRL = 151;//! ZRLのインデックス
+						__device__ __constant__ static const u_int	EOB = 0;	//! EOBのインデックス
+						__device__ __constant__ static const u_int	ZRL = 151;//! ZRLのインデックス
 					}  // namespace luminance
 					namespace component {
 						/** 色差AC成分用サイズテーブル */
-						__device__ __constant__ static const int	code_size[] = {
+						__device__ __constant__ static const u_int	code_size[] = {
 							 2, // EOB
 							 2,  3,  4,  5,  5,  6,  7,	 9, 10, 12,
 							 4,  6,  8,  9, 11,	12, 16, 16, 16, 16,
@@ -202,7 +202,7 @@ namespace jpeg {
 						};
 
 						/** 色差AC成分用符号語テーブル */
-						__device__ __constant__ static const int	code[] = {
+						__device__ __constant__ static const u_int	code[] = {
 							0x0000, // EOB
 							0x0001, 0x0004, 0x000a,	0x0018, 0x0019, 0x0038, 0x0078,	0x01f4, 0x03f6, 0x0ff4,
 							0x000b,	0x0039, 0x00f6, 0x01f5, 0x07f6,	0x0ff5, 0xff88, 0xff89, 0xff8a,	0xff8b,
@@ -223,8 +223,8 @@ namespace jpeg {
 							0x7fc3, 0xfff6, 0xfff7, 0xfff8,	0xfff9, 0xfffa, 0xfffb, 0xfffc,	0xfffd, 0xfffe
 						};
 
-						__device__ __constant__ static const int		EOB = 0;	//! EOBのインデックス
-						__device__ __constant__ static const int		ZRL = 151;	//! ZRLのインデックス
+						__device__ __constant__ static const u_int		EOB = 0;	//! EOBのインデックス
+						__device__ __constant__ static const u_int		ZRL = 151;	//! ZRLのインデックス
 					}  // namespace component
 				}  // namespace AC
 			}  // namespace HuffmanEncode
@@ -234,7 +234,7 @@ namespace jpeg {
 				* 間引き用テーブル輝度用
 				* ファイル出力、内部処理兼用
 				*/
-				static const int	luminance[] = {
+				static const u_int	luminance[] = {
 					 0,  0,  1,  1,  2,  2,  3,  3,  8,  8,  9,  9, 10, 10, 11, 11,
 					 0,  0,  1,  1,  2,  2,  3,  3,  8,  8,  9,  9, 10, 10, 11, 11,
 					16, 16, 17, 17, 18, 18, 19, 19, 24, 24, 25, 25, 26, 26, 27, 27,

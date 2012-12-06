@@ -49,6 +49,7 @@ int main(int argc, char *argv[]) {
 // [output_filename] [-b <block_width> <block_height>]
 // [-log <true|false>] [-logfile <true|false>]
 // [-q <quarity[1,100]>]
+//
 // command <-h | --help>
 bool parse_arg(int argc, char *argv[]) {
 	program_name = argv[0];

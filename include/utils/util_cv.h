@@ -2,7 +2,7 @@
  * util_cvlap.h
  *
  *  Created on: 2010/08/22
- *      Author: simasaki
+ *      Author: simasaki modefied by momma
  */
 
 #ifndef UTIL_CVLAP_H_

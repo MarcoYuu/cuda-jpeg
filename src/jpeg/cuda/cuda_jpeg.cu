@@ -1,9 +1,13 @@
 #include <cstdio>
 #include <cstdlib>
-
 #include <iostream>
 
+#include <jpeg/cpu/cpu_jpeg.h>
 #include <jpeg/cuda/cuda_jpeg.cuh>
+
+#include <utils/debug_log.h>
+#include <utils/type_definitions.h>
+#include <utils/utility.hpp>
 #include <utils/cuda/bit_operation.cuh>
 
 #include "encoder_tables_device.cuh"
@@ -95,17 +99,6 @@ namespace jpeg {
 				table[src_index].y = dst_y_index;
 				table[src_index].u = dst_u_index;
 				table[src_index].v = dst_v_index;
-
-//				if (src_index == 1) {
-//					printf("%d, %d, %d, %d, %d, %d\n", gridDim.x, gridDim.y, gridDim.z, blockDim.x, blockDim.y, blockDim.z);
-//					printf("%d, %d, %d,\n%d, %d, %d,\n%d, %d, %d,\n%d, %d, %d\n\n",
-//						blockIdx.x, blockIdx.y, blockIdx.z,
-//						threadIdx.x, threadIdx.y, threadIdx.z,
-//						src_block_start_index, src_mcu_start_index, src_index,
-//						dst_block_start_y_index, dst_mcu_y_start_index, dst_y_index);
-//					printf("%d, %d, %d, %d, %d, %d\n", dst_block_start_y_index, dst_mcu_y_start_index, dst_y_index,
-//						src_block_start_index, src_mcu_start_index, src_index);
-//				}
 			}
 
 			/**
@@ -127,7 +120,7 @@ namespace jpeg {
 			 */
 			void __global__ ConvertRGBToYUV(const byte* rgb, byte* yuv_result,
 				const TableElementSrcToDst *table) {
-				const int pix_index = threadIdx.x + threadIdx.y * blockDim.x
+				const u_int pix_index = threadIdx.x + threadIdx.y * blockDim.x
 					+ (blockIdx.x + blockIdx.y * gridDim.x + blockIdx.z * gridDim.x * gridDim.y) * blockDim.x
 						* blockDim.y;
 
@@ -160,7 +153,7 @@ namespace jpeg {
 			 */
 			void __global__ ConvertYUVToRGB(const byte* yuv, byte* rgb_result,
 				const TableElementSrcToDst *table) {
-				const int pix_index = threadIdx.x + threadIdx.y * blockDim.x
+				const u_int pix_index = threadIdx.x + threadIdx.y * blockDim.x
 					+ (blockIdx.x + blockIdx.y * gridDim.x + blockIdx.z * gridDim.x * gridDim.y) * blockDim.x
 						* blockDim.y;
 
@@ -199,9 +192,9 @@ namespace jpeg {
 				using DCTConstants::cos;
 				using DCTConstants::cos_t;
 
-				int x = threadIdx.x, y = threadIdx.y;
-				int local_index = x + y * 8;
-				int start_index = 64 * blockIdx.x;
+				u_int x = threadIdx.x, y = threadIdx.y;
+				u_int local_index = x + y * 8;
+				u_int start_index = 64 * blockIdx.x;
 
 				__shared__ float vertical_result[64];
 
@@ -242,9 +235,9 @@ namespace jpeg {
 				using DCTConstants::cos;
 				using DCTConstants::cos_t;
 
-				int x = threadIdx.x, y = threadIdx.y;
-				int local_index = x + y * 8;
-				int start_index = 64 * blockIdx.x;
+				u_int x = threadIdx.x, y = threadIdx.y;
+				u_int local_index = x + y * 8;
+				u_int start_index = 64 * blockIdx.x;
 
 				__shared__ float vertical_result[64];
 
@@ -296,8 +289,8 @@ namespace jpeg {
 			void __global__ ZigzagQuantizeLow(const int *dct_coefficient, int *quantized, float quariry) {
 				using Zigzag::sequence;
 
-				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
+				u_int local_index = threadIdx.x + threadIdx.y * 8;
+				u_int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
 					+ gridDim.x * 128 * 3 * blockIdx.z;
 				quantized[start_index + sequence[local_index]] = dct_coefficient[start_index + local_index]
 					/ ((255.0f - ((255.0f - quantize_table[blockIdx.y][local_index]) * (1.0f + quariry))));
@@ -318,8 +311,8 @@ namespace jpeg {
 				float quariry) {
 				using Zigzag::sequence;
 
-				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
+				u_int local_index = threadIdx.x + threadIdx.y * 8;
+				u_int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
 					+ gridDim.x * 128 * 3 * blockIdx.z;
 				dct_coefficient[start_index + local_index] = quantized[start_index + sequence[local_index]]
 					* ((255.0f - ((255.0f - quantize_table[blockIdx.y][local_index]) * (1.0f + quariry))));
@@ -339,8 +332,8 @@ namespace jpeg {
 			void __global__ ZigzagQuantizeHigh(const int *dct_coefficient, int *quantized, float quarity) {
 				using Zigzag::sequence;
 
-				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
+				u_int local_index = threadIdx.x + threadIdx.y * 8;
+				u_int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
 					+ gridDim.x * 128 * 3 * blockIdx.z;
 				quantized[start_index + sequence[local_index]] = dct_coefficient[start_index + local_index]
 					/ (quantize_table[blockIdx.y][local_index] * (1.0f - quarity));
@@ -361,8 +354,8 @@ namespace jpeg {
 				float quarity) {
 				using Zigzag::sequence;
 
-				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
+				u_int local_index = threadIdx.x + threadIdx.y * 8;
+				u_int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
 					+ gridDim.x * 128 * 3 * blockIdx.z;
 				dct_coefficient[start_index + local_index] = quantized[start_index + sequence[local_index]]
 					* (quantize_table[blockIdx.y][local_index] * (1.0f - quarity));
@@ -385,8 +378,8 @@ namespace jpeg {
 			void __global__ ZigzagQuantizeMax(const int *dct_coefficient, int *quantized) {
 				using Zigzag::sequence;
 
-				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * threadIdx.z + 192 * blockIdx.x;
+				u_int local_index = threadIdx.x + threadIdx.y * 8;
+				u_int start_index = 64 * threadIdx.z + 192 * blockIdx.x;
 				quantized[start_index + sequence[local_index]] = dct_coefficient[start_index + local_index];
 			}
 
@@ -407,407 +400,10 @@ namespace jpeg {
 			void __global__ InverseZigzagQuantizeMax(const int *quantized, int *dct_coefficient) {
 				using Zigzag::sequence;
 
-				int local_index = threadIdx.x + threadIdx.y * 8;
-				int start_index = 64 * threadIdx.z + 192 * blockIdx.x;
+				u_int local_index = threadIdx.x + threadIdx.y * 8;
+				u_int start_index = 64 * threadIdx.z + 192 * blockIdx.x;
 				dct_coefficient[start_index + local_index] = quantized[start_index + sequence[local_index]];
 			}
-			//-------------------------------------------------------------------------------------------------//
-			//
-			// ハフマン符号化
-			//
-			//-------------------------------------------------------------------------------------------------//
-			//TODO 使って試してみる
-			namespace huffman {
-				using namespace cuda::encode_table::HuffmanEncode;
-
-				/**
-				 * 余ったビットに1を詰めるためのマスク
-				 */
-				static __device__ __constant__ const unsigned char kBitFullMaskT[] = {
-					0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff };
-				/** 余ったビットに1を詰めるためのマスク */
-				static __device__ __constant__ const unsigned char kBitFullMaskLowT[] = {
-					0xff, 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
-
-				/**
-				 * @brief CUDAによる圧縮のMCUごとのステート
-				 *
-				 * @author yuumomma
-				 * @version 1.0
-				 */
-				class OutBitStream {
-
-					int byte_pos_;
-					int bit_pos_; //! 書き込みビット位置（上位ビットが7、下位ビットが0）
-					int writable_; //! 1:書き込み可, 0:書き込み不可
-					int num_bits_; //! 全体バッファに書き込むサイズ
-
-					byte *dst_buf_;
-
-				public:
-					static const int MAX_BLOCK_SIZE = 128;
-
-					/**
-					 * @brief コンストラクタ
-					 */
-					inline __host__ OutBitStream() :
-						byte_pos_(0),
-						bit_pos_(7),
-						writable_(1),
-						num_bits_(0),
-						dst_buf_(NULL) {
-					}
-
-					/**
-					 * @brief コンストラクタ
-					 *
-					 * 必ずMAX_BLOCK_SIZE以上のサイズのデバイスメモリを指定すること
-					 *
-					 * @param device_buf デバイスメモリへのポインタ
-					 */
-					inline __host__ OutBitStream(byte* device_buf) :
-						byte_pos_(0),
-						bit_pos_(7),
-						writable_(1),
-						num_bits_(0),
-						dst_buf_(device_buf) {
-					}
-
-					/**
-					 * @brief ストリームに関連付けられるバッファを設定
-					 *
-					 * 必ずMAX_BLOCK_SIZE以上のサイズのデバイスメモリを指定すること
-					 *
-					 * @param device_buf デバイスメモリへのポインタ
-					 */
-					inline __host__ void setStreamBuffer(byte* device_buf) {
-						dst_buf_ = device_buf;
-					}
-
-					/**
-					 * @brief 関連付けられたデータの取得
-					 * @return データバッファ
-					 */
-					inline __device__ byte* getData() {
-						return dst_buf_;
-					}
-
-					/**
-					 * @brief 関連付けられたデータの取得
-					 * @return データバッファ
-					 */
-					inline const __device__ byte* getData() const {
-						return dst_buf_;
-					}
-
-					/**
-					 * @brief ビット単位で書き込む（最大16ビット）
-					 *
-					 * - valueには右詰めでデータが入っている。
-					 * - dstには左詰めで格納する
-					 * - valueが負の時下位ビットのみを格納する
-					 * - num_bitsは1以上16以下
-					 *
-					 * value = 00010011(2)のとき10011を*mBufPに追加する
-					 *
-					 * @param value 書き込む値
-					 * @param num_bits 書き込みビット数
-					 */
-					inline __device__ void setBits(int value, int num_bits) {
-						assert(num_bits != 0);
-
-						if (num_bits > 8) { // 2バイトなら
-							set8Bits(byte(value >> 8), num_bits - 8); // 上位バイト書き込み
-							num_bits = 8;
-						}
-						set8Bits(byte(value), num_bits); // 残り下位バイトを書き込み
-					}
-
-				private:
-					/**
-					 * @brief バッファのカウンタをすすめる
-					 */
-					inline __device__ void increment() {
-						++byte_pos_;
-						assert((byte_pos_ < MAX_BLOCK_SIZE));
-					}
-
-					/**
-					 * @brief 8ビット以下のデータを１つのアドレスに書き込む
-					 *
-					 * @param value 書き込む値
-					 * @param num_bits 書き込みビット数
-					 */
-					inline __device__ void setFewBits(byte value, int num_bits) {
-						// 上位ビットをクリア
-						value &= kBitFullMaskT[num_bits - 1];
-
-						*(dst_buf_ + byte_pos_) |= value << (bit_pos_ + 1 - num_bits);
-
-						bit_pos_ -= num_bits;
-						if (bit_pos_ < 0) {
-							increment();
-							bit_pos_ = 7;
-						}
-					}
-
-					/**
-					 * @brief 8ビット以下のデータを2つのアドレスに分けて書き込む
-					 *
-					 * @param value 書き込む値
-					 * @param num_bits 書き込みビット数
-					 */
-					inline __device__ void setBits2Byte(byte value, int num_bits) {
-						// 上位ビットをクリア
-						value &= kBitFullMaskT[num_bits - 1];
-						// 次のバイトに入れるビット数
-						int nextBits = num_bits - (bit_pos_ + 1);
-
-						// 1バイト目書き込み
-						*(dst_buf_ + byte_pos_) |= (value >> nextBits) & kBitFullMaskT[bit_pos_];
-						increment();
-						// 2バイト目書き込み
-						*(dst_buf_ + byte_pos_) |= value << (8 - nextBits);
-
-						// ビット位置更新
-						bit_pos_ = 7 - nextBits;
-					}
-
-					/**
-					 * @brief 8ビット以下のデータを書き込む
-					 *
-					 * @param value 書き込む値
-					 * @param num_bits 書き込みビット数
-					 */
-					inline __device__ void set8Bits(byte value, int num_bits) {
-						// 現在のバイトに全部入るとき
-						if (bit_pos_ + 1 >= num_bits) {
-							setFewBits(value, num_bits);
-						}
-						// 現在のバイトからはみ出すとき
-						else {
-							setBits2Byte(value, num_bits);
-						}
-					}
-
-				public:
-
-					/**
-					 * @brief ハフマンバッファの結合情報
-					 *
-					 * @author yuumomma
-					 * @version 1.0
-					 */
-					struct WriteBitsInfo {
-						int bits_of_stream; /// このバッファのbit数
-						int bits_of_grobal; /// このバッファまでのbit数
-					};
-					typedef std::vector<WriteBitsInfo> WriteBitsTable;
-
-					/**
-					 * @brief ハフマンバッファの結合情報の作成
-					 *
-					 * @param stream ハフマン符号ストリームの配列へのポインタ
-					 * @param num_bits 結合情報配列へのポインタ
-					 * @param stream_num ストリーム配列のサイズ
-					 * @param stream_per_block ブロックを構成するストリームの個数
-					 */
-					static __host__ void CreateWriteBitsTable(const OutBitStream *stream,
-						WriteBitsInfo* num_bits, int stream_num, int stream_per_block) {
-
-						//BitPosは7が上位で0が下位なので注意,更に位置なので注意。7なら要素は0,0なら要素は7
-						num_bits[0].bits_of_stream = stream[0].byte_pos_ * 8 + (7 - stream[0].bit_pos_);
-						num_bits[0].bits_of_grobal = 0;
-
-						int blocks = stream_num / stream_per_block;
-						for (int i = 0; i < blocks; ++i) {
-							//BitPosは7が上位で0が下位なので注意,更に位置なので注意。7なら要素は0,0なら要素は7
-							int first_stream_of_block = i * stream_per_block;
-							num_bits[first_stream_of_block].bits_of_stream = stream[0].byte_pos_ * 8
-								+ (7 - stream[0].bit_pos_);
-							num_bits[first_stream_of_block].bits_of_grobal = 0;
-
-							for (int j = first_stream_of_block + 1;
-								j < first_stream_of_block + stream_per_block; ++j) {
-								num_bits[j].bits_of_stream = stream[j].byte_pos_ * 8
-									+ (7 - stream[0].bit_pos_);
-								num_bits[j].bits_of_grobal = num_bits[j - 1].bits_of_stream
-									+ num_bits[j - 1].bits_of_grobal;
-							}
-						}
-					}
-
-					/**
-					 * @brief ストリームの結合
-					 *
-					 * ストリームに含まれる有効bitを一つのバッファに結合する
-					 *
-					 * @param stream 結合するストリーム
-					 * @param info ストリームの結合情報
-					 * @param dst 書き込み先バッファの先頭ポインタ
-					 */
-					static __device__ void WriteStreamToLineBuffer(const OutBitStream *stream,
-						const WriteBitsInfo *info, byte *dst) {
-						const int bytes = info->bits_of_stream / 8;
-						const int rest_bits = info->bits_of_stream - 8 * bytes;
-
-						const int offset_bytes = info->bits_of_grobal / 8;
-						const int offset_bits = info->bits_of_grobal - 8 * offset_bytes;
-
-						const byte *data = stream->getData();
-						for (int i = 0; i < bytes; ++i) {
-							dst[i] |= ((data[i] >> offset_bits) & kBitFullMaskLowT[offset_bits]);
-							dst[i + 1] |= (data[i] << (8 - offset_bits));
-						}
-						dst[bytes] |= ((data[bytes] >> offset_bits)
-							& ~(kBitFullMaskLowT[offset_bits] | (0xff >> (rest_bits + offset_bits))));
-						dst[bytes + 1] |= (data[bytes] << (8 - offset_bits));
-					}
-				};
-
-				static __device__ __constant__ const int* DCSizeTable[] = {
-					DC::luminance::code_size, DC::luminance::code_size, DC::component::code_size };
-
-				static __device__ __constant__ const int* DCCodeTable[] = {
-					DC::luminance::code, DC::luminance::code, DC::component::code };
-
-				static __device__ __constant__ const int* ACSizeTable[] = {
-					AC::luminance::code_size, AC::luminance::code_size, AC::component::code_size };
-
-				static __device__ __constant__ const int* ACCodeTable[] = {
-					AC::luminance::code, AC::luminance::code, AC::component::code };
-
-				/**
-				 * @brief MCU(8x8)毎ハフマン符号化カーネル
-				 *
-				 * - 基本的に[huffman_code][value][huffman_code][value]…と続く
-				 * - カーネル呼び出しは8x8ブロックごと = (width*height*3/2)/64 thread.
-				 * - 最低は16x16の画像で、8X8ブロックは6個 = 最低 16x16x3/2/64 : 6 thread.
-				 * - blockIDx.yでわけるとするとTHREADSは最大 buffer_size/64/3/block_num.
-				 *
-				 *	- buffer_size = width * height * 3 / 2;
-				 * 	- block_size = block_width * block_height * 3 / 2;
-				 * 	- block_num = buffer_size / block_size;
-				 * 	- THREADS = block_size / 64 / 3;
-				 *
-				 * 	- grid(block_size / 64 / 3 / THREADS, 3, block_num)
-				 * 	- block(THREADS, 1, 1)
-				 *
-				 * @param quantized 量子化データ
-				 * @param dst 書き込み先
-				 *
-				 */__global__ void HuffmanEncodeForMCU(const int *quantized, OutBitStream *dst) {
-					using namespace encode_table::HuffmanEncode;
-
-					// マクロブロック番号
-					const int mcu_id = threadIdx.x + blockDim.x * blockIdx.x
-						+ gridDim.x * blockDim.x * blockIdx.y + gridDim.x * 3 * blockIdx.z;
-
-					// 量子化結果におけるマクロブロックの開始インデックス
-					const int mcu_start_index = 64 * mcu_id;
-
-					// マクロブロックごとのバッファ
-					OutBitStream *dst_mcu = &dst[mcu_id];
-
-					// 各画像ブロックの左上で有るかどうか(左上なら0,そうでないなら1)
-					const int is_block_left_top = (int) (!(threadIdx.x == 0 && blockIdx.x == 0
-						&& blockIdx.y == 0));
-
-					// ----------------------------- DC成分 ------------------------------------
-					// DC成分は前のMCUの成分との差分をハフマン符号化するため
-					// 画像の最も左上のMCUとの差分は0と取る
-					int diff = quantized[mcu_start_index]
-						- is_block_left_top * quantized[mcu_start_index - 64 * is_block_left_top];
-					//int diff = 0;
-					//if (mcu_start_index == 0) {
-					//	diff = quantized[mcu_start_index];
-					//} else {
-					//	diff = quantized[mcu_start_index] - quantized[mcu_start_index - 64];
-					//}
-
-					// 差分の絶対値から最低限その値を表すのに必要なbitを計算
-					// おそらく有効bitは11(=2^11=2048以下)のはず
-					byte4 abs_diff = abs(diff);
-					int effective_bits = EffectiveBits(abs_diff);
-					dst_mcu->setBits(DCCodeTable[blockIdx.y][effective_bits],
-						DCSizeTable[blockIdx.y][effective_bits]);
-
-					// 0以外ならハフマンbitに続けて実値を書き込む
-					if (effective_bits != 0) {
-						//if (diff < 0)
-						//	--diff;
-						diff -= (int) (diff < 0);
-						dst_mcu->setBits(diff, effective_bits);
-					}
-
-					// ----------------------------- AC成分 ------------------------------------
-					// 残り63のDCT係数に対して処理を行う
-					int runlength = 0;
-#pragma unroll
-					// 末尾以外
-					for (int i = 1; i < 63; i++) {
-						int value = quantized[mcu_start_index + i];
-						byte4 abs_value = abs(value);
-
-						if (abs_value != 0) {
-							// 0の個数が16ごとにZRL=code_id:151を代わりに割り当てる
-							while (runlength > 15) {
-								dst_mcu->setBits(ACCodeTable[blockIdx.y][AC::luminance::ZRL],
-									ACSizeTable[blockIdx.y][AC::luminance::ZRL]);
-								runlength -= 16;
-							}
-
-							// 有効bit数と15以下の0の個数を合わせて符号化コードを書き込む
-							// おそらくAC成分の有効bitは10(=2^10=1024)以下のはず
-							// したがってcode_idは[1,150][152,161]の範囲
-							effective_bits = EffectiveBits(abs_value);
-							int code_id = runlength * 10 + effective_bits + (runlength == 15);
-							dst_mcu->setBits(ACCodeTable[blockIdx.y][code_id],
-								ACSizeTable[blockIdx.y][code_id]);
-							runlength = 0;
-
-							// ハフマンbitに続けて実値を書き込む
-							//if (value < 0)
-							//	--value;
-							value -= (int) (value < 0);
-							dst_mcu->setBits(value, effective_bits);
-
-						} else {
-							++runlength;
-						}
-					}
-					// 末尾はEOB=code_id:0
-					dst_mcu->setBits(AC::luminance::code[AC::luminance::EOB],
-						AC::luminance::code_size[AC::luminance::EOB]);
-				}
-
-				/**
-				 * @brief ハフマンストリームの結合カーネル
-				 *
-				 * 排他処理のため3つに分ける.
-				 * 1MCUは最小4bit(EOBのみ)なので1Byteのバッファに最大3MCUが競合するため.
-				 * Scaleで分割数、Strideで各カーネルにおけるオフセットを指定
-				 *
-				 * - カーネル起動は8x8ブロックごと
-				 *
-				 * 	- grid(thread_devide, block_num, 1)
-				 * 	- block(stream_size / block_num / Scale / thread_devide, 1, 1)
-				 *
-				 * @param stream 結合するストリーム配列へのポインタ
-				 * @param info 結合情報配列へのポインタ
-				 * @param dst 書き込み先
-				 * @param block_size ブロックのサイズ
-				 */
-				template<int Scale, int Stride>
-				__global__ void CombineHuffmanStream(const OutBitStream *stream,
-					const OutBitStream::WriteBitsInfo *info, byte *dst, u_int block_size) {
-					int mcu_id = (blockIdx.x * blockDim.x + threadIdx.x) * Scale + Stride;
-					int block_id = blockIdx.y;
-
-					OutBitStream::WriteStreamToLineBuffer(stream + mcu_id, info + mcu_id,
-						dst + block_size * block_id);
-				}
-			} // namespace huffman
 		} // namespace kernel
 
 		//-------------------------------------------------------------------------------------------------//
@@ -868,10 +464,10 @@ namespace jpeg {
 
 		void CalculateDCTMatrix(float *dct_mat) {
 			const float PI = 3.141592653589793f;
-			for (int k = 0; k < 8; ++k) {
-				for (int n = 0; n < 8; ++n) {
+			for (u_int k = 0; k < 8; ++k) {
+				for (u_int n = 0; n < 8; ++n) {
 					float c = (k == 0) ? 1.0f / 1.41421356f : 1.0f;
-					int index = n + k * 8;
+					u_int index = n + k * 8;
 					dct_mat[index] = c * 0.5f * cos((2.0f * n + 1) * k * PI / 16.0f);
 				}
 			}
@@ -879,19 +475,19 @@ namespace jpeg {
 
 		void CalculateiDCTMatrix(float *idct_mat) {
 			const float PI = 3.141592653589793f;
-			for (int n = 0; n < 8; ++n) {
-				for (int k = 0; k < 8; ++k) {
+			for (u_int n = 0; n < 8; ++n) {
+				for (u_int k = 0; k < 8; ++k) {
 					float c = (n == 0) ? 1.0f / 1.41421356f : 1.0f;
-					int index = n + k * 8;
+					u_int index = n + k * 8;
 					idct_mat[index] = c * 0.5f * cos((2 * k + 1) * n * PI / 16.0f);
 				}
 			}
 		}
 
 		void ZigzagQuantize(const DeviceIntBuffer &dct_coefficient, DeviceIntBuffer &quantized,
-			int block_size, int quarity) {
+			u_int block_size, u_int quarity) {
 			// 最低品質
-			if (quarity < 0) {
+			if (quarity == 0) {
 				const dim3 grid(quantized.size() / 64 / 3, 3, 1);
 				const dim3 block(8, 8, 1);
 				kernel::ZigzagQuantizeLow<<<grid,block>>>(
@@ -921,9 +517,9 @@ namespace jpeg {
 		}
 
 		void InverseZigzagQuantize(const DeviceIntBuffer &quantized, DeviceIntBuffer &dct_coefficient,
-			int block_size, int quarity) {
+			u_int block_size, u_int quarity) {
 			// 最低品質
-			if (quarity < 0) {
+			if (quarity == 0) {
 				const dim3 grid(quantized.size() / 64 / 3, 3, 1);
 				const dim3 block(8, 8, 1);
 				kernel::InverseZigzagQuantizeLow<<<grid,block>>>(
@@ -950,70 +546,6 @@ namespace jpeg {
 				kernel::InverseZigzagQuantizeMax<<<grid,block>>>(
 					quantized.device_data(), dct_coefficient.device_data());
 			}
-		}
-
-		void HuffmanEncode(const DeviceIntBuffer &quantized, DeviceByteBuffer &result, IntBuffer &effective_bits) {
-			using namespace kernel::huffman;
-
-			const int buffer_size = quantized.size();
-			const int block_num = effective_bits.size();
-			const int block_size = buffer_size / block_num;
-			const int mcu_num = buffer_size / 64;
-
-			DeviceByteBuffer buffer(OutBitStream::MAX_BLOCK_SIZE * mcu_num);
-			cuda_memory<OutBitStream> stream(mcu_num);
-			cuda_memory<OutBitStream::WriteBitsInfo> info(mcu_num);
-			for (int i = 0; i < mcu_num; ++i) {
-				stream[i].setStreamBuffer(buffer.device_data() + OutBitStream::MAX_BLOCK_SIZE * i);
-			}
-			stream.sync_to_device();
-
-			dim3 block(buffer_size / 64 / 3 / block_num, 1, 1);
-			dim3 grid(block_size / 64 / 3 / block.x, 3, block_num);
-			HuffmanEncodeForMCU<<<grid,block>>>(quantized.device_data(), stream.device_data());
-
-			stream.sync_to_host();
-			OutBitStream::CreateWriteBitsTable(stream.host_data(), info.host_data(), mcu_num, mcu_num / block_num);
-			info.sync_to_device();
-
-			for (int i = 0; i < block_num; ++i) {
-				effective_bits[i] = info[i * block_size - 1].bits_of_grobal + info[i * block_size - 1].bits_of_stream;
-			}
-
-			int thread_devide = 1;
-			int threadx = mcu_num / block_num / 3;
-			int i = 1;
-			while (i < threadx) {
-				int thread_per_block = threadx / i;
-
-				if (thread_per_block < 32 || thread_per_block) {
-					break;
-				}
-				if (thread_per_block == 32) {
-					thread_devide = i;
-				}
-				else if (thread_per_block == 64) {
-					thread_devide = i;
-				}
-				else if (thread_per_block == 128) {
-					thread_devide = i;
-				}
-				else if (thread_per_block == 192) {
-					thread_devide = i;
-				}
-				else if (thread_per_block == 256) {
-					thread_devide = i;
-				}
-			}
-			grid = dim3(thread_devide, block_num, 1);
-			block = dim3(threadx / thread_devide, 1, 1);
-
-			CombineHuffmanStream<3, 0> <<<grid,block>>>(
-				stream.device_data(), info.device_data(), result.device_data(), block_size);
-			CombineHuffmanStream<3, 1> <<<grid,block>>>(
-				stream.device_data(), info.device_data(), result.device_data(), block_size);
-			CombineHuffmanStream<3, 2> <<<grid,block>>>(
-				stream.device_data(), info.device_data(), result.device_data(), block_size);
 		}
 	} // namespace cuda
 } // namespace jpeg

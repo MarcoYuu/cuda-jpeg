@@ -35,14 +35,15 @@
 								<option id="nvcc.compiler.def.symbols.1120942316" name="定義済みのシンボル (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
 								</option>
+								<option id="nvcc.compiler.compileroptions.1526362349" name="Preprocessor options (-Xcompiler)" superClass="nvcc.compiler.compileroptions" valueType="stringList"/>
 								<inputType id="nvcc.compiler.input.cu.632062340" superClass="nvcc.compiler.input.cu"/>
 								<inputType id="nvcc.compiler.input.cpp.220799909" superClass="nvcc.compiler.input.cpp"/>
 								<inputType id="nvcc.compiler.input.c.44154797" superClass="nvcc.compiler.input.c"/>
 							</tool>
 							<tool command="nvcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="nvcc.linker.base.1152999458" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.libs.1899206198" name="ライブラリー (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="opencv_highgui"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
+									<listOptionValue builtIn="false" value="opencv_highgui"/>
 								</option>
 								<inputType id="nvcc.linker.input.738260869" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -105,7 +106,10 @@
 								<option defaultValue="nvcc.compiler.optimization.level.most" id="nvcc.compiler.optimization.level.610115059" name="最適化レベル" superClass="nvcc.compiler.optimization.level" valueType="enumerated"/>
 								<option id="nvcc.compiler.pic.1157933168" name="Position Independent Code (-fPIC)" superClass="nvcc.compiler.pic"/>
 								<option id="nvcc.compiler.include.paths.238184026" name="インクルード・パス (-I)" superClass="nvcc.compiler.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/local/include/opencv"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/cuda_jpeg-0.2/include}&quot;"/>
+									<listOptionValue builtIn="false" value="../"/>
+									<listOptionValue builtIn="false" value="../~/NVIDIA_GPU_Computing_SDK/shared/inc"/>
 								</option>
 								<option id="nvcc.compiler.def.symbols.2036131691" name="定義済みのシンボル (-D)" superClass="nvcc.compiler.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="NDEBUG"/>
@@ -116,10 +120,8 @@
 							</tool>
 							<tool command="nvcc" commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX} ${OUTPUT} ${INPUTS}" id="nvcc.linker.base.1607289057" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.libs.1458696254" name="ライブラリー (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="highgui"/>
-									<listOptionValue builtIn="false" value="core"/>
-									<listOptionValue builtIn="false" value="opencv_highgui"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
+									<listOptionValue builtIn="false" value="opencv_highgui"/>
 								</option>
 								<inputType id="nvcc.linker.input.473189971" superClass="nvcc.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -139,7 +141,10 @@
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
 				<externalSettings containerId="org.eclipse.cdt.managedbuilder.pkgconfig.extSettings" factoryId="org.eclipse.cdt.core.extension.container.factory">
-					<externalSetting contentTypes="org.eclipse.cdt.core.cSource:org.eclipse.cdt.core.cxxSource"/>
+					<externalSetting contentTypes="org.eclipse.cdt.core.cSource:org.eclipse.cdt.core.cxxSource">
+						<entry flags="BUILTIN" kind="includePath" name="/usr/local/include/opencv"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/local/include"/>
+					</externalSetting>
 					<externalSetting contentTypes="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"/>
 				</externalSettings>
 			</storageModule>
@@ -184,8 +189,6 @@
 							</tool>
 							<tool id="nvcc.linker.base.969828767" name="NVCC Linker" superClass="nvcc.linker.base">
 								<option id="nvcc.linker.option.libs.2139325620" name="ライブラリー (-l)" superClass="nvcc.linker.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="highgui"/>
-									<listOptionValue builtIn="false" value="core"/>
 									<listOptionValue builtIn="false" value="opencv_highgui"/>
 									<listOptionValue builtIn="false" value="opencv_core"/>
 								</option>
@@ -250,4 +253,6 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.nvidia.cuda.ide.build.NVCCPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

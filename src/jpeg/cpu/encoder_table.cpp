@@ -5,14 +5,17 @@
  *      Author: yuumomma
  */
 
+#include <utils/type_definitions.h>
 #include "encoder_tables.h"
 
 namespace jpeg {
 	namespace cpu {
 		namespace encode_table{
 
+			using util::u_int;
+
 			/** ジグザグシーケンス用  */
-			const int	Zigzag::sequence[] = {
+			const u_int	Zigzag::sequence[] = {
 				 0,  1,  5,  6, 14, 15, 27, 28,
 				 2,  4,  7, 13, 16, 26, 29, 42,
 				 3,  8, 12, 17, 25, 30, 41, 43,
@@ -50,28 +53,28 @@ namespace jpeg {
 			namespace HuffmanEncode{
 				namespace DC {
 					/** 輝度DC成分用サイズテーブル */
-					const int	luminance::size[] = {
+					const u_int	luminance::size[] = {
 						0x0002, 0x0003, 0x0003, 0x0003,
 						0x0003, 0x0003, 0x0004, 0x0005,
 						0x0006, 0x0007, 0x0008, 0x0009
 					};
 
 					/** 輝度DC成分用符号語テーブル */
-					const int luminance::code[] = {
+					const u_int luminance::code[] = {
 						0x0000, 0x0002, 0x0003, 0x0004,
 						0x0005, 0x0006, 0x000e, 0x001e,
 						0x003e, 0x007e, 0x00fe, 0x01fe
 					};
 
 					/** 色差DC成分用サイズテーブル */
-					const int	component::size[] = {
+					const u_int	component::size[] = {
 						0x0002, 0x0002, 0x0002, 0x0003,
 						0x0004, 0x0005, 0x0006, 0x0007,
 						0x0008, 0x0009, 0x000a, 0x000b
 					};
 
 					/** 色差DC成分用符号語テーブル */
-					const int	component::code[] = {
+					const u_int	component::code[] = {
 						0x0000, 0x0001, 0x0002, 0x0006,
 						0x000e, 0x001e, 0x003e, 0x007e,
 						0x00fe, 0x01fe, 0x03fe, 0x07fe
@@ -79,7 +82,7 @@ namespace jpeg {
 				}
 				namespace AC {
 					/** 輝度AC成分用サイズテーブル */
-					const int	luminance::size[] = {
+					const u_int	luminance::size[] = {
 						 4,  2,  2,  3,  4,  5,  7,  8,
 						10, 16, 16,  4,  5,  7,  9, 11,
 						16, 16, 16, 16, 16,  5,  8, 10,
@@ -104,7 +107,7 @@ namespace jpeg {
 					};
 
 					/** 輝度AC成分用符号語テーブル */
-					const int	luminance::code[] = {
+					const u_int	luminance::code[] = {
 						0x000a, 0x0000, 0x0001, 0x0004,
 						0x000b, 0x001a, 0x0078, 0x00f8,
 						0x03f6, 0xff82, 0xff83, 0x000c,
@@ -149,7 +152,7 @@ namespace jpeg {
 					};
 
 					/** 色差AC成分用サイズテーブル */
-					const int	component::size[] = {
+					const u_int	component::size[] = {
 						 2,  2,  3,  4,  5,  5,  6,  7,
 						 9, 10, 12,  4,  6,  8,  9, 11,
 						12, 16, 16, 16, 16,  5,  8, 10,
@@ -174,7 +177,7 @@ namespace jpeg {
 					};
 
 					/** 色差AC成分用符号語テーブル */
-					const int	component::code[] = {
+					const u_int	component::code[] = {
 						0x0000, 0x0001, 0x0004, 0x000a,
 						0x0018, 0x0019, 0x0038, 0x0078,
 						0x01f4, 0x03f6, 0x0ff4, 0x000b,
@@ -252,36 +255,36 @@ namespace jpeg {
 
 				namespace DC {
 					/** 輝度DC成分用サイズテーブル */
-					const int	luminance::size[] = {
+					const u_int	luminance::size[] = {
 						0x0002, 0x0003, 0x0003, 0x0003,
 						0x0003, 0x0003, 0x0004, 0x0005,
 						0x0006, 0x0007, 0x0008, 0x0009
 					};
 					/** 輝度DC成分用符号語テーブル */
-					const int	luminance::code[] = {
+					const u_int	luminance::code[] = {
 						0x0000, 0x0002, 0x0003, 0x0004,
 						0x0005, 0x0006, 0x000e, 0x001e,
 						0x003e, 0x007e, 0x00fe, 0x01fe
 					};
 					/** 輝度DC成分用パラメータ */
-					const int	luminance::param[] = {
+					const u_int	luminance::param[] = {
 						0x0000, 0x0001, 0x0002, 0x0003,
 						0x0004, 0x0005, 0x0006, 0x0007,
 						0x0008, 0x0009, 0x000a, 0x000b
 					};
 
 					/** 色差DC成分用サイズテーブル */
-					const int	component::size[] = {
+					const u_int	component::size[] = {
 						0x0002, 0x0002, 0x0002, 0x0003,
 						0x0004, 0x0005, 0x0006, 0x0007,
 						0x0008, 0x0009, 0x000a, 0x000b };
 					/** 色差DC成分用符号語テーブル */
-					const int	component::code[] = {
+					const u_int	component::code[] = {
 						0x0000, 0x0001, 0x0002, 0x0006,
 						0x000e, 0x001e, 0x003e, 0x007e,
 						0x00fe, 0x01fe, 0x03fe, 0x07fe	};
 					/** 色差DC成分用パラメータ */
-					const int	component::param[] = {
+					const u_int	component::param[] = {
 						0x0000, 0x0001, 0x0002, 0x0003,
 						0x0004, 0x0005, 0x0006, 0x0007,
 						0x0008, 0x0009, 0x000a, 0x000b
@@ -289,7 +292,7 @@ namespace jpeg {
 				} // namespace DC
 				namespace AC {
 					/** 輝度AC成分用サイズテーブル */
-					const int	luminance::size[] = {
+					const u_int	luminance::size[] = {
 						 2,  2,  3,  4,  4,  4,  5,  5,
 						 5,  6,  6,  7,  7,  7,  7,  8,
 						 8,  8,  9,  9,  9,  9,  9, 10,
@@ -314,7 +317,7 @@ namespace jpeg {
 					};
 
 					/** 輝度AC成分用符号語テーブル */
-					const int	luminance::code[] = {
+					const u_int	luminance::code[] = {
 						0x0000, 0x0001, 0x0004, 0x000a, 0x000b, 0x000c, 0x001a, 0x001b,
 						0x001c, 0x003a, 0x003b, 0x0078, 0x0079, 0x007a, 0x007b, 0x00f8,
 						0x00f9, 0x00fa, 0x01f6, 0x01f7, 0x01f8, 0x01f9, 0x01fa, 0x03f6,
@@ -339,7 +342,7 @@ namespace jpeg {
 					};
 
 					/** 輝度AC成分用パラメータ */
-					const int luminance::param[] = {
+					const u_int luminance::param[] = {
 						0x0001, 0x0002, 0x0003, 0x0000, 0x0004, 0x0011, 0x0005, 0x0012,
 						0x0021, 0x0031, 0x0041, 0x0006, 0x0013, 0x0051, 0x0061, 0x0007,
 						0x0022, 0x0071, 0x0014, 0x0032, 0x0081, 0x0091, 0x00a1, 0x0008,
@@ -364,7 +367,7 @@ namespace jpeg {
 					};
 
 					/** 色差AC成分用サイズテーブル */
-					const int	component::size[] = {
+					const u_int	component::size[] = {
 						 2,  2,  3,  4,  4,  5,  5,  5,
 						 5,  6,  6,  6,  6,  7,  7,  7,
 						 8,  8,  8,  8,  9,  9,  9,  9,
@@ -389,7 +392,7 @@ namespace jpeg {
 					};
 
 					/** 色差AC成分用符号語テーブル */
-					const int	component::code[] = {
+					const u_int	component::code[] = {
 						0x0000, 0x0001, 0x0004, 0x000a, 0x000b, 0x0018, 0x0019, 0x001a,
 						0x001b, 0x0038, 0x0039, 0x003a, 0x003b, 0x0078, 0x0079, 0x007a,
 						0x00f6, 0x00f7, 0x00f8, 0x00f9, 0x01f4, 0x01f5, 0x01f6, 0x01f7,
@@ -414,7 +417,7 @@ namespace jpeg {
 					};
 
 					/** 色差AC成分用パラメータ */
-					const int component::param[]={//
+					const u_int component::param[]={//
 						0x0000, 0x0001, 0x0002, 0x0003, 0x0011, 0x0004, 0x0005, 0x0021,
 						0x0031, 0x0006, 0x0012, 0x0041, 0x0051, 0x0007, 0x0061, 0x0071,
 						0x0013, 0x0022, 0x0032, 0x0081, 0x0008, 0x0014, 0x0042, 0x0091,
@@ -445,7 +448,7 @@ namespace jpeg {
 			*
 			* ファイル出力、内部処理兼用
 			*/
-			const int Sampling::luminance[] = {
+			const u_int Sampling::luminance[] = {
 				 0,  0,  1,  1,  2,  2,  3,  3,  8,  8,  9,  9, 10, 10, 11, 11,
 				 0,  0,  1,  1,  2,  2,  3,  3,  8,  8,  9,  9, 10, 10, 11, 11,
 				16, 16, 17, 17, 18, 18, 19, 19, 24, 24, 25, 25, 26, 26, 27, 27,

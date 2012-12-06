@@ -17,6 +17,8 @@ namespace jpeg {
 		using namespace util;
 		using namespace util::cuda;
 
+		using util::u_int;
+
 		/**
 		 * @brief 変換テーブルの要素
 		 *
@@ -40,6 +42,32 @@ namespace jpeg {
 
 		typedef device_memory<float> DevicefloatBuffer; /// デバイスメモリfloatバッファ
 		typedef cuda_memory<float> CudafloatBuffer; /// ホスト同期可能floatバッファ
+
+		class Encoder {
+		public:
+			struct Result {
+				byte* result_buffer;
+				u_int effective_bits;
+			};
+
+		public:
+			Encoder(u_int width, u_int height);
+			Encoder(u_int width, u_int height, u_int block_width, u_int block_height);
+			~Encoder();
+
+			void reset();
+			void setImageSize(u_int width, u_int height);
+			void setBlockSize(u_int block_width, u_int block_height);
+
+			void setQuarity(u_int quarity);
+
+			void encode(const DeviceByteBuffer &rgb);
+			Result getEncodedData(u_int block_index);
+
+		private:
+			class Impl;
+			Impl *impl;
+		};
 
 		/**
 		 * @brief 色変換テーブルを作成する
@@ -129,7 +157,7 @@ namespace jpeg {
 		 * @param quarity 量子化品質[0,100]
 		 */
 		void ZigzagQuantize(const DeviceIntBuffer &dct_coefficient, DeviceIntBuffer &quantized,
-			int block_size, int quarity = 80);
+			u_int block_size, u_int quarity = 80);
 
 		/**
 		 * @brief 逆ジグザグ量子化
@@ -142,7 +170,7 @@ namespace jpeg {
 		 * @param quarity 量子化品質[0,100]
 		 */
 		void InverseZigzagQuantize(const DeviceIntBuffer &quantized, DeviceIntBuffer &dct_coefficient,
-			int block_size, int quarity = 80);
+			u_int block_size, u_int quarity = 80);
 
 		/**
 		 * @brief ハフマンエンコードする
@@ -150,6 +178,11 @@ namespace jpeg {
 		 * ハフマン符号化された結果をバッファに書き込む。
 		 * ただし、バッファはハフマン符号化されたデータが十分入る大きさでなければならず、
 		 * 量子化結果はeffective_bits.size()個のブロックに分割されたデータとみなし書き込みを行う。
+		 *
+		 * - 第一引数には量子化されたデータを渡す.
+		 * - 第二引数には結果を保存するバッファを渡す.
+		 * - ただしこのバッファは第三引数の要素数に等分割されて結果が保存される。
+		 * - 第三引数は第二引数の各バッファの有効bit数を返す。
 		 *
 		 * @param quantized 量子化データ
 		 * @param result 結果

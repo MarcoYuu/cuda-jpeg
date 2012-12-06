@@ -9,6 +9,7 @@
 #define DEBUGLOG_H_
 
 #include <string>
+#include <fstream>
 
 namespace util {
 	/**
