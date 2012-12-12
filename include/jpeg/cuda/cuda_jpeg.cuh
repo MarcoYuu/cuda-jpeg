@@ -19,6 +19,11 @@ namespace jpeg {
 
 		using util::u_int;
 
+		//-------------------------------------------------------------------------------------------------//
+		//
+		// 方定義
+		//
+		//-------------------------------------------------------------------------------------------------//
 		/**
 		 * @brief 変換テーブルの要素
 		 *
@@ -43,32 +48,154 @@ namespace jpeg {
 		typedef device_memory<float> DevicefloatBuffer; /// デバイスメモリfloatバッファ
 		typedef cuda_memory<float> CudafloatBuffer; /// ホスト同期可能floatバッファ
 
+		//-------------------------------------------------------------------------------------------------//
+		//
+		// 符号化クラス
+		//
+		//-------------------------------------------------------------------------------------------------//
+		/**
+		 * @brief JpegEncoder
+		 *
+		 * Jpeg圧縮の補助
+		 *
+		 * @author yuumomma
+		 * @version 1.0
+		 */
 		class Encoder {
 		public:
-			struct Result {
-				byte* result_buffer;
-				u_int effective_bits;
-			};
-
-		public:
+			/**
+			 * @brief コンストラクタ
+			 *
+			 * @param width 画像幅
+			 * @param height 画像高さ
+			 */
 			Encoder(u_int width, u_int height);
+
+			/**
+			 * @brief コンストラクタ
+			 *
+			 * @param width 画像幅
+			 * @param height 画像高さ
+			 * @param block_width ブロック幅
+			 * @param block_height ブロック高さ
+			 */
 			Encoder(u_int width, u_int height, u_int block_width, u_int block_height);
+
+			/**
+			 * デストラクタ
+			 */
 			~Encoder();
 
+			/**
+			 * @brief 状態のリセット
+			 *
+			 * 画像、ブロック幅を変更した際はこのメソッドを呼び出すこと
+			 */
 			void reset();
+
+			/**
+			 * @brief 画像サイズを設定する
+			 *
+			 * @param width 幅
+			 * @param height 高さ
+			 */
 			void setImageSize(u_int width, u_int height);
+
+			/**
+			 * @brief ブロック分割幅を指定する
+			 *
+			 * @param block_width 幅
+			 * @param block_height 高さ
+			 */
 			void setBlockSize(u_int block_width, u_int block_height);
 
+			/**
+			 * @brief 圧縮品質の設定
+			 *
+			 * @param quarity 品質[0-100]
+			 */
 			void setQuarity(u_int quarity);
 
-			void encode(const DeviceByteBuffer &rgb);
-			Result getEncodedData(u_int block_index);
+			/**
+			 * @brief エンコードする
+			 *
+			 * @param rgb 色データ
+			 */
+			void encode(const DeviceByteBuffer &rgb, DeviceByteBuffer &huffman, IntBuffer & effective_bits);
 
 		private:
 			class Impl;
 			Impl *impl;
+
+			Encoder(const Encoder&);
+			Encoder& operator=(const Encoder&);
 		};
 
+		/**
+		 * @brief JpegDecoder
+		 *
+		 * Jpeg圧縮の補助
+		 *
+		 * @author yuumomma
+		 * @version 1.0
+		 */
+		class Decoder {
+		public:
+			/**
+			 * @brief コンストラクタ
+			 *
+			 * @param width 画像幅
+			 * @param height 画像高さ
+			 */
+			Decoder(u_int width, u_int height);
+
+			/**
+			 * デストラクタ
+			 */
+			~Decoder();
+
+			/**
+			 * @brief 状態のリセット
+			 *
+			 * 画像、ブロック幅を変更した際はこのメソッドを呼び出すこと
+			 */
+			void reset();
+
+			/**
+			 * @brief 画像サイズを設定する
+			 *
+			 * @param width 幅
+			 * @param height 高さ
+			 */
+			void setImageSize(u_int width, u_int height);
+
+			/**
+			 * @brief 圧縮品質の設定
+			 *
+			 * @param quarity 品質[0-100]
+			 */
+			void setQuarity(u_int quarity);
+
+			/**
+			 * @brief デコードする
+			 *
+			 * @param rgb 色データ
+			 */
+			void decode(const byte* huffman, u_int size, DeviceByteBuffer &rgb);
+
+		private:
+			class Impl;
+			Impl *impl;
+
+			Decoder(const Decoder&);
+			Decoder& operator=(const Decoder&);
+		};
+
+		//-------------------------------------------------------------------------------------------------//
+		//
+		// 個別変換関数
+		//
+		//-------------------------------------------------------------------------------------------------//
 		/**
 		 * @brief 色変換テーブルを作成する
 		 *
@@ -188,7 +315,18 @@ namespace jpeg {
 		 * @param result 結果
 		 * @param block_size 有効ビット数
 		 */
-		void HuffmanEncode(const DeviceIntBuffer &quantized, DeviceByteBuffer &result, IntBuffer &effective_bits);
+		void HuffmanEncode(const DeviceIntBuffer &quantized, DeviceByteBuffer &result,
+			IntBuffer &effective_bits);
+
+		/**
+		 * @brief ハフマン符号をデコードする
+		 *
+		 * @param huffman ハフマン符号
+		 * @param quantized 量子化データ
+		 * @param width 画像幅
+		 * @param height 画像高さ
+		 */
+		void HuffmanDecode(const ByteBuffer &huffman, IntBuffer &quantized, size_t width, size_t height);
 	}
 }
 
