@@ -30,6 +30,13 @@ namespace util {
 		InBitStream(const byte* aBufP, size_t size);
 
 		/**
+		 *
+		 * @param aBufP 読み込みバッファ
+		 * @param size バッファの有効サイズ
+		 */
+		void reset(const byte* aBufP, size_t size);
+
+		/**
 		 * @brief ビット単位で読み出す
 		 *
 		 * @param numOfBits 読みだすビット数

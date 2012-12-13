@@ -26,11 +26,11 @@ bool parse_arg(int argc, char *argv[]);
 void cuda_main(const string &file_name, const string &out_file_name, size_t block_width, size_t block_height,
 	int quarity);
 
-string program_name;
-string infile_name;
-string outfile_name;
-size_t block_width = 0;
-size_t block_height = 0;
+static string program_name;
+static string infile_name;
+static string outfile_name;
+static size_t block_width = 0;
+static size_t block_height = 0;
 int quarity = 80;
 
 int main(int argc, char *argv[]) {

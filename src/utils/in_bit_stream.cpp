@@ -25,6 +25,17 @@ namespace util {
 		mReadFlag = 1; // アクセスエラー無し
 	}
 
+	void InBitStream::reset(const byte* aBufP, size_t size) {
+		// データバッファの設定
+		mBufP = (byte*) aBufP; // バッファ
+		mEndOfBufP = mBufP + size; // バッファの最終アドレス
+
+		// 状態変数初期化
+		mBitPos = 7; // 最上位ビット
+		mNextFlag = 1; // 読み飛ばし無し
+		mReadFlag = 1; // アクセスエラー無し
+	}
+
 	// 読み出しアドレスのインクリメントとアクセス違反のチェック
 	void InBitStream::incBuf() {
 		if (++mBufP >= mEndOfBufP) // 次のアクセスでエラー

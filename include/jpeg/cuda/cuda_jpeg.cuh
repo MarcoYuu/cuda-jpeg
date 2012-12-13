@@ -117,11 +117,18 @@ namespace jpeg {
 			void setQuarity(u_int quarity);
 
 			/**
-			 * @brief エンコードする
 			 *
-			 * @param rgb 色データ
+			 * @return
 			 */
-			void encode(const DeviceByteBuffer &rgb, DeviceByteBuffer &huffman, IntBuffer & effective_bits);
+			u_int getBlockNum() const;
+
+			/**
+			 *
+			 * @param rgb
+			 * @param huffman
+			 * @param effective_bits
+			 */
+			void encode(const byte* rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits);
 
 		private:
 			class Impl;
@@ -181,7 +188,7 @@ namespace jpeg {
 			 *
 			 * @param rgb 色データ
 			 */
-			void decode(const byte* huffman, u_int size, DeviceByteBuffer &rgb);
+			void decode(const byte *huffman, byte *dst);
 
 		private:
 			class Impl;

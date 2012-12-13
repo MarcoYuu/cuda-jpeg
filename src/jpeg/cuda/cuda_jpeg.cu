@@ -1038,9 +1038,18 @@ namespace jpeg {
 			u_int block_width_;
 			u_int block_height_;
 
+			u_int buffer_size_;
+			u_int block_size_;
+
 			u_int quarity_;
 
-			DeviceTable encode_table;
+			DeviceTable encode_table_;
+
+			DeviceByteBuffer encode_yuv_result_;
+			DeviceIntBuffer encode_dct_result_;
+			DeviceIntBuffer encode_qua_result_;
+
+			DeviceByteBuffer encode_src_;
 
 		public:
 			Impl(u_int width, u_int height, u_int block_width, u_int block_height) :
@@ -1048,11 +1057,24 @@ namespace jpeg {
 				height_(height),
 				block_width_(block_width),
 				block_height_(block_height),
+				buffer_size_(width * height * 3 / 2),
+				block_size_(block_width * block_height * 3 / 2),
 				quarity_(80),
-				encode_table(width * height) {
+				encode_table_(width * height),
+				encode_yuv_result_(buffer_size_),
+				encode_dct_result_(buffer_size_),
+				encode_qua_result_(buffer_size_),
+				encode_src_(width_ * height_ * 3) {
+
+				CreateConversionTable(width_, height_, block_width_, block_height_, encode_table_);
 			}
 
 			void reset() {
+				CreateConversionTable(width_, height_, block_width_, block_height_, encode_table_);
+				encode_yuv_result_.resize(buffer_size_);
+				encode_dct_result_.resize(buffer_size_);
+				encode_qua_result_.resize(buffer_size_);
+				encode_src_.resize(width_ * height_ * 3);
 			}
 
 			void setImageSize(u_int width, u_int height) {
@@ -1069,36 +1091,30 @@ namespace jpeg {
 				quarity_ = quarity;
 			}
 
-			void encode(const DeviceByteBuffer &rgb_src, DeviceByteBuffer &huffman,
-				IntBuffer & effective_bits) {
+			u_int getBlockNum() const {
+				return width_ * height_ / (block_width_ * block_height_);
+			}
 
-				using jpeg::cuda::HuffmanEncode;
+			void encode(const byte* rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits) {
+				assert(effective_bits.size() >= getBlockNum());
 
-				const int IMG_MEM_SIZE = width_ * height_ * 3 / 2;
-				const int BLOCK_MEM_SIZE = block_width_ * block_height_ * 3 / 2;
+				DeviceByteBuffer encode_src(rgb, width_ * height_ * 3);
+				huffman.fill_zero();
 
-				CudaByteBuffer encode_yuv_result(IMG_MEM_SIZE);
-				CudaIntBuffer encode_dct_result(IMG_MEM_SIZE);
-				CudaIntBuffer encode_qua_result(IMG_MEM_SIZE);
-
-				CreateConversionTable(width_, height_, block_width_, block_height_, encode_table);
-
-				ConvertRGBToYUV(rgb_src, encode_yuv_result, width_, height_, block_width_, block_height_,
-					encode_table);
-				DiscreteCosineTransform(encode_yuv_result, encode_dct_result);
-				ZigzagQuantize(encode_dct_result, encode_qua_result, BLOCK_MEM_SIZE, quarity_);
-				HuffmanEncode(encode_qua_result, huffman, effective_bits);
+				cuda::ConvertRGBToYUV(encode_src, encode_yuv_result_, width_, height_, block_width_,
+					block_height_, encode_table_);
+				cuda::DiscreteCosineTransform(encode_yuv_result_, encode_dct_result_);
+				cuda::ZigzagQuantize(encode_dct_result_, encode_qua_result_, block_size_, quarity_);
+				cuda::HuffmanEncode(encode_qua_result_, huffman, effective_bits);
 			}
 		};
 
 		Encoder::Encoder(u_int width, u_int height) :
 			impl(new Impl(width, height, width, height)) {
-
 		}
 
 		Encoder::Encoder(u_int width, u_int height, u_int block_width, u_int block_height) :
 			impl(new Impl(width, height, block_width, block_height)) {
-
 		}
 
 		Encoder::~Encoder() {
@@ -1121,8 +1137,7 @@ namespace jpeg {
 			impl->setQuarity(quarity);
 		}
 
-		void Encoder::encode(const DeviceByteBuffer &rgb, DeviceByteBuffer &huffman,
-			IntBuffer & effective_bits) {
+		void Encoder::encode(const byte* rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits) {
 			impl->encode(rgb, huffman, effective_bits);
 		}
 
@@ -1133,17 +1148,33 @@ namespace jpeg {
 
 			u_int quarity_;
 
-			DeviceTable decode_table;
+			u_int buffer_size_;
+
+			DeviceTable decode_table_;
+
+			DeviceIntBuffer decode_dct_src_;
+			DeviceByteBuffer decode_yuv_src_;
+			DeviceByteBuffer decode_result_;
+
+			CudaIntBuffer decode_qua_src_;
 
 		public:
 			Impl(u_int width, u_int height) :
 				width_(width),
 				height_(height),
 				quarity_(80),
-				decode_table(width * height) {
+				buffer_size_(width * height * 3 / 2),
+				decode_table_(width * height),
+				decode_dct_src_(buffer_size_),
+				decode_yuv_src_(buffer_size_),
+				decode_result_(width * height * 3),
+				decode_qua_src_(buffer_size_) {
+
+				CreateConversionTable(width, height, width, height, decode_table_);
 			}
 
 			void reset() {
+				CreateConversionTable(width_, height_, width_, height_, decode_table_);
 			}
 
 			void setImageSize(u_int width, u_int height) {
@@ -1155,21 +1186,16 @@ namespace jpeg {
 				quarity_ = quarity;
 			}
 
-			void decode(const byte* huffman, u_int size, DeviceByteBuffer &rgb) {
-				const int BLOCK_MEM_SIZE = width_ * height_ * 3 / 2;
+			void decode(const byte *huffman, byte *dst) {
+				InBitStream ibs(huffman, buffer_size_);
+				cpu::decode_huffman(&ibs, decode_qua_src_.host_data(), width_, height_);
+				decode_qua_src_.sync_to_device();
 
-				CudaIntBuffer decode_qua_src(BLOCK_MEM_SIZE);
-				DeviceIntBuffer decode_dct_src(BLOCK_MEM_SIZE);
-				DeviceByteBuffer decode_yuv_src(BLOCK_MEM_SIZE);
-
-				CreateConversionTable(width_, height_, width_, height_, decode_table);
-
-				InBitStream ibs(huffman, size);
-				cpu::decode_huffman(&ibs, decode_qua_src.host_data(), width_, height_);
-				decode_qua_src.sync_to_device();
-				InverseZigzagQuantize(decode_qua_src, decode_dct_src, BLOCK_MEM_SIZE, quarity_);
-				InverseDiscreteCosineTransform(decode_dct_src, decode_yuv_src);
-				ConvertYUVToRGB(decode_yuv_src, rgb, width_, height_, width_, height_, decode_table);
+				cuda::InverseZigzagQuantize(decode_qua_src_, decode_dct_src_, buffer_size_, quarity_);
+				cuda::InverseDiscreteCosineTransform(decode_dct_src_, decode_yuv_src_);
+				cuda::ConvertYUVToRGB(decode_yuv_src_, decode_result_, width_, height_, width_, height_,
+					decode_table_);
+				decode_result_.copy_to_host(dst, decode_result_.size());
 			}
 		};
 
@@ -1193,8 +1219,8 @@ namespace jpeg {
 			impl->setQuarity(quarity);
 		}
 
-		void Decoder::decode(const byte* huffman, u_int size, DeviceByteBuffer& rgb) {
-			impl->decode(huffman, size, rgb);
+		void Decoder::decode(const byte *huffman, byte *dst) {
+			impl->decode(huffman, dst);
 		}
 	} // namespace cuda
 } // namespace jpeg
