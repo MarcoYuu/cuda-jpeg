@@ -28,6 +28,12 @@ using namespace util::cuda;
 using namespace jpeg;
 using namespace jpeg::cuda;
 
+/**
+ * @brief テーブル出力用
+ *
+ * @author momma
+ * @version 1.0
+ */
 struct TableExport: public util::DebugLog::OutputFormat {
 private:
 	const size_t size_;
@@ -93,17 +99,56 @@ public:
 	}
 };
 
+/**
+ * DCT用行列の作成テスト
+ */
 void CalcurateMatrixTest();
 
+/**
+ * @brief エンコーダクラスとデコーダクラスを使う
+ *
+ * @param file_name 入力
+ * @param out_file_name 出力
+ * @param block_width ブロック幅
+ * @param block_height ブロック高さ
+ * @param quarity 品質
+ */
 void encoder_decoder(const std::string& file_name, const std::string& out_file_name, size_t block_width,
 	size_t block_height, int quarity);
 
+/**
+ * @brief ひとつずつ実行するテスト用コード
+ *
+ * @param file_name 入力
+ * @param out_file_name 出力
+ * @param block_width ブロック幅
+ * @param block_height ブロック高さ
+ * @param quarity 品質
+ */
 void encode_and_decode(const std::string& file_name, const std::string& out_file_name, size_t block_width,
 	size_t block_height, int quarity);
 
+/**
+ * @brief 色変換だけしてみるテスト
+ *
+ * @param file_name 入力
+ * @param out_file_name 出力
+ * @param block_width ブロック幅
+ * @param block_height ブロック高さ
+ * @param quarity 品質
+ */
 void color_conversion_only(const std::string &file_name, const std::string &out_file_name, size_t block_width,
 	size_t block_height, int quarity);
 
+/**
+ * @brief エンコード、デコード関数を呼び出すテスト
+ *
+ * @param file_name 入力
+ * @param out_file_name 出力
+ * @param block_width ブロック幅
+ * @param block_height ブロック高さ
+ * @param quarity 品質
+ */
 void code_func(const std::string &file_name, const std::string &out_file_name, size_t block_width,
 	size_t block_height, int quarity);
 
@@ -206,27 +251,55 @@ void encoder_decoder(const std::string& file_name, const std::string& out_file_n
 	const int height = source.getHeight();
 	const int BLOCK_NUM = width * height / (block_width * block_height);
 
-	CudaByteBuffer huffman(width * height);
-	IntBuffer effective_bits(BLOCK_NUM);
+	Encoder encoder(width, height, block_width, block_height);
+	encoder.setQuarity(quarity);
+	Decoder decoder(block_width, block_height);
+	decoder.setQuarity(quarity);
+
 	{
-		Encoder encoder(width, height, block_width, block_height);
-		encoder.setQuarity(quarity);
-		encoder.encode((byte*) source.getRawData(), huffman, effective_bits);
-		huffman.sync_to_host();
+		CudaByteBuffer huffman(width * height);
+		IntBuffer effective_bits(BLOCK_NUM);
+		{
+			encoder.encode((byte*) source.getRawData(), huffman, effective_bits);
+			huffman.sync_to_host();
+		}
+
+		{
+			BitmapCVUtil bmp(block_width, block_height, 8, source.getBytePerPixel());
+			for (int i = 0; i < BLOCK_NUM; ++i) {
+				decoder.decode(huffman.host_data() + huffman.size() / BLOCK_NUM * i,
+					(byte*) bmp.getRawData());
+
+				string index = boost::lexical_cast<string>(i);
+				string qrty = boost::lexical_cast<string>(quarity);
+				string outname = "cuda_" + index + "_" + qrty + "_" + out_file_name;
+				DebugLog::log("export to file :" + outname);
+				bmp.saveToFile(outname);
+			}
+		}
 	}
 
+	// 内部状態が引きずられないかの2回目テスト
 	{
-		BitmapCVUtil bmp(block_width, block_height, 8, source.getBytePerPixel());
-		Decoder decoder(block_width, block_height);
-		decoder.setQuarity(quarity);
-		for (int i = 0; i < BLOCK_NUM; ++i) {
-			decoder.decode(huffman.host_data() + huffman.size() / BLOCK_NUM * i, (byte*) bmp.getRawData());
+		CudaByteBuffer huffman(width * height);
+		IntBuffer effective_bits(BLOCK_NUM);
+		{
+			encoder.encode((byte*) source.getRawData(), huffman, effective_bits);
+			huffman.sync_to_host();
+		}
 
-			string index = boost::lexical_cast<string>(i);
-			string qrty = boost::lexical_cast<string>(quarity);
-			string outname = "cuda_" + index + "_" + qrty + "_" + out_file_name;
-			DebugLog::log("export to file :" + outname);
-			bmp.saveToFile(outname);
+		{
+			BitmapCVUtil bmp(block_width, block_height, 8, source.getBytePerPixel());
+			for (int i = 0; i < BLOCK_NUM; ++i) {
+				decoder.decode(huffman.host_data() + huffman.size() / BLOCK_NUM * i,
+					(byte*) bmp.getRawData());
+
+				string index = boost::lexical_cast<string>(i);
+				string qrty = boost::lexical_cast<string>(quarity);
+				string outname = "cuda_" + index + "_" + qrty + "_" + out_file_name;
+				DebugLog::log("export to file :" + outname);
+				bmp.saveToFile(outname);
+			}
 		}
 	}
 }

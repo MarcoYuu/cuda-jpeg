@@ -230,11 +230,26 @@ namespace util {
 			virtual ~cuda_memory() {
 				delete[] host_mem_;
 			}
+
 			/**
 			 * @brief メモリゼロクリア
 			 */
 			void fill_zero() {
 				memset(host_mem_, 0, sizeof(T) * this->size());
+				base::fill_zero();
+			}
+
+			/**
+			 * @brief メモリゼロクリア
+			 */
+			void fill_zero_host() {
+				memset(host_mem_, 0, sizeof(T) * this->size());
+			}
+
+			/**
+			 * @brief メモリゼロクリア
+			 */
+			void fill_zero_device() {
 				base::fill_zero();
 			}
 

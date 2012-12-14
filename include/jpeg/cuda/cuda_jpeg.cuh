@@ -89,12 +89,15 @@ namespace jpeg {
 			/**
 			 * @brief 状態のリセット
 			 *
+			 * エンコーダの内部状態を変更されたパラメータに沿ってリセットする
 			 * 画像、ブロック幅を変更した際はこのメソッドを呼び出すこと
 			 */
 			void reset();
 
 			/**
 			 * @brief 画像サイズを設定する
+			 *
+			 * @sa Encoder::reset()
 			 *
 			 * @param width 幅
 			 * @param height 高さ
@@ -103,6 +106,8 @@ namespace jpeg {
 
 			/**
 			 * @brief ブロック分割幅を指定する
+			 *
+			 * @sa Encoder::reset()
 			 *
 			 * @param block_width 幅
 			 * @param block_height 高さ
@@ -117,18 +122,41 @@ namespace jpeg {
 			void setQuarity(u_int quarity);
 
 			/**
+			 * @brief 分割されたブロック数の取得
 			 *
-			 * @return
+			 * @return ブロック数
 			 */
 			u_int getBlockNum() const;
 
 			/**
+			 * @brief エンコードする
 			 *
-			 * @param rgb
-			 * @param huffman
-			 * @param effective_bits
+			 * - 変換するデータはBGRBGRB...の順に格納されている必要がある
+			 * - 変換するデータは一つの連続したメモリに格納されている必要がある
+			 * - 変換するデータのサイズは事前に設定した画像サイズとして解釈される
+			 * - 変換結果はEncoder::getBlockNum()個に当分割されたバッファに格納される
+			 * - 変換結果の各ブロックのバッファはeffective_bitsの各要素の値分だけ有効である
+			 *
+			 * @param rgb 色データ
+			 * @param huffman 符号化結果
+			 * @param effective_bits 有効ビット数
 			 */
 			void encode(const byte* rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits);
+
+			/**
+			 * @brief エンコードする
+			 *
+			 * - 変換するデータはBGRBGRB...の順に格納されている必要がある
+			 * - 変換するデータは一つの連続したメモリに格納されている必要がある
+			 * - 変換するデータのサイズは事前に設定した画像サイズとして解釈される
+			 * - 変換結果はEncoder::getBlockNum()個に当分割されたバッファに格納される
+			 * - 変換結果の各ブロックのバッファはeffective_bitsの各要素の値分だけ有効である
+			 *
+			 * @param rgb 色データ
+			 * @param huffman 符号化結果
+			 * @param effective_bits 色データ
+			 */
+			void encode(const DeviceByteBuffer &rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits);
 
 		private:
 			class Impl;
@@ -164,6 +192,7 @@ namespace jpeg {
 			/**
 			 * @brief 状態のリセット
 			 *
+			 * エンコーダの内部状態を変更されたパラメータに沿ってリセットする
 			 * 画像、ブロック幅を変更した際はこのメソッドを呼び出すこと
 			 */
 			void reset();
@@ -186,7 +215,12 @@ namespace jpeg {
 			/**
 			 * @brief デコードする
 			 *
-			 * @param rgb 色データ
+			 * - ハフマン符号は事前にセットされたサイズにデコードできるものとして復元される
+			 * - 結果はBGRBGRB...の順に格納される
+			 * - 結果のバッファはwidth*height*3以上あるとしてアクセスされる
+			 *
+			 * @param huffman ハフマン符号化されたデータ
+			 * @param dst 結果
 			 */
 			void decode(const byte *huffman, byte *dst);
 
