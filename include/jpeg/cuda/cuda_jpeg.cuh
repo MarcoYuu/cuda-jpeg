@@ -8,6 +8,7 @@
 #ifndef CUDA_JPEG_H_
 #define CUDA_JPEG_H_
 
+#include <boost/scoped_ptr.hpp>
 #include <utils/type_definitions.h>
 #include <utils/cuda/cuda_memory.hpp>
 
@@ -160,7 +161,7 @@ namespace jpeg {
 
 		private:
 			class Impl;
-			Impl *impl;
+			boost::scoped_ptr<Impl> impl;
 
 			Encoder(const Encoder&);
 			Encoder& operator=(const Encoder&);
@@ -226,7 +227,7 @@ namespace jpeg {
 
 		private:
 			class Impl;
-			Impl *impl;
+			boost::scoped_ptr<Impl> impl;
 
 			Decoder(const Decoder&);
 			Decoder& operator=(const Decoder&);

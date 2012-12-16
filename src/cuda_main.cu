@@ -15,8 +15,9 @@
 #include "jpeg/cpu/cpu_jpeg.h"
 #include "jpeg/cuda/cuda_jpeg.cuh"
 
-#include "utils/debug_log.h"
 #include "utils/util_cv.h"
+#include "utils/timer.h"
+#include "utils/debug_log.h"
 #include "utils/type_definitions.h"
 
 #include "utils/cuda/cuda_timer.h"
@@ -153,15 +154,29 @@ void code_func(const std::string &file_name, const std::string &out_file_name, s
 	size_t block_height, int quarity);
 
 void cuda_main(const std::string &file_name, const std::string &out_file_name, size_t block_width,
-	size_t block_height, int quarity) {
-	//code_func(file_name, out_file_name, block_width, block_height, quarity);
-	encoder_decoder(file_name, out_file_name, block_width, block_height, quarity);
-	//encode_and_decode(file_name, out_file_name, block_width, block_height, quarity);
-	//color_conversion_only(file_name, out_file_name, block_width, block_height, quarity);
+	size_t block_height, int quarity, int test) {
+	switch (test) {
+	case 0:
+		encoder_decoder(file_name, out_file_name, block_width, block_height, quarity);
+		break;
+	case 1:
+		code_func(file_name, out_file_name, block_width, block_height, quarity);
+		break;
+	case 2:
+		encode_and_decode(file_name, out_file_name, block_width, block_height, quarity);
+		break;
+	case 3:
+		color_conversion_only(file_name, out_file_name, block_width, block_height, quarity);
+		break;
+	default:
+		break;
+	}
 }
 
 void encode(const byte* rgb, byte* huffman, size_t width, size_t height, size_t block_width,
 	size_t block_height, int quarity) {
+
+	StopWatch w(StopWatch::CPU_OPTIMUM);
 
 	// ブロックサイズ
 	const int IMG_MEM_SIZE = width * height * 3 / 2;
@@ -170,6 +185,7 @@ void encode(const byte* rgb, byte* huffman, size_t width, size_t height, size_t 
 	const int BLOCK_MEM_SIZE = BLOCK_WIDTH * BLOCK_HEIGHT * 3 / 2;
 	const int BLOCK_NUM = width * height / (BLOCK_WIDTH * BLOCK_HEIGHT);
 
+	w.start();
 	DeviceByteBuffer encode_src(rgb, width * height * 3);
 	CudaTable encode_table(width * height);
 	CudaByteBuffer encode_yuv_result(IMG_MEM_SIZE);
@@ -177,18 +193,41 @@ void encode(const byte* rgb, byte* huffman, size_t width, size_t height, size_t 
 	CudaIntBuffer encode_qua_result(IMG_MEM_SIZE);
 	CudaByteBuffer encode_huffman_result(IMG_MEM_SIZE);
 	IntBuffer huffman_effective_bits(BLOCK_NUM);
+	w.lap();
 
 	CreateConversionTable(width, height, BLOCK_WIDTH, BLOCK_HEIGHT, encode_table);
+	w.lap();
+
 	ConvertRGBToYUV(encode_src, encode_yuv_result, width, height, BLOCK_WIDTH, BLOCK_HEIGHT, encode_table);
+	w.lap();
+
 	DiscreteCosineTransform(encode_yuv_result, encode_dct_result);
+	w.lap();
+
 	ZigzagQuantize(encode_dct_result, encode_qua_result, BLOCK_MEM_SIZE, quarity);
+	w.lap();
+
 	encode_huffman_result.fill_zero();
 	HuffmanEncode(encode_qua_result, encode_huffman_result, huffman_effective_bits);
+	w.lap();
+
 	encode_huffman_result.copy_to_host(huffman, IMG_MEM_SIZE);
+	w.lap();
+	w.stop();
+
+	std::cout << "encode[ms]" << std::endl;
+	std::cout << "setup, table_create, color_conv, dct, quantize, huffman, memcpy, total" << std::endl;
+	for (int i = 0; i < w.getLapList().size(); ++i) {
+		std::cout << w.getLapList()[i] * 1000 << ",";
+	}
+	std::cout << w.getTotalTime() * 1000 - w.getLapList()[0] * 1000;
+	std::cout << std::endl;
 }
 
 void decode(const byte *huffman, byte *dst, size_t width, size_t height, size_t block_width,
 	size_t block_height, int quarity) {
+
+	StopWatch w(StopWatch::CPU_OPTIMUM);
 
 	// ブロックサイズ
 	const int IMG_MEM_SIZE = width * height * 3 / 2;
@@ -196,23 +235,44 @@ void decode(const byte *huffman, byte *dst, size_t width, size_t height, size_t 
 	const int BLOCK_HEIGHT = block_height == 0 ? height : block_height;
 	const int BLOCK_MEM_SIZE = BLOCK_WIDTH * BLOCK_HEIGHT * 3 / 2;
 
+	w.start();
 	CudaTable decode_table(BLOCK_WIDTH * BLOCK_HEIGHT);
 	CudaByteBuffer decode_huffman_src(BLOCK_MEM_SIZE);
 	CudaIntBuffer decode_qua_src(BLOCK_MEM_SIZE);
 	CudaIntBuffer decode_dct_src(BLOCK_MEM_SIZE);
 	CudaByteBuffer decode_yuv_src(BLOCK_MEM_SIZE);
 	CudaByteBuffer decode_result(BLOCK_WIDTH * BLOCK_HEIGHT * 3);
+	w.lap();
 
 	CreateConversionTable(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT, decode_table);
+	w.lap();
 
 	InBitStream ibs(huffman, IMG_MEM_SIZE);
 	cpu::decode_huffman(&ibs, decode_qua_src.host_data(), BLOCK_WIDTH, BLOCK_HEIGHT);
 	decode_qua_src.sync_to_device();
+	w.lap();
+
 	InverseZigzagQuantize(decode_qua_src, decode_dct_src, BLOCK_MEM_SIZE, quarity);
+	w.lap();
+
 	InverseDiscreteCosineTransform(decode_dct_src, decode_yuv_src);
+	w.lap();
+
 	ConvertYUVToRGB(decode_yuv_src, decode_result, BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT,
 		decode_table);
+	w.lap();
+
 	decode_result.copy_to_host(dst, decode_result.size());
+	w.lap();
+	w.stop();
+
+	std::cout << "decode[ms]" << std::endl;
+	std::cout << "setup, table_create, huffman, quantize, dct, color_conv, memcpy, total" << std::endl;
+	for (int i = 0; i < w.getLapList().size(); ++i) {
+		std::cout << w.getLapList()[i] * 1000 << ",";
+	}
+	std::cout << w.getTotalTime() * 1000 - w.getLapList()[0] * 1000;
+	std::cout << std::endl;
 }
 
 void code_func(const std::string &file_name, const std::string &out_file_name, size_t block_width,
@@ -237,13 +297,14 @@ void code_func(const std::string &file_name, const std::string &out_file_name, s
 		string index = boost::lexical_cast<string>(i);
 		string qrty = boost::lexical_cast<string>(quarity);
 		string outname = "cuda_" + index + "_" + qrty + "_" + out_file_name;
-		DebugLog::log("export to file :" + outname);
 		bmp.saveToFile(outname);
 	}
 }
 
 void encoder_decoder(const std::string& file_name, const std::string& out_file_name, size_t block_width,
 	size_t block_height, int quarity) {
+
+	StopWatch w(StopWatch::CPU_OPTIMUM);
 
 	// 画像読み込み
 	BitmapCVUtil source(file_name, BitmapCVUtil::RGB_COLOR);
@@ -260,48 +321,55 @@ void encoder_decoder(const std::string& file_name, const std::string& out_file_n
 		CudaByteBuffer huffman(width * height);
 		IntBuffer effective_bits(BLOCK_NUM);
 		{
+			w.start();
 			encoder.encode((byte*) source.getRawData(), huffman, effective_bits);
 			huffman.sync_to_host();
+			w.stop();
+			cout << "encode, " << w.getLastElapsedTime() * 1000.0 << endl;
+			w.clear();
 		}
 
 		{
 			BitmapCVUtil bmp(block_width, block_height, 8, source.getBytePerPixel());
 			for (int i = 0; i < BLOCK_NUM; ++i) {
+				w.start();
 				decoder.decode(huffman.host_data() + huffman.size() / BLOCK_NUM * i,
 					(byte*) bmp.getRawData());
+				w.stop();
+				cout << "decode, " << w.getLastElapsedTime() * 1000.0 << endl;
+				w.clear();
 
 				string index = boost::lexical_cast<string>(i);
 				string qrty = boost::lexical_cast<string>(quarity);
 				string outname = "cuda_" + index + "_" + qrty + "_" + out_file_name;
-				DebugLog::log("export to file :" + outname);
 				bmp.saveToFile(outname);
 			}
 		}
 	}
 
 	// 内部状態が引きずられないかの2回目テスト
-	{
-		CudaByteBuffer huffman(width * height);
-		IntBuffer effective_bits(BLOCK_NUM);
-		{
-			encoder.encode((byte*) source.getRawData(), huffman, effective_bits);
-			huffman.sync_to_host();
-		}
-
-		{
-			BitmapCVUtil bmp(block_width, block_height, 8, source.getBytePerPixel());
-			for (int i = 0; i < BLOCK_NUM; ++i) {
-				decoder.decode(huffman.host_data() + huffman.size() / BLOCK_NUM * i,
-					(byte*) bmp.getRawData());
-
-				string index = boost::lexical_cast<string>(i);
-				string qrty = boost::lexical_cast<string>(quarity);
-				string outname = "cuda_" + index + "_" + qrty + "_" + out_file_name;
-				DebugLog::log("export to file :" + outname);
-				bmp.saveToFile(outname);
-			}
-		}
-	}
+//	{
+//		CudaByteBuffer huffman(width * height);
+//		IntBuffer effective_bits(BLOCK_NUM);
+//		{
+//			encoder.encode((byte*) source.getRawData(), huffman, effective_bits);
+//			huffman.sync_to_host();
+//		}
+//
+//		{
+//			BitmapCVUtil bmp(block_width, block_height, 8, source.getBytePerPixel());
+//			for (int i = 0; i < BLOCK_NUM; ++i) {
+//				decoder.decode(huffman.host_data() + huffman.size() / BLOCK_NUM * i,
+//					(byte*) bmp.getRawData());
+//
+//				string index = boost::lexical_cast<string>(i);
+//				string qrty = boost::lexical_cast<string>(quarity);
+//				string outname = "cuda_" + index + "_" + qrty + "_" + out_file_name;
+//				DebugLog::log("export to file :" + outname);
+//				bmp.saveToFile(outname);
+//			}
+//		}
+//	}
 }
 
 void encode_and_decode(const std::string& file_name, const std::string& out_file_name, size_t block_width,

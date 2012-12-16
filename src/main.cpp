@@ -24,14 +24,15 @@ bool parse_arg(int argc, char *argv[]);
 //void cpu_main(const string &file_name, const string &out_file_name);
 //void gpu_main(const string &file_name, const string &out_file_name);
 void cuda_main(const string &file_name, const string &out_file_name, size_t block_width, size_t block_height,
-	int quarity);
+	int quarity, int test);
 
 static string program_name;
 static string infile_name;
 static string outfile_name;
 static size_t block_width = 0;
 static size_t block_height = 0;
-int quarity = 80;
+static int quarity = 80;
+static int test = 0;
 
 int main(int argc, char *argv[]) {
 	if (!parse_arg(argc, argv))
@@ -39,7 +40,7 @@ int main(int argc, char *argv[]) {
 
 	//cpu_main(infile_name, outfile_name);
 	//gpu_main(infile_name, outfile_name);
-	cuda_main(infile_name, outfile_name, block_width, block_height, quarity);
+	cuda_main(infile_name, outfile_name, block_width, block_height, quarity, test);
 
 	return 0;
 }
@@ -109,6 +110,12 @@ bool parse_arg(int argc, char *argv[]) {
 				return false;
 			}
 			quarity = boost::lexical_cast<int>(argv[i]);
+		} else if (arg == "-test") {
+			if (argc - ++i < 1) {
+				cout << "Please input test num." << endl;
+				return false;
+			}
+			test = boost::lexical_cast<int>(argv[i]);
 		} else {
 			if (i == 2 && arg[0] != '-') {
 				if (arg.substr(arg.length() - 4, arg.length()) != ".bmp") {
