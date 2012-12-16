@@ -811,8 +811,8 @@ namespace jpeg {
 		// C/C++ CPU側インタフェース
 		//
 		//-------------------------------------------------------------------------------------------------//
-		__host__ void CreateConversionTable(size_t width, size_t height, size_t block_width,
-			size_t block_height, DeviceTable &table) {
+		void CreateConversionTable(size_t width, size_t height, size_t block_width, size_t block_height,
+			DeviceTable &table) {
 			assert(table.size() >= width * height);
 			const dim3 grid(block_width / 16, block_height / 16, width / block_width * height / block_height);
 			const dim3 block(16, 16, 1);
@@ -821,7 +821,7 @@ namespace jpeg {
 				block_height, table.device_data());
 		}
 
-		__host__ void ConvertRGBToYUV(const DeviceByteBuffer &rgb, DeviceByteBuffer &yuv_result, size_t width,
+		void ConvertRGBToYUV(const DeviceByteBuffer &rgb, DeviceByteBuffer &yuv_result, size_t width,
 			size_t height, size_t block_width, size_t block_height, const DeviceTable &table) {
 			assert(rgb.size()/2 <= yuv_result.size());
 
@@ -831,7 +831,7 @@ namespace jpeg {
 			kernel::ConvertRGBToYUV<<<grid,block>>>(rgb.device_data(), yuv_result.device_data(), table.device_data());
 		}
 
-		__host__ void ConvertYUVToRGB(const DeviceByteBuffer &yuv, DeviceByteBuffer &rgb_result, size_t width,
+		void ConvertYUVToRGB(const DeviceByteBuffer &yuv, DeviceByteBuffer &rgb_result, size_t width,
 			size_t height, size_t block_width, size_t block_height, const DeviceTable &table) {
 			assert(yuv.size() <= rgb_result.size()/2);
 
@@ -841,7 +841,7 @@ namespace jpeg {
 			kernel::ConvertYUVToRGB<<<grid,block>>>(yuv.device_data(), rgb_result.device_data(), table.device_data());
 		}
 
-		__host__ void DiscreteCosineTransform(const DeviceByteBuffer &yuv, DeviceIntBuffer &dct_coefficient) {
+		void DiscreteCosineTransform(const DeviceByteBuffer &yuv, DeviceIntBuffer &dct_coefficient) {
 			// grid (8x8ブロックの個数, 分割数, 1)
 			const dim3 grid(yuv.size() / 64, 1, 1);
 			// grid (1, 8x8ブロック)
@@ -851,7 +851,7 @@ namespace jpeg {
 				yuv.device_data(), dct_coefficient.device_data());
 		}
 
-		__host__ void InverseDiscreteCosineTransform(const DeviceIntBuffer &dct_coefficient,
+		void InverseDiscreteCosineTransform(const DeviceIntBuffer &dct_coefficient,
 			DeviceByteBuffer &yuv_result) {
 			// grid (8x8ブロックの個数, 分割数, 1)
 			const dim3 grid(dct_coefficient.size() / 64, 1, 1);
@@ -862,7 +862,7 @@ namespace jpeg {
 				dct_coefficient.device_data(), yuv_result.device_data());
 		}
 
-		__host__ void CalculateDCTMatrix(float *dct_mat) {
+		void CalculateDCTMatrix(float *dct_mat) {
 			const float PI = 3.141592653589793f;
 			for (u_int k = 0; k < 8; ++k) {
 				for (u_int n = 0; n < 8; ++n) {
@@ -873,7 +873,7 @@ namespace jpeg {
 			}
 		}
 
-		__host__ void CalculateiDCTMatrix(float *idct_mat) {
+		void CalculateiDCTMatrix(float *idct_mat) {
 			const float PI = 3.141592653589793f;
 			for (u_int n = 0; n < 8; ++n) {
 				for (u_int k = 0; k < 8; ++k) {
@@ -884,7 +884,7 @@ namespace jpeg {
 			}
 		}
 
-		__host__ void ZigzagQuantize(const DeviceIntBuffer &dct_coefficient, DeviceIntBuffer &quantized,
+		void ZigzagQuantize(const DeviceIntBuffer &dct_coefficient, DeviceIntBuffer &quantized,
 			u_int block_size, u_int quarity) {
 			// 最低品質
 			if (quarity == 0) {
@@ -916,8 +916,8 @@ namespace jpeg {
 			}
 		}
 
-		__host__ void InverseZigzagQuantize(const DeviceIntBuffer &quantized,
-			DeviceIntBuffer &dct_coefficient, u_int block_size, u_int quarity) {
+		void InverseZigzagQuantize(const DeviceIntBuffer &quantized, DeviceIntBuffer &dct_coefficient,
+			u_int block_size, u_int quarity) {
 			// 最低品質
 			if (quarity == 0) {
 				const dim3 grid(quantized.size() / 64 / 3, 3, 1);
@@ -948,7 +948,7 @@ namespace jpeg {
 			}
 		}
 
-		__host__ u_int CalcOptimumThreads(u_int require_threads) {
+		u_int CalcOptimumThreads(u_int require_threads) {
 			u_int threads_per_block = require_threads;
 
 			if (threads_per_block < 32) {
@@ -981,7 +981,7 @@ namespace jpeg {
 			return gcd(512u, threads_per_block);
 		}
 
-		__host__ void HuffmanEncode(const DeviceIntBuffer &quantized, DeviceByteBuffer &result,
+		void HuffmanEncode(const DeviceIntBuffer &quantized, DeviceByteBuffer &result,
 			IntBuffer &effective_bits) {
 			using namespace kernel;
 
@@ -1035,8 +1035,7 @@ namespace jpeg {
 				stream.device_data(), info.device_data(), result.device_data(), result.size() / block_num);
 		}
 
-		__host__ void HuffmanDecode(const ByteBuffer &huffman, IntBuffer &quantized, size_t width,
-			size_t height) {
+		void HuffmanDecode(const ByteBuffer &huffman, IntBuffer &quantized, size_t width, size_t height) {
 			InBitStream ibs(huffman.data(), huffman.size());
 			cpu::decode_huffman(&ibs, quantized.data(), width, height);
 
@@ -1051,51 +1050,6 @@ namespace jpeg {
 		private:
 			typedef cuda_memory<kernel::OutBitStream> CudaBitStreams;
 			typedef cuda_memory<kernel::OutBitStream::WriteBitsInfo> CudaStreamInfos;
-
-			class HuffmanBuffer {
-			private:
-				DeviceByteBuffer buffer_;
-				CudaBitStreams stream_;
-				CudaStreamInfos info_;
-
-			public:
-				__host__ HuffmanBuffer(u_int mcu_num) :
-					buffer_(kernel::OutBitStream::MAX_BLOCK_SIZE * mcu_num),
-					stream_(mcu_num),
-					info_(mcu_num) {
-
-					// 各MCU用のバッファを作成
-					for (u_int i = 0; i < mcu_num; ++i) {
-						stream_[i].setStreamBuffer(
-							buffer_.device_data() + kernel::OutBitStream::MAX_BLOCK_SIZE * i);
-					}
-					stream_.sync_to_device();
-
-					clear();
-				}
-
-				__host__ inline u_int getMcuNum() {
-					return info_.size();
-				}
-
-				__host__ inline void resize(u_int mcu_num) {
-					buffer_.resize(kernel::OutBitStream::MAX_BLOCK_SIZE * mcu_num);
-					stream_.resize(mcu_num);
-					info_.resize(mcu_num);
-				}
-
-				__host__ inline void clear() {
-					buffer_.fill_zero();
-				}
-
-				__host__ inline CudaBitStreams& stream() {
-					return stream_;
-				}
-
-				__host__ inline CudaStreamInfos& info() {
-					return info_;
-				}
-			};
 
 			u_int width_;
 			u_int height_;
@@ -1115,12 +1069,15 @@ namespace jpeg {
 
 			DeviceByteBuffer encode_src_;
 
-			HuffmanBuffer huffman_buffer_;
-			u_int mcu_kernel_block_x;
-			u_int combine_kernel_block_x;
+			u_int mcu_kernel_block_x_;
+			u_int combine_kernel_block_x_;
+
+			DeviceByteBuffer huffman_buffer_;
+			CudaBitStreams huffman_stream_;
+			CudaStreamInfos huffman_info_;
 
 		public:
-			__host__ Impl(u_int width, u_int height, u_int block_width, u_int block_height) :
+			Impl(u_int width, u_int height, u_int block_width, u_int block_height) :
 				width_(width),
 				height_(height),
 				block_width_(block_width),
@@ -1133,15 +1090,31 @@ namespace jpeg {
 				encode_dct_result_(buffer_size_),
 				encode_qua_result_(buffer_size_),
 				encode_src_(width_ * height_ * 3),
-				huffman_buffer_(buffer_size_ / 64) {
+				huffman_buffer_(kernel::OutBitStream::MAX_BLOCK_SIZE * buffer_size_ / 64),
+				huffman_stream_(buffer_size_ / 64),
+				huffman_info_(buffer_size_ / 64) {
 
-				mcu_kernel_block_x = CalcOptimumThreads(block_size_ / 6 / 64);
-				combine_kernel_block_x = CalcOptimumThreads(huffman_buffer_.getMcuNum() / getBlockNum() / 3);
+				mcu_kernel_block_x_ = CalcOptimumThreads(block_size_ / 6 / 64);
+				combine_kernel_block_x_ = CalcOptimumThreads(getMcuNum() / getBlockNum() / 3);
+
+				// 各MCU用のバッファを作成
+				for (u_int i = 0; i < getMcuNum(); ++i) {
+					huffman_stream_[i].setStreamBuffer(
+						huffman_buffer_.device_data() + kernel::OutBitStream::MAX_BLOCK_SIZE * i);
+				}
+				huffman_stream_.sync_to_device();
+				huffman_buffer_.fill_zero();
 
 				CreateConversionTable(width_, height_, block_width_, block_height_, encode_table_);
 			}
 
-			__host__ void reset() {
+			~Impl() {
+#ifdef DEBUG
+				DebugLog::log("Encoder::Impl::~Impl()");
+#endif
+			}
+
+			void reset() {
 				CreateConversionTable(width_, height_, block_width_, block_height_, encode_table_);
 
 				buffer_size_ = width_ * height_ * 3 / 2;
@@ -1152,31 +1125,45 @@ namespace jpeg {
 				encode_qua_result_.resize(buffer_size_);
 				encode_src_.resize(width_ * height_ * 3);
 
-				huffman_buffer_.resize(buffer_size_ / 64);
+				huffman_buffer_.resize(kernel::OutBitStream::MAX_BLOCK_SIZE * buffer_size_ / 64);
+				huffman_stream_.resize(buffer_size_ / 64);
+				huffman_info_.resize(buffer_size_ / 64);
 
-				mcu_kernel_block_x = CalcOptimumThreads(block_size_ / 6 / 64);
-				combine_kernel_block_x = CalcOptimumThreads(huffman_buffer_.getMcuNum() / getBlockNum() / 3);
+				// 各MCU用のバッファを作成
+				for (u_int i = 0; i < getMcuNum(); ++i) {
+					huffman_stream_[i].setStreamBuffer(
+						huffman_buffer_.device_data() + kernel::OutBitStream::MAX_BLOCK_SIZE * i);
+				}
+				huffman_stream_.sync_to_device();
+				huffman_buffer_.fill_zero();
+
+				mcu_kernel_block_x_ = CalcOptimumThreads(block_size_ / 6 / 64);
+				combine_kernel_block_x_ = CalcOptimumThreads(getMcuNum() / getBlockNum() / 3);
 			}
 
-			__host__ void setImageSize(u_int width, u_int height) {
+			void setImageSize(u_int width, u_int height) {
 				width_ = width;
 				height_ = height;
 			}
 
-			__host__ void setBlockSize(u_int block_width, u_int block_height) {
+			void setBlockSize(u_int block_width, u_int block_height) {
 				block_width_ = block_width;
 				block_height_ = block_height;
 			}
 
-			__host__ void setQuarity(u_int quarity) {
+			void setQuarity(u_int quarity) {
 				quarity_ = quarity;
 			}
 
-			__host__ u_int getBlockNum() const {
+			u_int getBlockNum() const {
 				return width_ * height_ / (block_width_ * block_height_);
 			}
 
-			__host__ void encode(const byte* rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits) {
+			u_int getMcuNum() const {
+				return huffman_info_.size();
+			}
+
+			void encode(const byte* rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits) {
 				assert(effective_bits.size() >= getBlockNum());
 
 				DeviceByteBuffer encode_src(rgb, width_ * height_ * 3);
@@ -1190,8 +1177,7 @@ namespace jpeg {
 				huffmanEncode(encode_qua_result_, huffman, effective_bits);
 			}
 
-			__host__ void encode(const DeviceByteBuffer &rgb, DeviceByteBuffer &huffman,
-				IntBuffer &effective_bits) {
+			void encode(const DeviceByteBuffer &rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits) {
 				assert(effective_bits.size() >= getBlockNum());
 
 				huffman.fill_zero();
@@ -1205,79 +1191,94 @@ namespace jpeg {
 			}
 
 		private:
-			__host__ void huffmanEncode(const DeviceIntBuffer &quantized, DeviceByteBuffer &result,
+			void huffmanEncode(const DeviceIntBuffer &quantized, DeviceByteBuffer &result,
 				IntBuffer &effective_bits) {
 				using namespace kernel;
 
 				const u_int block_num = getBlockNum();
-				const u_int mcu_num = huffman_buffer_.getMcuNum();
+				const u_int mcu_num = getMcuNum();
 
 				// バッファをクリア
-				huffman_buffer_.clear();
+				huffman_buffer_.fill_zero();
 
 				// 各MCU用ごとにエンコード
-				dim3 block(mcu_kernel_block_x, 1, 1);
+				dim3 block(mcu_kernel_block_x_, 1, 1);
 				dim3 grid(block_size_ / 6 / 64 / block.x, 6, block_num);
-				HuffmanEncodeForMCU<<<grid,block>>>(quantized.device_data(), huffman_buffer_.stream().device_data());
+				HuffmanEncodeForMCU<<<grid,block>>>(
+					quantized.device_data(), huffman_stream_.device_data());
 
 				// 書きこみ情報の作成
-				huffman_buffer_.stream().sync_to_host();
-				OutBitStream::CreateWriteBitsTable(huffman_buffer_.stream().host_data(),
-					huffman_buffer_.info().host_data(), mcu_num, mcu_num / block_num);
-				huffman_buffer_.info().sync_to_device();
+				huffman_stream_.sync_to_host();
+				OutBitStream::CreateWriteBitsTable(huffman_stream_.host_data(), huffman_info_.host_data(),
+					mcu_num, mcu_num / block_num);
+				huffman_info_.sync_to_device();
 
 				// 各画像ブロックの有効bit数を算出
 				for (u_int i = 0; i < block_num; ++i) {
 					u_int last_index = (i + 1) * mcu_num / block_num - 1;
-					effective_bits[i] = huffman_buffer_.info()[last_index].bits_of_grobal
-						+ huffman_buffer_.info()[last_index].bits_of_stream;
+					effective_bits[i] = huffman_info_[last_index].bits_of_grobal
+						+ huffman_info_[last_index].bits_of_stream;
 				}
 
 				// 適切なスレッド数でMCUbitを結合
 				u_int total_thread = mcu_num / block_num / 3;
-				block = dim3(combine_kernel_block_x, 1, 1);
+				block = dim3(combine_kernel_block_x_, 1, 1);
 				grid = dim3(total_thread / block.x, block_num, 1);
 				CombineHuffmanStream<3, 0> <<<grid,block>>>(
-					huffman_buffer_.stream().device_data(), huffman_buffer_.info().device_data(), result.device_data(), result.size() / block_num);
+					huffman_stream_.device_data(), huffman_info_.device_data(),
+					result.device_data(), result.size() / block_num);
 				CombineHuffmanStream<3, 1> <<<grid,block>>>(
-					huffman_buffer_.stream().device_data(), huffman_buffer_.info().device_data(), result.device_data(), result.size() / block_num);
+					huffman_stream_.device_data(), huffman_info_.device_data(),
+					result.device_data(), result.size() / block_num);
 				CombineHuffmanStream<3, 2> <<<grid,block>>>(
-					huffman_buffer_.stream().device_data(), huffman_buffer_.info().device_data(), result.device_data(), result.size() / block_num);
+					huffman_stream_.device_data(), huffman_info_.device_data(),
+					result.device_data(), result.size() / block_num);
 			}
 		};
 
-		__host__ Encoder::Encoder(u_int width, u_int height) :
+		Encoder::Encoder(u_int width, u_int height) :
 			impl(new Impl(width, height, width, height)) {
 		}
 
-		__host__ Encoder::Encoder(u_int width, u_int height, u_int block_width, u_int block_height) :
+		Encoder::Encoder(u_int width, u_int height, u_int block_width, u_int block_height) :
 			impl(new Impl(width, height, block_width, block_height)) {
 		}
 
-		__host__ Encoder::~Encoder() {
+		Encoder::~Encoder() {
+#ifdef DEBUG
+			DebugLog::log("Encoder::~Encoder()");
+#endif
 		}
 
-		__host__ void Encoder::reset() {
+		void Encoder::reset() {
 			impl->reset();
 		}
 
-		__host__ void Encoder::setImageSize(u_int width, u_int height) {
+		void Encoder::setImageSize(u_int width, u_int height) {
 			impl->setImageSize(width, height);
 		}
 
-		__host__ void Encoder::setBlockSize(u_int block_width, u_int block_height) {
+		void Encoder::setBlockSize(u_int block_width, u_int block_height) {
 			impl->setBlockSize(block_width, block_height);
 		}
 
-		__host__ void Encoder::setQuarity(u_int quarity) {
+		void Encoder::setQuarity(u_int quarity) {
 			impl->setQuarity(quarity);
 		}
 
-		__host__ void Encoder::encode(const byte* rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits) {
+		u_int Encoder::getBlockNum() const {
+			return impl->getBlockNum();
+		}
+
+		u_int Encoder::getMcuNum() const {
+			return impl->getMcuNum();
+		}
+
+		void Encoder::encode(const byte* rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits) {
 			impl->encode(rgb, huffman, effective_bits);
 		}
 
-		__host__ void Encoder::encode(const DeviceByteBuffer &rgb, DeviceByteBuffer &huffman,
+		void Encoder::encode(const DeviceByteBuffer &rgb, DeviceByteBuffer &huffman,
 			IntBuffer &effective_bits) {
 			impl->encode(rgb, huffman, effective_bits);
 		}
@@ -1300,7 +1301,7 @@ namespace jpeg {
 			CudaIntBuffer decode_qua_src_;
 
 		public:
-			__host__ Impl(u_int width, u_int height) :
+			Impl(u_int width, u_int height) :
 				width_(width),
 				height_(height),
 				quarity_(80),
@@ -1314,20 +1315,26 @@ namespace jpeg {
 				CreateConversionTable(width, height, width, height, decode_table_);
 			}
 
-			__host__ void reset() {
+			~Impl() {
+#ifdef DEBUG
+				DebugLog::log("Decoder::Impl::~Impl()");
+#endif
+			}
+
+			void reset() {
 				CreateConversionTable(width_, height_, width_, height_, decode_table_);
 			}
 
-			__host__ void setImageSize(u_int width, u_int height) {
+			void setImageSize(u_int width, u_int height) {
 				width_ = width;
 				height_ = height;
 			}
 
-			__host__ void setQuarity(u_int quarity) {
+			void setQuarity(u_int quarity) {
 				quarity_ = quarity;
 			}
 
-			__host__ void decode(const byte *huffman, byte *dst) {
+			void decode(const byte *huffman, byte *dst) {
 				InBitStream ibs(huffman, buffer_size_);
 				cpu::decode_huffman(&ibs, decode_qua_src_.host_data(), width_, height_);
 				decode_qua_src_.sync_to_device();
@@ -1340,26 +1347,29 @@ namespace jpeg {
 			}
 		};
 
-		__host__ Decoder::Decoder(u_int width, u_int height) :
+		Decoder::Decoder(u_int width, u_int height) :
 			impl(new Impl(width, height)) {
 		}
 
-		__host__ Decoder::~Decoder() {
+		Decoder::~Decoder() {
+#ifdef DEBUG
+			DebugLog::log("Decoder::~Decoder()");
+#endif
 		}
 
-		__host__ void Decoder::reset() {
+		void Decoder::reset() {
 			impl->reset();
 		}
 
-		__host__ void Decoder::setImageSize(u_int width, u_int height) {
+		void Decoder::setImageSize(u_int width, u_int height) {
 			impl->setImageSize(width, height);
 		}
 
-		__host__ void Decoder::setQuarity(u_int quarity) {
+		void Decoder::setQuarity(u_int quarity) {
 			impl->setQuarity(quarity);
 		}
 
-		__host__ void Decoder::decode(const byte *huffman, byte *dst) {
+		void Decoder::decode(const byte *huffman, byte *dst) {
 			impl->decode(huffman, dst);
 		}
 	} // namespace cuda

@@ -130,6 +130,13 @@ namespace jpeg {
 			u_int getBlockNum() const;
 
 			/**
+			 * @brief 分割されたブロック数の取得
+			 *
+			 * @return ブロック数
+			 */
+			u_int getMcuNum() const;
+
+			/**
 			 * @brief エンコードする
 			 *
 			 * - 変換するデータはBGRBGRB...の順に格納されている必要がある

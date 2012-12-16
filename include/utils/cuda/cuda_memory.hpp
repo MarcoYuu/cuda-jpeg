@@ -13,6 +13,8 @@
 #include <cstring>
 #include <cassert>
 
+#include <utils/debug_log.h>
+
 namespace util {
 	namespace cuda {
 		/**
@@ -83,6 +85,10 @@ namespace util {
 			virtual ~device_memory() {
 				if (device_mem_ != NULL)
 					cudaFree(device_mem_);
+
+#ifdef DEBUG
+				DebugLog::log("device_memory::~device_memory()");
+#endif
 			}
 
 			/**
@@ -229,6 +235,10 @@ namespace util {
 			 */
 			virtual ~cuda_memory() {
 				delete[] host_mem_;
+
+#ifdef DEBUG
+				DebugLog::log("cuda_memory::~cuda_memory()");
+#endif
 			}
 
 			/**
