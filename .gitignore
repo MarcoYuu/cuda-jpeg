@@ -1,5 +1,6 @@
 Release/
 Debug/
+Debug/*
 *.d
 *.o
 *.md5
