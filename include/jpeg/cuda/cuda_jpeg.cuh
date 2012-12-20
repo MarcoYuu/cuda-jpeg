@@ -134,6 +134,13 @@ namespace jpeg {
 			 *
 			 * @return ブロック数
 			 */
+			u_int getBlocksPerRow() const;
+
+			/**
+			 * @brief 分割されたブロック数の取得
+			 *
+			 * @return ブロック数
+			 */
 			u_int getMcuNum() const;
 
 			/**

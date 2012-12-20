@@ -161,9 +161,9 @@ namespace util {
 			 * @param host_mem [out] 書き込み先
 			 * @param size [in] 書き込みサイズ
 			 */
-			void copy_to_host(T* host_mem, size_t size) {
+			void copy_to_host(T* host_mem, size_t size, size_t offset = 0) {
 				assert(size <= size_);
-				cudaMemcpy(host_mem, device_mem_, sizeof(T) * size, cudaMemcpyDeviceToHost);
+				cudaMemcpy(host_mem, device_mem_ + offset, sizeof(T) * size, cudaMemcpyDeviceToHost);
 			}
 		};
 

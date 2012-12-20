@@ -101,6 +101,19 @@ namespace jpeg {
 				table[src_index].v = dst_v_index;
 			}
 
+			/*
+			 * Y = 0.2990 * R + 0.5870 * G + 0.1140 * B
+			 * Cb = -0.1687 * R - 0.3313 * G + 0.5000 * B + 128
+			 * Cr = 0.5000 * R - 0.4187 * G - 0.0813 * B + 128
+			 *
+			 * R = Y + 1.40200 x (Cr - 128)
+			 * G = Y - 0.34414 x (Cb - 128) - 0.71414 x (Cr - 128)
+			 * B = Y + 1.77200 x (Cb - 128)
+			 *
+			 * R = Y          + 1.402V
+			 * G = Y - 0.344U - 0.714V
+			 * B = Y + 1.772U
+			 */
 			/**
 			 * @brief RGB→YUV変換カーネル
 			 *
@@ -128,16 +141,29 @@ namespace jpeg {
 				const u_int src_index = pix_index * 3;
 
 				// R,G,B [0, 255] -> R,G,B [16, 235]
-				const float b = rgb[src_index + 0] * 0.8588f + 16.0f;
-				const float g = rgb[src_index + 1] * 0.8588f + 16.0f;
-				const float r = rgb[src_index + 2] * 0.8588f + 16.0f;
+				//const float b = rgb[src_index + 0] * 0.8588f + 16.0f;
+				//const float g = rgb[src_index + 1] * 0.8588f + 16.0f;
+				//const float r = rgb[src_index + 2] * 0.8588f + 16.0f;
+				const float b = rgb[src_index + 0];
+				const float g = rgb[src_index + 1];
+				const float r = rgb[src_index + 2];
 
 				// R,G,B [16, 235] -> Y [16, 235] U,V [16, 240]
-				yuv_result[elem.y] = 0.11448f * b + 0.58661f * g + 0.29891f * r;
-				yuv_result[elem.u] = 0.50000f * b - 0.33126f * g - 0.16874f * r + 128.0f;
-				yuv_result[elem.v] = -0.08131f * b - 0.41869f * g + 0.50000f * r + 128.0f;
+				//yuv_result[elem.y] = 0.11448f * b + 0.58661f * g + 0.29891f * r;
+				//yuv_result[elem.u] = 0.50000f * b - 0.33126f * g - 0.16874f * r + 128.0f;
+				//yuv_result[elem.v] = -0.08131f * b - 0.41869f * g + 0.50000f * r + 128.0f;
+				yuv_result[elem.y] = 0.2990 * r + 0.5870 * g + 0.1140 * b;
+				yuv_result[elem.u] = -0.1687 * r - 0.3313 * g + 0.5000 * b + 128;
+				yuv_result[elem.v] = 0.5000 * r - 0.4187 * g - 0.0813 * b + 128;
 			}
 
+			__device__ byte revise_value_d(double v) {
+				if (v < 0.0)
+					return 0;
+				if (v > 255.0)
+					return 255;
+				return (byte) v;
+			}
 			/**
 			 * @brief YUV→RGB変換カーネル
 			 *
@@ -166,9 +192,12 @@ namespace jpeg {
 				const float v = yuv[elem.v] - 128.0f;
 
 				// Y [16, 235] U,V [-112, 112] -> R,G,B [0, 255]
-				rgb_result[dst_index + 0] = (y + 1.77200f * u - 16.0f) * 1.164f;
-				rgb_result[dst_index + 1] = (y - 0.34414f * u - 0.71414f * v - 16.0f) * 1.164f;
-				rgb_result[dst_index + 2] = (y + 1.40200f * v - 16.0f) * 1.164f;
+				//rgb_result[dst_index + 0] = (y + 1.77200f * u - 16.0f) * 1.164f;
+				//rgb_result[dst_index + 1] = (y - 0.34414f * u - 0.71414f * v - 16.0f) * 1.164f;
+				//rgb_result[dst_index + 2] = (y + 1.40200f * v - 16.0f) * 1.164f;
+				rgb_result[dst_index + 0] = revise_value_d(y + 1.77200 * u);
+				rgb_result[dst_index + 1] = revise_value_d(y - 0.34414 * u - 0.71414 * v);
+				rgb_result[dst_index + 2] = revise_value_d(y + 1.40200 * v);
 			}
 
 			//-------------------------------------------------------------------------------------------------//
@@ -817,8 +846,8 @@ namespace jpeg {
 			const dim3 grid(block_width / 16, block_height / 16, width / block_width * height / block_height);
 			const dim3 block(16, 16, 1);
 
-			kernel::CreateConversionTable<<<grid,block>>>(width, height, block_width,
-				block_height, table.device_data());
+			kernel::CreateConversionTable<<<grid, block>>>(width, height, block_width, block_height,
+				table.device_data());
 		}
 
 		void ConvertRGBToYUV(const DeviceByteBuffer &rgb, DeviceByteBuffer &yuv_result, size_t width,
@@ -828,7 +857,8 @@ namespace jpeg {
 			const dim3 grid(block_width / 16, block_height / 16, width / block_width * height / block_height);
 			const dim3 block(16, 16, 1);
 
-			kernel::ConvertRGBToYUV<<<grid,block>>>(rgb.device_data(), yuv_result.device_data(), table.device_data());
+			kernel::ConvertRGBToYUV<<<grid, block>>>(rgb.device_data(), yuv_result.device_data(),
+				table.device_data());
 		}
 
 		void ConvertYUVToRGB(const DeviceByteBuffer &yuv, DeviceByteBuffer &rgb_result, size_t width,
@@ -838,7 +868,8 @@ namespace jpeg {
 			const dim3 grid(block_width / 16, block_height / 16, width / block_width * height / block_height);
 			const dim3 block(16, 16, 1);
 
-			kernel::ConvertYUVToRGB<<<grid,block>>>(yuv.device_data(), rgb_result.device_data(), table.device_data());
+			kernel::ConvertYUVToRGB<<<grid, block>>>(yuv.device_data(), rgb_result.device_data(),
+				table.device_data());
 		}
 
 		void DiscreteCosineTransform(const DeviceByteBuffer &yuv, DeviceIntBuffer &dct_coefficient) {
@@ -847,8 +878,8 @@ namespace jpeg {
 			// grid (1, 8x8ブロック)
 			const dim3 block(8, 8, 1);
 
-			kernel::DiscreteCosineTransform<<<grid,block>>>(
-				yuv.device_data(), dct_coefficient.device_data());
+			kernel::DiscreteCosineTransform<<<grid, block>>>(yuv.device_data(),
+				dct_coefficient.device_data());
 		}
 
 		void InverseDiscreteCosineTransform(const DeviceIntBuffer &dct_coefficient,
@@ -858,8 +889,8 @@ namespace jpeg {
 			// grid (1, 8x8ブロック)
 			const dim3 block(8, 8, 1);
 
-			kernel::InverseDiscreteCosineTransform<<<grid,block>>>(
-				dct_coefficient.device_data(), yuv_result.device_data());
+			kernel::InverseDiscreteCosineTransform<<<grid, block>>>(dct_coefficient.device_data(),
+				yuv_result.device_data());
 		}
 
 		void CalculateDCTMatrix(float *dct_mat) {
@@ -890,29 +921,29 @@ namespace jpeg {
 			if (quarity == 0) {
 				const dim3 grid(quantized.size() / 64 / 3, 3, 1);
 				const dim3 block(8, 8, 1);
-				kernel::ZigzagQuantizeLow<<<grid,block>>>(
-					dct_coefficient.device_data(), quantized.device_data(), -1.0f);
+				kernel::ZigzagQuantizeLow<<<grid, block>>>(dct_coefficient.device_data(),
+					quantized.device_data(), -1.0f);
 			}
 			// 低品質
 			else if (quarity < 50) {
 				const dim3 grid(block_size / 128 / 3, 3, dct_coefficient.size() / block_size);
 				const dim3 block(8, 8, 2);
-				kernel::ZigzagQuantizeLow<<<grid,block>>>(
-					dct_coefficient.device_data(), quantized.device_data(), (quarity - 50.0f) / 50.0f);
+				kernel::ZigzagQuantizeLow<<<grid, block>>>(dct_coefficient.device_data(),
+					quantized.device_data(), (quarity - 50.0f) / 50.0f);
 			}
 			// 高品質
 			else if (quarity < 100) {
 				const dim3 grid(block_size / 128 / 3, 3, dct_coefficient.size() / block_size);
 				const dim3 block(8, 8, 2);
-				kernel::ZigzagQuantizeHigh<<<grid,block>>>(
-					dct_coefficient.device_data(), quantized.device_data(), (quarity - 50.0f) / 50.0f);
+				kernel::ZigzagQuantizeHigh<<<grid, block>>>(dct_coefficient.device_data(),
+					quantized.device_data(), (quarity - 50.0f) / 50.0f);
 			}
 			// 最高品質
 			else {
 				const dim3 grid(quantized.size() / 192, 3, 1);
 				const dim3 block(8, 8, 3);
-				kernel::ZigzagQuantizeMax<<<grid,block>>>(
-					dct_coefficient.device_data(), quantized.device_data());
+				kernel::ZigzagQuantizeMax<<<grid, block>>>(dct_coefficient.device_data(),
+					quantized.device_data());
 			}
 		}
 
@@ -922,29 +953,29 @@ namespace jpeg {
 			if (quarity == 0) {
 				const dim3 grid(quantized.size() / 64 / 3, 3, 1);
 				const dim3 block(8, 8, 1);
-				kernel::InverseZigzagQuantizeLow<<<grid,block>>>(
-					quantized.device_data(), dct_coefficient.device_data(), -1.0f);
+				kernel::InverseZigzagQuantizeLow<<<grid, block>>>(quantized.device_data(),
+					dct_coefficient.device_data(), -1.0f);
 			}
 			// 低品質
 			else if (quarity < 50) {
 				const dim3 grid(block_size / 128 / 3, 3, dct_coefficient.size() / block_size);
 				const dim3 block(8, 8, 2);
-				kernel::InverseZigzagQuantizeLow<<<grid,block>>>(
-					quantized.device_data(), dct_coefficient.device_data(), (quarity - 50.0f) / 50.0f);
+				kernel::InverseZigzagQuantizeLow<<<grid, block>>>(quantized.device_data(),
+					dct_coefficient.device_data(), (quarity - 50.0f) / 50.0f);
 			}
 			// 高品質
 			else if (quarity < 100) {
 				const dim3 grid(block_size / 128 / 3, 3, dct_coefficient.size() / block_size);
 				const dim3 block(8, 8, 2);
-				kernel::InverseZigzagQuantizeHigh<<<grid,block>>>(
-					quantized.device_data(), dct_coefficient.device_data(), (quarity - 50.0f) / 50.0f);
+				kernel::InverseZigzagQuantizeHigh<<<grid, block>>>(quantized.device_data(),
+					dct_coefficient.device_data(), (quarity - 50.0f) / 50.0f);
 			}
 			// 最高品質
 			else {
 				const dim3 grid(quantized.size() / 192, 1, 1);
 				const dim3 block(8, 8, 3);
-				kernel::InverseZigzagQuantizeMax<<<grid,block>>>(
-					quantized.device_data(), dct_coefficient.device_data());
+				kernel::InverseZigzagQuantizeMax<<<grid, block>>>(quantized.device_data(),
+					dct_coefficient.device_data());
 			}
 		}
 
@@ -1009,7 +1040,7 @@ namespace jpeg {
 			// 各MCU用ごとにエンコード
 			dim3 block(CalcOptimumThreads(block_size / 6 / 64), 1, 1);
 			dim3 grid(block_size / 6 / 64 / block.x, 6, block_num);
-			HuffmanEncodeForMCU<<<grid,block>>>(quantized.device_data(), stream.device_data());
+			HuffmanEncodeForMCU<<<grid, block>>>(quantized.device_data(), stream.device_data());
 
 			// 書きこみ情報の作成
 			stream.sync_to_host();
@@ -1027,12 +1058,12 @@ namespace jpeg {
 			u_int total_thread = mcu_num / block_num / 3;
 			block = dim3(CalcOptimumThreads(total_thread), 1, 1);
 			grid = dim3(total_thread / block.x, block_num, 1);
-			CombineHuffmanStream<3, 0> <<<grid,block>>>(
-				stream.device_data(), info.device_data(), result.device_data(), result.size() / block_num);
-			CombineHuffmanStream<3, 1> <<<grid,block>>>(
-				stream.device_data(), info.device_data(), result.device_data(), result.size() / block_num);
-			CombineHuffmanStream<3, 2> <<<grid,block>>>(
-				stream.device_data(), info.device_data(), result.device_data(), result.size() / block_num);
+			CombineHuffmanStream<3, 0> <<<grid, block>>>(stream.device_data(), info.device_data(),
+				result.device_data(), result.size() / block_num);
+			CombineHuffmanStream<3, 1> <<<grid, block>>>(stream.device_data(), info.device_data(),
+				result.device_data(), result.size() / block_num);
+			CombineHuffmanStream<3, 2> <<<grid, block>>>(stream.device_data(), info.device_data(),
+				result.device_data(), result.size() / block_num);
 		}
 
 		void HuffmanDecode(const ByteBuffer &huffman, IntBuffer &quantized, size_t width, size_t height) {
@@ -1115,6 +1146,7 @@ namespace jpeg {
 			}
 
 			void reset() {
+				encode_table_.resize(width_ * height_, true);
 				CreateConversionTable(width_, height_, block_width_, block_height_, encode_table_);
 
 				buffer_size_ = width_ * height_ * 3 / 2;
@@ -1157,6 +1189,10 @@ namespace jpeg {
 
 			u_int getBlockNum() const {
 				return width_ * height_ / (block_width_ * block_height_);
+			}
+
+			u_int getBlocksPerRow() const {
+				return width_ / block_width_;
 			}
 
 			u_int getMcuNum() const {
@@ -1204,8 +1240,7 @@ namespace jpeg {
 				// 各MCU用ごとにエンコード
 				dim3 block(mcu_kernel_block_x_, 1, 1);
 				dim3 grid(block_size_ / 6 / 64 / block.x, 6, block_num);
-				HuffmanEncodeForMCU<<<grid,block>>>(
-					quantized.device_data(), huffman_stream_.device_data());
+				HuffmanEncodeForMCU<<<grid, block>>>(quantized.device_data(), huffman_stream_.device_data());
 
 				// 書きこみ情報の作成
 				huffman_stream_.sync_to_host();
@@ -1224,15 +1259,12 @@ namespace jpeg {
 				u_int total_thread = mcu_num / block_num / 3;
 				block = dim3(combine_kernel_block_x_, 1, 1);
 				grid = dim3(total_thread / block.x, block_num, 1);
-				CombineHuffmanStream<3, 0> <<<grid,block>>>(
-					huffman_stream_.device_data(), huffman_info_.device_data(),
-					result.device_data(), result.size() / block_num);
-				CombineHuffmanStream<3, 1> <<<grid,block>>>(
-					huffman_stream_.device_data(), huffman_info_.device_data(),
-					result.device_data(), result.size() / block_num);
-				CombineHuffmanStream<3, 2> <<<grid,block>>>(
-					huffman_stream_.device_data(), huffman_info_.device_data(),
-					result.device_data(), result.size() / block_num);
+				CombineHuffmanStream<3, 0> <<<grid, block>>>(huffman_stream_.device_data(),
+					huffman_info_.device_data(), result.device_data(), result.size() / block_num);
+				CombineHuffmanStream<3, 1> <<<grid, block>>>(huffman_stream_.device_data(),
+					huffman_info_.device_data(), result.device_data(), result.size() / block_num);
+				CombineHuffmanStream<3, 2> <<<grid, block>>>(huffman_stream_.device_data(),
+					huffman_info_.device_data(), result.device_data(), result.size() / block_num);
 			}
 		};
 
@@ -1268,6 +1300,10 @@ namespace jpeg {
 
 		u_int Encoder::getBlockNum() const {
 			return impl->getBlockNum();
+		}
+
+		u_int Encoder::getBlocksPerRow() const {
+			return impl->getBlocksPerRow();
 		}
 
 		u_int Encoder::getMcuNum() const {
@@ -1343,7 +1379,7 @@ namespace jpeg {
 				cuda::InverseDiscreteCosineTransform(decode_dct_src_, decode_yuv_src_);
 				cuda::ConvertYUVToRGB(decode_yuv_src_, decode_result_, width_, height_, width_, height_,
 					decode_table_);
-				decode_result_.copy_to_host(dst, decode_result_.size());
+				decode_result_.copy_to_host(dst, decode_result_.size(), 0);
 			}
 		};
 
