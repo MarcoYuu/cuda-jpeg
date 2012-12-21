@@ -356,16 +356,16 @@ namespace jpeg {
 			 *
 			 * @param dct_coefficient DCT係数行列
 			 * @param quantized 量子化データ
-			 * @param quarity 量子化品質[0,100]
+			 * @param quality 量子化品質[0,100]
 			 */
-			void __global__ ZigzagQuantizeHigh(const int *dct_coefficient, int *quantized, float quarity) {
+			void __global__ ZigzagQuantizeHigh(const int *dct_coefficient, int *quantized, float quality) {
 				using Zigzag::sequence;
 
 				u_int local_index = threadIdx.x + threadIdx.y * 8;
 				u_int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
 					+ gridDim.x * 128 * 3 * blockIdx.z;
 				quantized[start_index + sequence[local_index]] = dct_coefficient[start_index + local_index]
-					/ (quantize_table[blockIdx.y][local_index] * (1.0f - quarity));
+					/ (quantize_table[blockIdx.y][local_index] * (1.0f - quality));
 			}
 
 			/**
@@ -377,17 +377,17 @@ namespace jpeg {
 			 *
 			 * @param quantized 量子化データ
 			 * @param dct_coefficient DCT係数行列
-			 * @param quarity 量子化品質[0,100]
+			 * @param quality 量子化品質[0,100]
 			 */
 			void __global__ InverseZigzagQuantizeHigh(const int *quantized, int *dct_coefficient,
-				float quarity) {
+				float quality) {
 				using Zigzag::sequence;
 
 				u_int local_index = threadIdx.x + threadIdx.y * 8;
 				u_int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
 					+ gridDim.x * 128 * 3 * blockIdx.z;
 				dct_coefficient[start_index + local_index] = quantized[start_index + sequence[local_index]]
-					* (quantize_table[blockIdx.y][local_index] * (1.0f - quarity));
+					* (quantize_table[blockIdx.y][local_index] * (1.0f - quality));
 			}
 
 			/**
@@ -916,27 +916,27 @@ namespace jpeg {
 		}
 
 		void ZigzagQuantize(const DeviceIntBuffer &dct_coefficient, DeviceIntBuffer &quantized,
-			u_int block_size, u_int quarity) {
+			u_int block_size, u_int quality) {
 			// 最低品質
-			if (quarity == 0) {
+			if (quality == 0) {
 				const dim3 grid(quantized.size() / 64 / 3, 3, 1);
 				const dim3 block(8, 8, 1);
 				kernel::ZigzagQuantizeLow<<<grid, block>>>(dct_coefficient.device_data(),
 					quantized.device_data(), -1.0f);
 			}
 			// 低品質
-			else if (quarity < 50) {
+			else if (quality < 50) {
 				const dim3 grid(block_size / 128 / 3, 3, dct_coefficient.size() / block_size);
 				const dim3 block(8, 8, 2);
 				kernel::ZigzagQuantizeLow<<<grid, block>>>(dct_coefficient.device_data(),
-					quantized.device_data(), (quarity - 50.0f) / 50.0f);
+					quantized.device_data(), (quality - 50.0f) / 50.0f);
 			}
 			// 高品質
-			else if (quarity < 100) {
+			else if (quality < 100) {
 				const dim3 grid(block_size / 128 / 3, 3, dct_coefficient.size() / block_size);
 				const dim3 block(8, 8, 2);
 				kernel::ZigzagQuantizeHigh<<<grid, block>>>(dct_coefficient.device_data(),
-					quantized.device_data(), (quarity - 50.0f) / 50.0f);
+					quantized.device_data(), (quality - 50.0f) / 50.0f);
 			}
 			// 最高品質
 			else {
@@ -948,27 +948,27 @@ namespace jpeg {
 		}
 
 		void InverseZigzagQuantize(const DeviceIntBuffer &quantized, DeviceIntBuffer &dct_coefficient,
-			u_int block_size, u_int quarity) {
+			u_int block_size, u_int quality) {
 			// 最低品質
-			if (quarity == 0) {
+			if (quality == 0) {
 				const dim3 grid(quantized.size() / 64 / 3, 3, 1);
 				const dim3 block(8, 8, 1);
 				kernel::InverseZigzagQuantizeLow<<<grid, block>>>(quantized.device_data(),
 					dct_coefficient.device_data(), -1.0f);
 			}
 			// 低品質
-			else if (quarity < 50) {
+			else if (quality < 50) {
 				const dim3 grid(block_size / 128 / 3, 3, dct_coefficient.size() / block_size);
 				const dim3 block(8, 8, 2);
 				kernel::InverseZigzagQuantizeLow<<<grid, block>>>(quantized.device_data(),
-					dct_coefficient.device_data(), (quarity - 50.0f) / 50.0f);
+					dct_coefficient.device_data(), (quality - 50.0f) / 50.0f);
 			}
 			// 高品質
-			else if (quarity < 100) {
+			else if (quality < 100) {
 				const dim3 grid(block_size / 128 / 3, 3, dct_coefficient.size() / block_size);
 				const dim3 block(8, 8, 2);
 				kernel::InverseZigzagQuantizeHigh<<<grid, block>>>(quantized.device_data(),
-					dct_coefficient.device_data(), (quarity - 50.0f) / 50.0f);
+					dct_coefficient.device_data(), (quality - 50.0f) / 50.0f);
 			}
 			// 最高品質
 			else {
@@ -1090,7 +1090,7 @@ namespace jpeg {
 			u_int buffer_size_;
 			u_int block_size_;
 
-			u_int quarity_;
+			u_int quality_;
 
 			DeviceTable encode_table_;
 
@@ -1115,7 +1115,7 @@ namespace jpeg {
 				block_height_(block_height),
 				buffer_size_(width * height * 3 / 2),
 				block_size_(block_width * block_height * 3 / 2),
-				quarity_(80),
+				quality_(80),
 				encode_table_(width * height),
 				encode_yuv_result_(buffer_size_),
 				encode_dct_result_(buffer_size_),
@@ -1183,8 +1183,8 @@ namespace jpeg {
 				block_height_ = block_height;
 			}
 
-			void setQuarity(u_int quarity) {
-				quarity_ = quarity;
+			void setQuality(u_int quality) {
+				quality_ = quality;
 			}
 
 			u_int getBlockNum() const {
@@ -1208,7 +1208,7 @@ namespace jpeg {
 				cuda::ConvertRGBToYUV(encode_src, encode_yuv_result_, width_, height_, block_width_,
 					block_height_, encode_table_);
 				cuda::DiscreteCosineTransform(encode_yuv_result_, encode_dct_result_);
-				cuda::ZigzagQuantize(encode_dct_result_, encode_qua_result_, block_size_, quarity_);
+				cuda::ZigzagQuantize(encode_dct_result_, encode_qua_result_, block_size_, quality_);
 
 				huffmanEncode(encode_qua_result_, huffman, effective_bits);
 			}
@@ -1221,7 +1221,7 @@ namespace jpeg {
 				cuda::ConvertRGBToYUV(rgb, encode_yuv_result_, width_, height_, block_width_, block_height_,
 					encode_table_);
 				cuda::DiscreteCosineTransform(encode_yuv_result_, encode_dct_result_);
-				cuda::ZigzagQuantize(encode_dct_result_, encode_qua_result_, block_size_, quarity_);
+				cuda::ZigzagQuantize(encode_dct_result_, encode_qua_result_, block_size_, quality_);
 
 				huffmanEncode(encode_qua_result_, huffman, effective_bits);
 			}
@@ -1294,8 +1294,8 @@ namespace jpeg {
 			impl->setBlockSize(block_width, block_height);
 		}
 
-		void Encoder::setQuarity(u_int quarity) {
-			impl->setQuarity(quarity);
+		void Encoder::setQuality(u_int quality) {
+			impl->setQuality(quality);
 		}
 
 		u_int Encoder::getBlockNum() const {
@@ -1324,7 +1324,7 @@ namespace jpeg {
 			u_int width_;
 			u_int height_;
 
-			u_int quarity_;
+			u_int quality_;
 
 			u_int buffer_size_;
 
@@ -1340,7 +1340,7 @@ namespace jpeg {
 			Impl(u_int width, u_int height) :
 				width_(width),
 				height_(height),
-				quarity_(80),
+				quality_(80),
 				buffer_size_(width * height * 3 / 2),
 				decode_table_(width * height),
 				decode_dct_src_(buffer_size_),
@@ -1366,8 +1366,8 @@ namespace jpeg {
 				height_ = height;
 			}
 
-			void setQuarity(u_int quarity) {
-				quarity_ = quarity;
+			void setQuality(u_int quality) {
+				quality_ = quality;
 			}
 
 			void decode(const byte *huffman, byte *dst) {
@@ -1375,7 +1375,7 @@ namespace jpeg {
 				cpu::decode_huffman(&ibs, decode_qua_src_.host_data(), width_, height_);
 				decode_qua_src_.sync_to_device();
 
-				cuda::InverseZigzagQuantize(decode_qua_src_, decode_dct_src_, buffer_size_, quarity_);
+				cuda::InverseZigzagQuantize(decode_qua_src_, decode_dct_src_, buffer_size_, quality_);
 				cuda::InverseDiscreteCosineTransform(decode_dct_src_, decode_yuv_src_);
 				cuda::ConvertYUVToRGB(decode_yuv_src_, decode_result_, width_, height_, width_, height_,
 					decode_table_);
@@ -1401,8 +1401,8 @@ namespace jpeg {
 			impl->setImageSize(width, height);
 		}
 
-		void Decoder::setQuarity(u_int quarity) {
-			impl->setQuarity(quarity);
+		void Decoder::setQuality(u_int quality) {
+			impl->setQuality(quality);
 		}
 
 		void Decoder::decode(const byte *huffman, byte *dst) {

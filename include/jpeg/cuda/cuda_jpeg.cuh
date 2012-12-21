@@ -118,9 +118,9 @@ namespace jpeg {
 			/**
 			 * @brief 圧縮品質の設定
 			 *
-			 * @param quarity 品質[0-100]
+			 * @param quality 品質[0-100]
 			 */
-			void setQuarity(u_int quarity);
+			void setQuality(u_int quality);
 
 			/**
 			 * @brief 分割されたブロック数の取得
@@ -223,9 +223,9 @@ namespace jpeg {
 			/**
 			 * @brief 圧縮品質の設定
 			 *
-			 * @param quarity 品質[0-100]
+			 * @param quality 品質[0-100]
 			 */
-			void setQuarity(u_int quarity);
+			void setQuality(u_int quality);
 
 			/**
 			 * @brief デコードする
@@ -337,10 +337,10 @@ namespace jpeg {
 		 * @param dct_coefficient DCT係数行列
 		 * @param quantized 量子化データ
 		 * @param block_size ブロックごとの要素数
-		 * @param quarity 量子化品質[0,100]
+		 * @param quality 量子化品質[0,100]
 		 */
 		void ZigzagQuantize(const DeviceIntBuffer &dct_coefficient, DeviceIntBuffer &quantized,
-			u_int block_size, u_int quarity = 80);
+			u_int block_size, u_int quality = 80);
 
 		/**
 		 * @brief 逆ジグザグ量子化
@@ -350,10 +350,10 @@ namespace jpeg {
 		 * @param quantized 量子化データ
 		 * @param dct_coefficient DCT係数行列
 		 * @param block_size ブロックごとの要素数
-		 * @param quarity 量子化品質[0,100]
+		 * @param quality 量子化品質[0,100]
 		 */
 		void InverseZigzagQuantize(const DeviceIntBuffer &quantized, DeviceIntBuffer &dct_coefficient,
-			u_int block_size, u_int quarity = 80);
+			u_int block_size, u_int quality = 80);
 
 		/**
 		 * @brief ハフマンエンコードする

@@ -313,9 +313,9 @@ void encoder_decoder(const std::string& file_name, const std::string& out_file_n
 	const int BLOCK_NUM = width * height / (block_width * block_height);
 
 	Encoder encoder(width, height, block_width, block_height);
-	encoder.setQuarity(quarity);
+	encoder.setQuality(quarity);
 	Decoder decoder(block_width, block_height);
-	decoder.setQuarity(quarity);
+	decoder.setQuality(quarity);
 
 	{
 		CudaByteBuffer huffman(width * height);
