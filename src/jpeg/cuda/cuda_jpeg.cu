@@ -101,19 +101,6 @@ namespace jpeg {
 				table[src_index].v = dst_v_index;
 			}
 
-			/*
-			 * Y = 0.2990 * R + 0.5870 * G + 0.1140 * B
-			 * Cb = -0.1687 * R - 0.3313 * G + 0.5000 * B + 128
-			 * Cr = 0.5000 * R - 0.4187 * G - 0.0813 * B + 128
-			 *
-			 * R = Y + 1.40200 x (Cr - 128)
-			 * G = Y - 0.34414 x (Cb - 128) - 0.71414 x (Cr - 128)
-			 * B = Y + 1.77200 x (Cb - 128)
-			 *
-			 * R = Y          + 1.402V
-			 * G = Y - 0.344U - 0.714V
-			 * B = Y + 1.772U
-			 */
 			/**
 			 * @brief RGB→YUV変換カーネル
 			 *
@@ -141,20 +128,14 @@ namespace jpeg {
 				const u_int src_index = pix_index * 3;
 
 				// R,G,B [0, 255] -> R,G,B [16, 235]
-				//const float b = rgb[src_index + 0] * 0.8588f + 16.0f;
-				//const float g = rgb[src_index + 1] * 0.8588f + 16.0f;
-				//const float r = rgb[src_index + 2] * 0.8588f + 16.0f;
 				const float b = rgb[src_index + 0];
 				const float g = rgb[src_index + 1];
 				const float r = rgb[src_index + 2];
 
 				// R,G,B [16, 235] -> Y [16, 235] U,V [16, 240]
-				//yuv_result[elem.y] = 0.11448f * b + 0.58661f * g + 0.29891f * r;
-				//yuv_result[elem.u] = 0.50000f * b - 0.33126f * g - 0.16874f * r + 128.0f;
-				//yuv_result[elem.v] = -0.08131f * b - 0.41869f * g + 0.50000f * r + 128.0f;
-				yuv_result[elem.y] = 0.2990 * r + 0.5870 * g + 0.1140 * b;
-				yuv_result[elem.u] = -0.1687 * r - 0.3313 * g + 0.5000 * b + 128;
-				yuv_result[elem.v] = 0.5000 * r - 0.4187 * g - 0.0813 * b + 128;
+				yuv_result[elem.y] = 0.257 * r + 0.504 * g + 0.098 * b + 16;
+				yuv_result[elem.u] = -0.148 * r - 0.291 * g + 0.439 * b + 128;
+				yuv_result[elem.v] = 0.439 * r - 0.368 * g - 0.071 * b + 128;
 			}
 
 			__device__ byte revise_value_d(double v) {
@@ -187,17 +168,14 @@ namespace jpeg {
 				const u_int dst_index = pix_index * 3;
 
 				// Y [16, 235] U,V [16, 240] -> Y [16, 235] U,V [-112, 112]
-				const float y = yuv[elem.y];
+				const float y = yuv[elem.y] - 16;
 				const float u = yuv[elem.u] - 128.0f;
 				const float v = yuv[elem.v] - 128.0f;
 
 				// Y [16, 235] U,V [-112, 112] -> R,G,B [0, 255]
-				//rgb_result[dst_index + 0] = (y + 1.77200f * u - 16.0f) * 1.164f;
-				//rgb_result[dst_index + 1] = (y - 0.34414f * u - 0.71414f * v - 16.0f) * 1.164f;
-				//rgb_result[dst_index + 2] = (y + 1.40200f * v - 16.0f) * 1.164f;
-				rgb_result[dst_index + 0] = revise_value_d(y + 1.77200 * u);
-				rgb_result[dst_index + 1] = revise_value_d(y - 0.34414 * u - 0.71414 * v);
-				rgb_result[dst_index + 2] = revise_value_d(y + 1.40200 * v);
+				rgb_result[dst_index + 0] = revise_value_d(1.164 * y + 2.018 * u);
+				rgb_result[dst_index + 1] = revise_value_d(1.164 * y - 0.391 * u - 0.813 * v);
+				rgb_result[dst_index + 2] = revise_value_d(1.164 * y + 1.596 * v);
 			}
 
 			//-------------------------------------------------------------------------------------------------//
