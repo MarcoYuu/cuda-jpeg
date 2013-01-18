@@ -304,7 +304,7 @@ void code_func(const std::string &file_name, const std::string &out_file_name, s
 void encoder_decoder(const std::string& file_name, const std::string& out_file_name, size_t block_width,
 	size_t block_height, int quarity) {
 
-	StopWatch w(StopWatch::CPU_OPTIMUM);
+	CudaStopWatch watch;
 
 	// 画像読み込み
 	BitmapCVUtil source(file_name, BitmapCVUtil::RGB_COLOR);
@@ -312,37 +312,51 @@ void encoder_decoder(const std::string& file_name, const std::string& out_file_n
 	const int height = source.getHeight();
 	const int BLOCK_NUM = width * height / (block_width * block_height);
 
-	Encoder encoder(width, height, block_width, block_height);
-	encoder.setQuality(quarity);
-	Decoder decoder(block_width, block_height);
-	decoder.setQuality(quarity);
-
 	{
+		cout << "Encode" << endl;
+		watch.start();
+		Encoder encoder(width, height, block_width, block_height);
+		encoder.setQuality(quarity);
+		DeviceByteBuffer encode_src(width * height * 3);
 		CudaByteBuffer huffman(width * height);
 		IntBuffer effective_bits(BLOCK_NUM);
+		watch.stop();
+		cout << "Pre-Process, " << watch.getLastElapsedTime() * 1000.0 << endl;
+		watch.clear();
 		{
-			w.start();
-			encoder.encode((byte*) source.getRawData(), huffman, effective_bits);
+			watch.start();
+			encode_src.write_device((byte*) source.getRawData(), width * height * 3);
+			watch.stop();
+			cout << "Memory Transfer, " << watch.getLastElapsedTime() * 1000.0 << endl;
+			watch.clear();
+
+			encoder.encode(encode_src, huffman, effective_bits);
+
+			watch.start();
 			huffman.sync_to_host();
-			w.stop();
-			cout << "encode, " << w.getLastElapsedTime() * 1000.0 << endl;
-			w.clear();
+			watch.stop();
+			cout << "Memory Transfer, " << watch.getLastElapsedTime() * 1000.0 << endl;
+			watch.clear();
 		}
 
+		cout << "\nDecode" << endl;
+		watch.start();
+		Decoder decoder(block_width, block_height);
+		decoder.setQuality(quarity);
+		BitmapCVUtil bmp(block_width, block_height, 8, source.getBytePerPixel());
+		watch.stop();
+		cout << "Pre-Process, " << watch.getLastElapsedTime() * 1000.0 << endl;
+		watch.clear();
+
 		{
-			BitmapCVUtil bmp(block_width, block_height, 8, source.getBytePerPixel());
 			for (int i = 0; i < BLOCK_NUM; ++i) {
-				w.start();
 				decoder.decode(huffman.host_data() + huffman.size() / BLOCK_NUM * i,
 					(byte*) bmp.getRawData());
-				w.stop();
-				cout << "decode, " << w.getLastElapsedTime() * 1000.0 << endl;
-				w.clear();
 
 				string index = boost::lexical_cast<string>(i);
 				string qrty = boost::lexical_cast<string>(quarity);
 				string outname = "cuda_" + index + "_" + qrty + "_" + out_file_name;
-				bmp.saveToFile(outname);
+				//bmp.saveToFile(outname);
 			}
 		}
 	}

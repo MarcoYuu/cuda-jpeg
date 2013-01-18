@@ -9,6 +9,7 @@
 #include <utils/type_definitions.h>
 #include <utils/utility.hpp>
 #include <utils/cuda/bit_operation.cuh>
+#include <utils/cuda/cuda_timer.h>
 
 #include "encoder_tables_device.cuh"
 
@@ -187,8 +188,8 @@ namespace jpeg {
 			 * @brief DCTカーネル
 			 *
 			 * - カーネル起動は各YUVごと = width*height*3/2スレッド必要
-			 * 	- grid(yuv.size() / 64, 1, 1)
-			 * 	- block(8, 8, 1)
+			 * 	- grid(yuv.size() / 64 / 6, 1, 1)
+			 * 	- block(8, 8, 6)
 			 * - グリッド/ブロック数に制限はない
 			 * - dst_coefficient.size == yuv.sizeであること
 			 *
@@ -201,11 +202,11 @@ namespace jpeg {
 
 				u_int x = threadIdx.x, y = threadIdx.y;
 				u_int local_index = x + y * 8;
-				u_int start_index = 64 * blockIdx.x;
+				u_int start_index = 384 * blockIdx.x + 64 * threadIdx.z;
 
-				__shared__ float vertical_result[64];
+				__shared__ float vertical_result[6][64];
 
-				vertical_result[local_index] = cos[y * 8 + 0] * yuv_src[start_index + x + 0 * 8]
+				vertical_result[threadIdx.z][local_index] = cos[y * 8 + 0] * yuv_src[start_index + x + 0 * 8]
 					+ cos[y * 8 + 1] * yuv_src[start_index + x + 1 * 8]
 					+ cos[y * 8 + 2] * yuv_src[start_index + x + 2 * 8]
 					+ cos[y * 8 + 3] * yuv_src[start_index + x + 3 * 8]
@@ -216,22 +217,22 @@ namespace jpeg {
 
 				__syncthreads();
 
-				dct_coefficient[start_index + local_index] = vertical_result[y * 8 + 0] * cos_t[x + 0 * 8]
-					+ vertical_result[y * 8 + 1] * cos_t[x + 1 * 8]
-					+ vertical_result[y * 8 + 2] * cos_t[x + 2 * 8]
-					+ vertical_result[y * 8 + 3] * cos_t[x + 3 * 8]
-					+ vertical_result[y * 8 + 4] * cos_t[x + 4 * 8]
-					+ vertical_result[y * 8 + 5] * cos_t[x + 5 * 8]
-					+ vertical_result[y * 8 + 6] * cos_t[x + 6 * 8]
-					+ vertical_result[y * 8 + 7] * cos_t[x + 7 * 8];
+				dct_coefficient[start_index + local_index] = vertical_result[threadIdx.z][y * 8 + 0] * cos_t[x + 0 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 1] * cos_t[x + 1 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 2] * cos_t[x + 2 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 3] * cos_t[x + 3 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 4] * cos_t[x + 4 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 5] * cos_t[x + 5 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 6] * cos_t[x + 6 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 7] * cos_t[x + 7 * 8];
 			}
 
 			/**
 			 * @brief iDCTカーネル
 			 *
 			 * - カーネル起動は各YUVごと = width*height*3/2スレッド必要
-			 * 	- grid(yuv.size() / 64, 1, 1)
-			 * 	- block(8, 8, 1)
+			 * 	- grid(yuv.size() / 64 / 6, 1, 1)
+			 * 	- block(8, 8, 6)
 			 * - グリッド/ブロック数に制限はない
 			 * - dst_coefficient.size == yuv.sizeであること
 			 *
@@ -244,11 +245,11 @@ namespace jpeg {
 
 				u_int x = threadIdx.x, y = threadIdx.y;
 				u_int local_index = x + y * 8;
-				u_int start_index = 64 * blockIdx.x;
+				u_int start_index = 384 * blockIdx.x + 64 * threadIdx.z;
 
-				__shared__ float vertical_result[64];
+				__shared__ float vertical_result[6][64];
 
-				vertical_result[local_index] = cos_t[y * 8 + 0] * dct_coefficient[start_index + x + 0 * 8]
+				vertical_result[threadIdx.z][local_index] = cos_t[y * 8 + 0] * dct_coefficient[start_index + x + 0 * 8]
 					+ cos_t[y * 8 + 1] * dct_coefficient[start_index + x + 1 * 8]
 					+ cos_t[y * 8 + 2] * dct_coefficient[start_index + x + 2 * 8]
 					+ cos_t[y * 8 + 3] * dct_coefficient[start_index + x + 3 * 8]
@@ -259,14 +260,14 @@ namespace jpeg {
 
 				__syncthreads();
 
-				float value = vertical_result[y * 8 + 0] * cos[x + 0 * 8]
-					+ vertical_result[y * 8 + 1] * cos[x + 1 * 8]
-					+ vertical_result[y * 8 + 2] * cos[x + 2 * 8]
-					+ vertical_result[y * 8 + 3] * cos[x + 3 * 8]
-					+ vertical_result[y * 8 + 4] * cos[x + 4 * 8]
-					+ vertical_result[y * 8 + 5] * cos[x + 5 * 8]
-					+ vertical_result[y * 8 + 6] * cos[x + 6 * 8]
-					+ vertical_result[y * 8 + 7] * cos[x + 7 * 8];
+				float value = vertical_result[threadIdx.z][y * 8 + 0] * cos[x + 0 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 1] * cos[x + 1 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 2] * cos[x + 2 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 3] * cos[x + 3 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 4] * cos[x + 4 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 5] * cos[x + 5 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 6] * cos[x + 6 * 8]
+					+ vertical_result[threadIdx.z][y * 8 + 7] * cos[x + 7 * 8];
 
 				yuv_result[start_index + local_index] = (byte) ((int) value);
 			}
@@ -1009,9 +1010,9 @@ namespace jpeg {
 
 		void DiscreteCosineTransform(const DeviceByteBuffer &yuv, DeviceIntBuffer &dct_coefficient) {
 			// grid (8x8ブロックの個数, 分割数, 1)
-			const dim3 grid(yuv.size() / 64, 1, 1);
+			const dim3 grid(yuv.size() / 64 / 6, 1, 1);
 			// grid (1, 8x8ブロック)
-			const dim3 block(8, 8, 1);
+			const dim3 block(8, 8, 6);
 
 			kernel::DiscreteCosineTransform<<<grid, block>>>(yuv.device_data(),
 				dct_coefficient.device_data());
@@ -1020,9 +1021,9 @@ namespace jpeg {
 		void InverseDiscreteCosineTransform(const DeviceIntBuffer &dct_coefficient,
 			DeviceByteBuffer &yuv_result) {
 			// grid (8x8ブロックの個数, 分割数, 1)
-			const dim3 grid(dct_coefficient.size() / 64, 1, 1);
+			const dim3 grid(dct_coefficient.size() / 64 / 6, 1, 1);
 			// grid (1, 8x8ブロック)
-			const dim3 block(8, 8, 1);
+			const dim3 block(8, 8, 6);
 
 			kernel::InverseDiscreteCosineTransform<<<grid, block>>>(dct_coefficient.device_data(),
 				yuv_result.device_data());
@@ -1351,14 +1352,38 @@ namespace jpeg {
 			void encode(const DeviceByteBuffer &rgb, DeviceByteBuffer &huffman, IntBuffer &effective_bits) {
 				assert(effective_bits.size() >= getBlockNum());
 
-				huffman.fill_zero();
+				CudaStopWatch watch;
 
+				watch.start();
+				huffman.fill_zero();
+				watch.stop();
+				std::cout << "Pre-Process, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
+
+				watch.start();
 				cuda::ConvertRGBToYUV(rgb, encode_yuv_result_, width_, height_, block_width_, block_height_,
 					encode_table_);
-				cuda::DiscreteCosineTransform(encode_yuv_result_, encode_dct_result_);
-				cuda::ZigzagQuantize(encode_dct_result_, encode_qua_result_, block_size_, quality_);
+				watch.stop();
+				std::cout << "Color Conversion, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
 
+				watch.start();
+				cuda::DiscreteCosineTransform(encode_yuv_result_, encode_dct_result_);
+				watch.stop();
+				std::cout << "DCT, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
+
+				watch.start();
+				cuda::ZigzagQuantize(encode_dct_result_, encode_qua_result_, block_size_, quality_);
+				watch.stop();
+				std::cout << "Zigzag Quantize, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
+
+				watch.start();
 				huffmanEncode(encode_qua_result_, huffman, effective_bits);
+				watch.stop();
+				std::cout << "Huffman Encode, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
 			}
 
 		private:
@@ -1506,15 +1531,46 @@ namespace jpeg {
 			}
 
 			void decode(const byte *huffman, byte *dst) {
+
+				CudaStopWatch watch;
+
+				watch.start();
 				InBitStream ibs(huffman, buffer_size_);
 				cpu::decode_huffman(&ibs, decode_qua_src_.host_data(), width_, height_);
-				decode_qua_src_.sync_to_device();
+				watch.stop();
+				std::cout << "Huffman Decode, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
 
+				watch.start();
+				decode_qua_src_.sync_to_device();
+				watch.stop();
+				std::cout << "Memory Transfer, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
+
+				watch.start();
 				cuda::InverseZigzagQuantize(decode_qua_src_, decode_dct_src_, buffer_size_, quality_);
+				watch.stop();
+				std::cout << "Zigzag Quantize, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
+
+				watch.start();
 				cuda::InverseDiscreteCosineTransform(decode_dct_src_, decode_yuv_src_);
+				watch.stop();
+				std::cout << "iDCT, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
+
+				watch.start();
 				cuda::ConvertYUVToRGB(decode_yuv_src_, decode_result_, width_, height_, width_, height_,
 					decode_table_);
+				watch.stop();
+				std::cout << "Color Conversion, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
+
+				watch.start();
 				decode_result_.copy_to_host(dst, decode_result_.size(), 0);
+				watch.stop();
+				std::cout << "Memory Transfer, " << watch.getLastElapsedTime() * 1000.0 << std::endl;
+				watch.clear();
 			}
 		};
 
