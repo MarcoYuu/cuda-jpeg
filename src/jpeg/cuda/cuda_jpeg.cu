@@ -173,9 +173,9 @@ namespace jpeg {
 				const float v = yuv[elem.v] - 128.0f;
 
 				// Y [16, 235] U,V [-112, 112] -> R,G,B [0, 255]
-				rgb_result[dst_index + 0] = revise_value_d(1.164 * y + 2.018 * u);
-				rgb_result[dst_index + 1] = revise_value_d(1.164 * y - 0.391 * u - 0.813 * v);
-				rgb_result[dst_index + 2] = revise_value_d(1.164 * y + 1.596 * v);
+				rgb_result[dst_index + 0] = 1.164 * y + 2.018 * u;
+				rgb_result[dst_index + 1] = 1.164 * y - 0.391 * u - 0.813 * v;
+				rgb_result[dst_index + 2] = 1.164 * y + 1.596 * v;
 			}
 
 			//-------------------------------------------------------------------------------------------------//
@@ -291,16 +291,16 @@ namespace jpeg {
 			 *
 			 * @param dct_coefficient DCT係数行列
 			 * @param quantized 量子化データ
-			 * @param quariry 量子化品質[0,100]
+			 * @param quality 量子化品質[0,100]
 			 */
-			void __global__ ZigzagQuantizeLow(const int *dct_coefficient, int *quantized, float quariry) {
+			void __global__ ZigzagQuantizeLow(const int *dct_coefficient, int *quantized, float quality) {
 				using Zigzag::sequence;
 
 				u_int local_index = threadIdx.x + threadIdx.y * 8;
 				u_int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
 					+ gridDim.x * 128 * 3 * blockIdx.z;
 				quantized[start_index + sequence[local_index]] = dct_coefficient[start_index + local_index]
-					/ ((255.0f - ((255.0f - quantize_table[blockIdx.y][local_index]) * (1.0f + quariry))));
+					/ ((255.0f - ((255.0f - quantize_table[blockIdx.y][local_index]) * (1.0f + quality))));
 			}
 
 			/**
@@ -312,17 +312,17 @@ namespace jpeg {
 			 *
 			 * @param quantized 量子化データ
 			 * @param dct_coefficient DCT係数行列
-			 * @param quariry 量子化品質[0,100]
+			 * @param quality 量子化品質[0,100]
 			 */
 			void __global__ InverseZigzagQuantizeLow(const int *quantized, int *dct_coefficient,
-				float quariry) {
+				float quality) {
 				using Zigzag::sequence;
 
 				u_int local_index = threadIdx.x + threadIdx.y * 8;
 				u_int start_index = 64 * threadIdx.z + 128 * blockIdx.x + 128 * gridDim.x * blockIdx.y
 					+ gridDim.x * 128 * 3 * blockIdx.z;
 				dct_coefficient[start_index + local_index] = quantized[start_index + sequence[local_index]]
-					* ((255.0f - ((255.0f - quantize_table[blockIdx.y][local_index]) * (1.0f + quariry))));
+					* ((255.0f - ((255.0f - quantize_table[blockIdx.y][local_index]) * (1.0f + quality))));
 			}
 
 			/**
@@ -420,6 +420,9 @@ namespace jpeg {
 			/** @brief 余ったビットに1を詰めるためのマスク */
 			static __device__ __constant__ const unsigned char kBitFullMaskLowT[] = {
 				0xff, 0x7f, 0x3f, 0x1f, 0x0f, 0x07, 0x03, 0x01 };
+			// ビット取り出しのためのマスク
+			static __device__ __constant__ const unsigned char kBitTestMaskT[8] = {
+				0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 
 			//-------------------------------------------------------------------------------------------------//
 			//
@@ -750,6 +753,7 @@ namespace jpeg {
 				u_int runlength = 0;
 
 				// 末尾以外
+#pragma unroll
 				for (u_int i = 1; i < 63; i++) {
 					int value = quantized[mcu_start_index + i];
 					byte4 abs_value = abs(value);
@@ -783,6 +787,159 @@ namespace jpeg {
 				dst_mcu->setBits(ACCodeTable[blockIdx.y / 2][AC::luminance::EOB],
 					ACSizeTable[blockIdx.y / 2][AC::luminance::EOB]);
 			}
+
+//			/**
+//			 * @brief ビット読み出しクラス
+//			 *
+//			 * コンストラクタに渡した読み込みバッファは、
+//			 * このクラスの寿命より先に破棄されてはいけない
+//			 *
+//			 * @author AsWe.Co modified by momma
+//			 * @version 1.0
+//			 */
+//			class InBitStream {
+//			public:
+//				/**
+//				 * @brief コンストラクタ
+//				 *
+//				 * @param aBufP 読み込みバッファ
+//				 * @param size バッファの有効サイズ
+//				 */
+//				__device__ InBitStream(const byte* aBufP, size_t size) {
+//					// データバッファの設定
+//					mBufP = (byte*) aBufP; // バッファ
+//					mEndOfBufP = mBufP + size; // バッファの最終アドレス
+//
+//					// 状態変数初期化
+//					mBitPos = 7; // 最上位ビット
+//					mNextFlag = 1; // 読み飛ばし無し
+//					mReadFlag = 1; // アクセスエラー無し
+//				}
+//
+//				/**
+//				 * @brief ビット単位で読み出す
+//				 *
+//				 * @param numOfBits 読みだすビット数
+//				 * @return 読み出し値
+//				 */
+//				__device__ int getBits(size_t numOfBits) {
+//					if (numOfBits <= 0)
+//						return 0; // エラー
+//
+//					int r = 0; // 返値
+//					while (numOfBits) {
+//						if (mBitPos < 0) { // 次のバイトを読み出すとき
+//							mBitPos = 7; // 読み出しビット位置更新
+//							incBuf(); // アドレス更新
+//						}
+//
+//						// 返値の作成
+//						r <<= 1;
+//						r |= ((*mBufP) & kBitTestMaskT[mBitPos--]) ? 1 : 0;
+//						// 1ビット読み出しと読み出しビット位置更新
+//						numOfBits--; // 読み出しビット数更新
+//					}
+//					return r;
+//				}
+//
+//			private:
+//				byte* mBufP; 		//! 読み出しアドレス
+//				byte* mEndOfBufP; 	//! バッファの終了アドレス
+//				int mBitPos; 		//! 読み出しビット位置（上位ビットが7、下位ビットが0）
+//				int mNextFlag; 		//! 次のバイトを読んでいいかどうか
+//				int mReadFlag; 		//! 1:読み出し可, 0:読み出し不可
+//
+//				/** @brief 読み出しアドレスのインクリメントとアクセス違反のチェック */
+//				__device__ void incBuf() {
+//					if (++mBufP >= mEndOfBufP) // 次のアクセスでエラー
+//						mReadFlag = 0;
+//				}
+//
+//				__device__ InBitStream(jpeg::cuda::kernel::InBitStream &);
+//				void __device__ operator =(jpeg::cuda::kernel::InBitStream &);
+//			};
+//
+//			__device__ int decode_huffman_word(jpeg::cuda::kernel::InBitStream *ibit_stream, int is_ac,
+//				int is_lumi) { // is_lumi =0で輝度値ってことにする
+//				// ハフマンテーブル指定
+//				using HuffmanDecode::TableSet;
+//				using HuffmanDecode::tableSet;
+//				const TableSet &theHT = tableSet[is_lumi][is_ac];	// 使用するハフマンテーブル
+//
+//				int code = 0; // ハフマン符号語の候補：最大値16ビット
+//				int length = 0; // ハフマン符号語候補のビット数
+//				int next = 0; // 次の1ビット
+//				int k = 0; // 表の指数
+//
+//				while (k < theHT.table_size && length < 16) {
+//					length++;
+//					code <<= 1;
+//					next = ibit_stream->getBits(1);
+//
+//					code |= next;
+//
+//					while (theHT.size_table[k] == length) { // 候補と符号語のビット数が等しい間検索
+//						if (theHT.code_table[k] == code) { // ヒット
+//							return theHT.value_table[k]; // 復号結果を返す
+//						}
+//						k++; // 次の符号語
+//					}
+//				}
+//				return 0;
+//			}
+//
+//			// grid : all_blocks/8x8blocks/3, 3, 1
+//			// block : 8x8blocks, 1, 1
+//			__global__ void HuffmanDecodeForMCU(const byte *huffman, int *offsetbits_of_block, int *dst_qua) {
+//				using namespace encode_table::HuffmanEncode;
+//				using jpeg::cuda::kernel::InBitStream;
+//
+//				// マクロブロック番号
+//				const u_int mcu_id = threadIdx.x + gridDim.x * blockDim.x;
+//				InBitStream ibit_stream(huffman + (u_int) ceil(offsetbits_of_block[mcu_id] / 8.0f), 255);
+//				ibit_stream.getBits(offsetbits_of_block[mcu_id] % 8);
+//				int is_lumi = blockIdx.y / 2;
+//
+//				int preDC = 0;
+//
+//				//--------------------------- DC ---------------------------
+//				int diff = 0;
+//				int category = decode_huffman_word(&ibit_stream, 0, is_lumi);
+//
+//				diff = ibit_stream.getBits(category);
+//				if ((diff & (1 << (category - 1))) == 0) { //負
+//					diff -= (1 << category) - 1;
+//				}
+//
+//				preDC += diff;
+//				dst_qua[mcu_id * 64] = preDC;
+//
+//				//--------------------------- AC ---------------------------
+//				int k = 1;
+//				while (k < 64) {
+//					category = decode_huffman_word(&ibit_stream, 1, is_lumi);
+//					if (category == 0) { //EOB
+//						while (k < 64) {
+//							dst_qua[mcu_id * 64 + (k++)] = 0;
+//						}
+//						break;
+//					}
+//
+//					int run = category >> 4; //run length
+//					category &= 0x0f; //category
+//					int acv = 0;
+//					if (category) {
+//						acv = ibit_stream.getBits(category);
+//						if ((acv & (1 << (category - 1))) == 0)
+//							acv -= (1 << category) - 1; //負
+//					}
+//
+//					while (run-- > 0) { //ランレングスの数だけ0
+//						dst_qua[mcu_id * 64 + (k++)] = 0;
+//					}
+//					dst_qua[mcu_id * 64 + (k++)] = acv;
+//				}
+//			}
 
 			/**
 			 * @brief ハフマンストリームの結合カーネル
