@@ -22,6 +22,7 @@ namespace util {
 		 * @brief CUDAの同期関数を用いたGPU時間計測クラス
 		 *
 		 * - stopではラップは刻まれない。リセットせず特定区間の経過時間をgetElapseするには、lap->stopで。
+		 * - 単位は秒
 		 *
 		 * @author yuumomma
 		 * @version 1.0

@@ -7,6 +7,7 @@
 
 #include <utils/out_bit_stream.h>
 #include <utils/in_bit_stream.h>
+#include <utils/cuda/cuda_timer.h>
 
 #include "../encoder_tables_device.cuh"
 
@@ -528,6 +529,9 @@ namespace jpeg {
 
 			inner_encode(rgb_data);
 
+			util::cuda::CudaStopWatch watch;
+
+			watch.start();
 			gpu_huffman_mcu<<<grid_mcu_, block_mcu_>>>(
 				quantized_.device_data(), out_bit_stream_.status().device_data(),
 				out_bit_stream_.head_device(), out_bit_stream_.end_device(), width_, height_);
@@ -546,6 +550,9 @@ namespace jpeg {
 			gpu_huffman_write_devide2<<<grid_huffman_, block_huffman_>>>(
 				out_bit_stream_.status().device_data(),
 				out_bit_stream_.head_device(), result.device_data());
+			watch.stop();
+			std::cout << "Huffman Encode, " << watch.getLastElapsedTime() << std::endl;
+			watch.clear();
 
 			return out_bit_stream_.available_size();
 		}
@@ -562,23 +569,41 @@ namespace jpeg {
 		}
 
 		void JpegEncoder::inner_encode(const byte* rgb_data) {
-			src_.write_device(rgb_data, width_ * height_ * 3);
+			util::cuda::CudaStopWatch watch;
 
+			watch.start();
+			src_.write_device(rgb_data, width_ * height_ * 3);
+			watch.stop();
+			std::cout << "Memory Transfer, " << watch.getLastElapsedTime() << std::endl;
+			watch.clear();
+
+			watch.start();
 			gpu_color_trans_Y<<<grid_color_, block_color_>>>(
 				src_.device_data(), yuv_buffer_.device_data(), trans_table_Y_.device_data());
 			gpu_color_trans_C<<<grid_color_, block_color_>>>(
 				src_.device_data(), yuv_buffer_.device_data(), trans_table_C_.device_data(),
 				height_, c_size_);
+			watch.stop();
+			std::cout << "Color Conversion, " << watch.getLastElapsedTime() << std::endl;
+			watch.clear();
 
+			watch.start();
 			gpu_dct_0<<<grid_dct_, block_dct_>>>(
 				yuv_buffer_.device_data(), dct_tmp_buffer_.device_data());
 			gpu_dct_1<<<grid_dct_, block_dct_>>>(
 				dct_tmp_buffer_.device_data(), dct_coeficient_.device_data());
+			watch.stop();
+			std::cout << "DCT, " << watch.getLastElapsedTime() << std::endl;
+			watch.clear();
 
+			watch.start();
 			gpu_zig_quantize_Y<<<grid_quantize_y_, block_quantize_y_>>>(
 				dct_coeficient_.device_data(), quantized_.device_data());
 			gpu_zig_quantize_C<<<grid_quantize_c_, block_quantize_c_>>>(
 				dct_coeficient_.device_data(), quantized_.device_data(), y_size_);
+			watch.stop();
+			std::cout << "Zigzag Quantize, " << watch.getLastElapsedTime() << std::endl;
+			watch.clear();
 		}
 
 		/**
@@ -678,24 +703,41 @@ namespace jpeg {
 		 * @param result 結果を格納するバッファ
 		 */
 		void JpegDecoder::decode(const byte *src, size_t src_size, util::cuda::device_memory<byte> &result) {
-			util::InBitStream mIBSP(src, src_size);
+			util::cuda::CudaStopWatch watch;
 
+			watch.start();
+			util::InBitStream mIBSP(src, src_size);
 			cpu::decode_huffman(&mIBSP, quantized_.host_data(), width_, height_);
 			quantized_.sync_to_device();
+			watch.stop();
+			std::cout << "Huffman Decode, " << watch.getLastElapsedTime() << std::endl;
+			watch.clear();
 
+			watch.start();
 			gpu_izig_quantize_Y<<<grid_quantize_y_, block_quantize_y_>>>(
 				quantized_.device_data(), dct_coeficient_.device_data());
 			gpu_izig_quantize_C<<<grid_quantize_c_, block_quantize_c_>>>(
 				quantized_.device_data(), dct_coeficient_.device_data(), y_size_);
+			watch.stop();
+			std::cout << "Zigzag Quantize, " << watch.getLastElapsedTime() << std::endl;
+			watch.clear();
 
+			watch.start();
 			gpu_idct_0<<<grid_dct_, block_dct_>>>(
 				dct_coeficient_.device_data(), dct_tmp_buffer_.device_data());
 			gpu_idct_1<<<grid_dct_, block_dct_>>>(
 				dct_tmp_buffer_.device_data(), yuv_buffer_.device_data());
+			watch.stop();
+			std::cout << "iDCT, " << watch.getLastElapsedTime() << std::endl;
+			watch.clear();
 
+			watch.start();
 			gpu_color_itrans<<<grid_color_, block_color_>>>(
 				yuv_buffer_.device_data(), result.device_data(),
 				itrans_table_Y_.device_data(), itrans_table_C_.device_data(), c_size_);
+			watch.stop();
+			std::cout << "Color Conversion, " << watch.getLastElapsedTime() << std::endl;
+			watch.clear();
 		}
 
 	} // namespace gpu

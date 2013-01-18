@@ -346,30 +346,6 @@ void encoder_decoder(const std::string& file_name, const std::string& out_file_n
 			}
 		}
 	}
-
-	// 内部状態が引きずられないかの2回目テスト
-//	{
-//		CudaByteBuffer huffman(width * height);
-//		IntBuffer effective_bits(BLOCK_NUM);
-//		{
-//			encoder.encode((byte*) source.getRawData(), huffman, effective_bits);
-//			huffman.sync_to_host();
-//		}
-//
-//		{
-//			BitmapCVUtil bmp(block_width, block_height, 8, source.getBytePerPixel());
-//			for (int i = 0; i < BLOCK_NUM; ++i) {
-//				decoder.decode(huffman.host_data() + huffman.size() / BLOCK_NUM * i,
-//					(byte*) bmp.getRawData());
-//
-//				string index = boost::lexical_cast<string>(i);
-//				string qrty = boost::lexical_cast<string>(quarity);
-//				string outname = "cuda_" + index + "_" + qrty + "_" + out_file_name;
-//				DebugLog::log("export to file :" + outname);
-//				bmp.saveToFile(outname);
-//			}
-//		}
-//	}
 }
 
 void encode_and_decode(const std::string& file_name, const std::string& out_file_name, size_t block_width,

@@ -29,49 +29,54 @@ void gpu_main(const std::string &file_name, const std::string &out_file_name) {
 	const int width = source.getWidth();
 	const int height = source.getHeight();
 
-	std::cout << "===============================================" << std::endl;
-	std::cout << " Start GPU Encoding & Decoding" << std::endl;
-	std::cout << "-----------------------------------------------\n" << std::endl;
-
-	std::cout << "	-----------------------------------------------" << std::endl;
-	std::cout << "	 Encode" << std::endl;
-	std::cout << "	-----------------------------------------------" << std::endl;
+	std::cout << "Encode" << std::endl;
 	int result_size;
+
+	watch.start();
 	cuda_memory<byte> encode_result(sizeof(byte) * (width * height * 3));
 	encode_result.fill_zero();
+	watch.stop();
+	cout << "Preprocess, " << watch.getLastElapsedTime() << endl;
 	{
-		jpeg::ohmura::JpegEncoder encoder(width, height);
-
 		watch.start();
+		jpeg::ohmura::JpegEncoder encoder(width, height);
+		watch.stop();
+		cout << "Preprocess, " << watch.getLastElapsedTime() << endl;
+
 		{
 			result_size = encoder.encode((byte*) source.getRawData(), encode_result);
+
+			watch.start();
 			encode_result.sync_to_host();
+			watch.stop();
+			cout << "Memory Transfer, " << watch.getLastElapsedTime() << endl;
 		}
-		watch.stop();
-		std::cout << "	" << watch.getLastElapsedTime() * 1000 << "[ms]\n" << std::endl;
 	}
 
 	watch.clear();
-	std::cout << "	-----------------------------------------------" << std::endl;
-	std::cout << "	 Decode" << std::endl;
-	std::cout << "	-----------------------------------------------" << std::endl;
+
+	std::cout << "\nDecode" << std::endl;
+	watch.start();
 	BitmapCVUtil result(width, height, 8, source.getBytePerPixel());
+	watch.stop();
+	cout << "Preprocess, " << watch.getLastElapsedTime() << endl;
+
 	{
+		watch.start();
 		device_memory<byte> decode_result(width * height * 3);
 		jpeg::ohmura::JpegDecoder decoder(width, height);
+		watch.stop();
+		cout << "Preprocess, " << watch.getLastElapsedTime() << endl;
 
-		watch.start();
 		{
 			decoder.decode(encode_result.host_data(), result_size, decode_result);
+
+			watch.start();
 			decode_result.copy_to_host((byte*) result.getRawData(), decode_result.size());
+			watch.stop();
+			cout << "Memory Transfer, " << watch.getLastElapsedTime() << "\n" << endl;
 		}
-		watch.stop();
-		std::cout << "	" << watch.getLastElapsedTime() * 1000 << "[ms]\n" << std::endl;
 	}
 	result.saveToFile("gpu_" + out_file_name);
-
-	std::cout << "-----------------------------------------------" << std::endl;
-	std::cout << " Finish GPU Encoding & Decoding" << std::endl;
-	std::cout << "===============================================\n\n" << std::endl;
 }
 
